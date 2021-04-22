@@ -73,6 +73,7 @@ trait MediaRelation
                     'path' => $file ? ($file->is_folder ? $file->path->getRelativeUrl() : (string)$file->path) : $defaultPath,
                     'relativePath' => $file ? $file->path->getRelativeUrl() : '',
                     'isImage' => $file ? $file->isImage() : false,
+                    'isVideo' => $file ? $file->isVideo() : false,
                     'isFolder' => $file ? $file->isFolder() : false,
                     'mediaType' => $file->media_type ?? null,
                     'createdAt' => $file->created_at ?? null,

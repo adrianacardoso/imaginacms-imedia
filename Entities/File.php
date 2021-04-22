@@ -26,6 +26,7 @@ class File extends Model implements TaggableInterface, Responsable
      * @var array
      */
     private $imageExtensions = ['jpg', 'png', 'jpeg', 'gif'];
+    private $videoExtensions = ['mp4', 'webm', 'ogg'];
 
     protected $table = 'media__files';
     public $translatedAttributes = ['description', 'alt_attribute', 'keywords'];
@@ -85,6 +86,17 @@ class File extends Model implements TaggableInterface, Responsable
       }
         
         return in_array(pathinfo($path ?? $this->path, PATHINFO_EXTENSION), $this->imageExtensions);
+    }
+
+
+    public function isVideo()
+    {
+      if( $this->disk == 'privatemedia' ){
+        $privateDisk = config('filesystems.disks.privatemedia');
+        $path = $privateDisk["root"]. config('asgard.media.config.files-path').$this->filename;
+      }
+        
+        return in_array(pathinfo($path ?? $this->path, PATHINFO_EXTENSION), $this->videoExtensions);
     }
 
     public function getThumbnail($type)
