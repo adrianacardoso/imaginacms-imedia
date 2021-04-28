@@ -44,7 +44,7 @@ class EloquentFileRepository extends EloquentBaseRepository implements FileRepos
      * @param  string  $disk
      * @return mixed
      */
-    public function createFromFile(UploadedFile $file, int $parentId = 0, $disk = null)
+    public function createFromFile(UploadedFile $file, $parentId = 0, $disk = null)
     {
         $fileName = FileHelper::slug($file->getClientOriginalName());
 
@@ -53,14 +53,14 @@ class EloquentFileRepository extends EloquentBaseRepository implements FileRepos
         if ($exists) {
             $fileName = $this->getNewUniqueFilename($fileName);
         }
-
+        
         $data = [
             'filename' => $fileName,
             'path' => $this->getPathFor($fileName, $parentId),
             'extension' => substr(strrchr($fileName, '.'), 1),
             'mimetype' => $file->getClientMimeType(),
             'filesize' => $file->getFileInfo()->getSize(),
-            'folder_id' => $parentId,
+            'folder_id' => $parentId ?? 0,
             'is_folder' => 0,
             'disk' => $disk
         ];
@@ -73,7 +73,7 @@ class EloquentFileRepository extends EloquentBaseRepository implements FileRepos
         return $file;
     }
 
-    private function getPathFor(string $filename, int $folderId)
+    private function getPathFor(string $filename, $folderId)
     {
         if ($folderId !== 0) {
             $parent = app(FolderRepository::class)->findFolder($folderId);
@@ -182,7 +182,7 @@ class EloquentFileRepository extends EloquentBaseRepository implements FileRepos
      * @param int $folderId
      * @return Collection
      */
-    public function allChildrenOf(int $folderId): Collection
+    public function allChildrenOf($folderId): Collection
     {
         return $this->model->where('folder_id', $folderId)->get();
     }

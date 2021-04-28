@@ -28,7 +28,7 @@ class EloquentFolderRepository extends EloquentBaseRepository implements FolderR
      * @param int $folderId
      * @return File|null
      */
-    public function findFolder(int $folderId)
+    public function findFolder($folderId)
     {
         return $this->model->where('is_folder', 1)->where('id', $folderId)->first();
     }
@@ -36,10 +36,10 @@ class EloquentFolderRepository extends EloquentBaseRepository implements FolderR
     public function create($data)
     {
         $data = [
-            'filename' => Arr::get($data, 'name'),
+            'filename' => Arr::get($data, 'name') ?? Arr::get($data, 'filename'),
             'path' => $this->getPath($data),
             'is_folder' => true,
-            'folder_id' => Arr::get($data, 'parent_id'),
+            'folder_id' => Arr::get($data, 'parent_id') ?? 0,
             'disk' => Arr::get($data,'disk')
         ];
         event($event = new FolderIsCreating($data));
@@ -55,20 +55,23 @@ class EloquentFolderRepository extends EloquentBaseRepository implements FolderR
         $previousData = [
             'filename' => $model->filename,
             'path' => $model->path,
+            'id' => $model->id,
         ];
         $formattedData = [
-            'filename' => Arr::get($data, 'name'),
+            'id' => Arr::get($data, 'id'),
+            'filename' => Arr::get($data, 'name') ?? Arr::get($data, 'filename'),
             'path' => $this->getPath($data),
             'parent_id' => Arr::get($data, 'parent_id'),
-          'disk' => Arr::get($data,'disk')
+            'disk' => Arr::get($data,'disk')
         ];
 
         event($event = new FolderIsUpdating($formattedData));
-        $model->update($event->getAttributes());
-
-        event(new FolderWasUpdated($model, $formattedData, $previousData));
-
-        return $model;
+      
+      $model->update($event->getAttributes());
+   
+      event(new FolderWasUpdated($model, $formattedData, $previousData));
+ 
+      return $model;
     }
 
     public function destroy($folder)
@@ -287,6 +290,36 @@ class EloquentFolderRepository extends EloquentBaseRepository implements FolderR
     }
   }
 
+  public function getItem($criteria, $params = false)
+      {
+        //Initialize query
+        $query = $this->model->query();
+  
+      /*== RELATIONSHIPS ==*/
+      if(in_array('*',$params->include)){//If Request all relationships
+        $query->with([]);
+      }else{//Especific relationships
+        $includeDefault = [];//Default relationships
+        if (isset($params->include))//merge relations with default relationships
+          $includeDefault = array_merge($includeDefault, $params->include);
+        $query->with($includeDefault);//Add Relationships to query
+      }
+  
+        /*== FILTER ==*/
+        if (isset($params->filter)) {
+          $filter = $params->filter;
+  
+          if (isset($filter->field))//Filter by specific field
+            $field = $filter->field;
+        }
+  
+        /*== FIELDS ==*/
+        if (isset($params->fields) && count($params->fields))
+          $query->select($params->fields);
+  
+        /*== REQUEST ==*/
+        return $query->where($field ?? 'id', $criteria)->first();
+      }
 
   function validateIndexAllPermission(&$query, $params)
   {

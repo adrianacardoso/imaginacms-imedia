@@ -13,11 +13,11 @@ class CreateFolderRequest extends FormRequest
         $parentId = $this->get('parent_id');
 
         return [
-            'name' => [
+            'filename' => [
                 new AlphaDashWithSpaces(),
                 'required',
                 Rule::unique('media__files', 'filename')->where(function ($query) use ($parentId) {
-                    return $query->where('is_folder', 1)->where('folder_id', $parentId);
+                    return $query->where('is_folder', 1)->where('folder_id', $parentId)->where("id","!=",$this->id);
                 }),
             ],
         ];

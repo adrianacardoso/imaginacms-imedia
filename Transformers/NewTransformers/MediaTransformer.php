@@ -60,13 +60,24 @@ class MediaTransformer extends JsonResource
         'size' => $thumbnail->size(),
       ];
     }
-
-    foreach (LaravelLocalization::getSupportedLocales() as $locale => $supportedLocale) {
-      $data[$locale] = [];
-      foreach ($this->translatedAttributes as $translatedAttribute) {
-        $data[$locale][$translatedAttribute] = $this->translateOrNew($locale)->$translatedAttribute;
+  
+    $filter = json_decode($request->filter);
+  
+    // Return data with available translations
+    if (isset($filter->allTranslations) && $filter->allTranslations) {
+      // Get langs avaliables
+      $languages = \LaravelLocalization::getSupportedLocales();
+    
+      foreach ($languages as $lang => $value) {
+        $data[$lang]['description'] = $this->hasTranslation($lang) ?
+          $this->translate("$lang")['description'] : '';
+        $data[$lang]['altAttribute'] = $this->hasTranslation($lang) ?
+          $this->translate("$lang")['alt_attribute'] ?? '' : '';
+        $data[$lang]['keywords'] = $this->hasTranslation($lang) ?
+          $this->translate("$lang")['keywords'] : '';
       }
     }
+    
 
     foreach ($this->tags as $tag) {
       $data['tags'][] = $tag->name;

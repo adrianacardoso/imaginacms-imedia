@@ -35,7 +35,7 @@ class FileService
      * @return mixed
      * @throws \Illuminate\Contracts\Filesystem\FileExistsException
      */
-    public function store(UploadedFile $file, int $parentId = 0, $disk = null)
+    public function store(UploadedFile $file, $parentId = 0, $disk = null)
     {
         $disk = is_null($disk)? $this->getConfiguredFilesystem() : $disk;
 
