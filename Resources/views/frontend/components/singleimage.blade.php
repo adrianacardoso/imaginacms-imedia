@@ -1,5 +1,5 @@
-@if(!empty($url))
-  <a href="{{$url}}" title="{{$title}}" class="image-link w-100">
+@if(!empty($url) || $dataFancybox)
+  <a href="{{$dataFancybox ? $src : $url}}" title="{{$title}}" class="image-link w-100" {{$dataFancybox ? "data-fancybox='$dataFancybox'" : ''}}>
     @endif
   
         <img
@@ -15,7 +15,7 @@
       class="img-fluid lazyload {{$imgClasses}}"
         style="{{$imgStyles}}"/>
   
-    @if(!empty($url))
+    @if(!empty($url)|| $dataFancybox)
   </a>
 @endif
 
