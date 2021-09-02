@@ -1,5 +1,7 @@
 @if(!empty($url) || $dataFancybox)
-  <a href="{{$dataFancybox ? $src : $url}}" title="{{$title}}" class="image-link w-100" {{$dataFancybox ? "data-fancybox='$dataFancybox'" : ''}}>
+  <a href="{{$dataFancybox ? $src : $url}}" title="{{$title}}" class="{{$defaultLinkClasses}} {{$linkClasses}}"
+    {{$dataFancybox ? "data-fancybox=$dataFancybox" : ''}}
+    {{$dataCaption ? "data-caption=$dataCaption" : ''}} >
     @endif
   
         <img

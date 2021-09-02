@@ -126,8 +126,9 @@ class Imagy
                 $image = $this->imageFactory->make($manipulation)->handle($image, $options);
             }
        
-            $image = $image->stream($thumbnail->format(), Arr::get($thumbnail->filters(), 'quality', 90));
-            $this->writeImage( preg_replace('/\\.[^.\\s]{3,4}$/', '', $filename).'.'.$thumbnail->format(), $image, $disk);
+            $imageStream = $image->stream($thumbnail->format(), Arr::get($thumbnail->filters(), 'quality', 90));
+            $this->writeImage( preg_replace('/\\.[^.\\s]{3,4}$/', '', $filename).'.'.$thumbnail->format(), $imageStream, $disk);
+            $image->destroy();
         }
     }
 
@@ -194,6 +195,7 @@ class Imagy
         $image = $image->stream(pathinfo($path, PATHINFO_EXTENSION));
 
         $this->writeImage($filename, $image);
+        $image->destroy();
     }
 
     /**

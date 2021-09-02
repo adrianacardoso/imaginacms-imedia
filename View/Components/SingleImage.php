@@ -23,23 +23,29 @@ class SingleImage extends Component
   public $mediumSrc;
   public $smallSrc;
   public $imgClasses;
+  public $linkClasses;
+  public $defaultLinkClasses;
   public $imgStyles;
   public $width;
   public $dataFancybox;
+  public $dataCaption;
   
   public function __construct($src = '', $alt = '', $title = null, $url = null, $isMedia = false, $mediaFiles = null,
                               $zone = 'mainimage', $extraLargeSrc = null, $largeSrc = null, $mediumSrc = null,
-                              $smallSrc = null, $fallback = null, $imgClasses = '',  $imgStyles = '', $width = "300px",
-                              $dataFancybox = null)
+                              $smallSrc = null, $fallback = null, $imgClasses = '', $linkClasses = '', $defaultLinkClasses = 'image-link w-100',
+                              $imgStyles = '', $width = "300px", $dataFancybox = null, $dataCaption = null)
   {
     $this->src = $src;
     $this->alt = $alt;
     $this->title = $title;
     $this->url = $url;
     $this->imgClasses = $imgClasses;
+    $this->linkClasses = $linkClasses;
+    $this->defaultLinkClasses = $defaultLinkClasses;
     $this->imgStyles = $imgStyles;
     $this->width = $width;
     $this->dataFancybox = $dataFancybox;
+    $this->dataCaption = $dataCaption;
   
     if (!empty($fallback)) {
       $this->extension = pathinfo($fallback, PATHINFO_EXTENSION);
