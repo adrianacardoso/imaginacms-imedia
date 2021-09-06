@@ -1,5 +1,5 @@
 @if(!empty($url) || $dataFancybox)
-    <a href="{{$dataFancybox ? $src : $url}}" title="{{$title}}" class="{{$defaultLinkClasses}} {{$linkClasses}}"
+    <a href="{{$isOldMacVersion ? $url ?? $fallback : ($dataFancybox ? $src : $url) }}" title="{{$title}}" class="{{$defaultLinkClasses}} {{$linkClasses}}"
             {{$dataFancybox ? "data-fancybox=$dataFancybox" : ''}}
             {{$dataCaption ? "data-caption=$dataCaption" : ''}} >
         @endif

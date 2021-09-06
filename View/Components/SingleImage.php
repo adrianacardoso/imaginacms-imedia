@@ -47,12 +47,13 @@ class SingleImage extends Component
     $this->width = $width;
     $this->dataFancybox = $dataFancybox;
     $this->dataCaption = $dataCaption;
-  
+    $this->isOldMacVersion = false;
+    
     if (!empty($fallback)) {
       $this->extension = pathinfo($fallback, PATHINFO_EXTENSION);
       if ($this->extension == "jpg") $this->extension = "jpeg";
     }
-  
+    
    
     if($isMedia && !empty($mediaFiles)){
       $this->src = $mediaFiles->{$zone}->extraLargeThumb;
@@ -61,17 +62,21 @@ class SingleImage extends Component
       $this->largeSrc = $mediaFiles->{$zone}->largeThumb;
       $this->mediumSrc = $mediaFiles->{$zone}->mediumThumb;
       $this->smallSrc = $mediaFiles->{$zone}->smallThumb;
+      
     }else{
       $this->extraLargeSrc = $extraLargeSrc;
       $this->largeSrc = $largeSrc;
       $this->mediumSrc = $mediumSrc;
       $this->smallSrc = $smallSrc;
+      $this->fallback = $fallback ?? $src;
     }
     
     //Fix Safari version 14, does not support the webp images format
     if(Browser::isSafari() && Browser::browserVersion()<=14){
       $this->isOldMacVersion = true;
+  
     }
+ 
   }
   
   /**
