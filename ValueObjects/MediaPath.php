@@ -35,6 +35,7 @@ class MediaPath
     {
         $path = ltrim($this->path, '/');
         $disk = is_null($disk)? is_null($this->disk)? config('asgard.media.config.filesystem') : $this->disk : $disk;
+   // dd( Storage::disk($disk));
         return Storage::disk($disk)->url($path);
     }
 

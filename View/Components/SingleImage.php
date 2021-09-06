@@ -3,7 +3,6 @@
 namespace Modules\Media\View\Components;
 
 use Illuminate\View\Component;
-use Browser;
 
 class SingleImage extends Component
 {
@@ -15,7 +14,7 @@ class SingleImage extends Component
   public $src;
   public $alt;
   public $title;
-  public $extension;
+  public $fallbackExtension;
   public $url;
   public $extraLargeSrc;
   public $fallback;
@@ -29,7 +28,6 @@ class SingleImage extends Component
   public $width;
   public $dataFancybox;
   public $dataCaption;
-  public $isOldMacVersion;
   
   public function __construct($src = '', $alt = '', $title = null, $url = null, $isMedia = false, $mediaFiles = null,
                               $zone = 'mainimage', $extraLargeSrc = null, $largeSrc = null, $mediumSrc = null,
@@ -47,11 +45,10 @@ class SingleImage extends Component
     $this->width = $width;
     $this->dataFancybox = $dataFancybox;
     $this->dataCaption = $dataCaption;
-    $this->isOldMacVersion = false;
     
     if (!empty($fallback)) {
-      $this->extension = pathinfo($fallback, PATHINFO_EXTENSION);
-      if ($this->extension == "jpg") $this->extension = "jpeg";
+      $this->fallbackExtension = pathinfo($fallback, PATHINFO_EXTENSION);
+      if ($this->fallbackExtension == "jpg") $this->fallbackExtension = "jpeg";
     }
     
    
@@ -69,12 +66,6 @@ class SingleImage extends Component
       $this->mediumSrc = $mediumSrc;
       $this->smallSrc = $smallSrc;
       $this->fallback = $fallback ?? $src;
-    }
-    
-    //Fix Safari version 14, does not support the webp images format
-    if(Browser::isSafari() && Browser::browserVersion()<=14){
-      $this->isOldMacVersion = true;
-  
     }
  
   }
