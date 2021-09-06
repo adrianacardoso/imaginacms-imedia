@@ -3,7 +3,7 @@
 namespace Modules\Media\View\Components;
 
 use Illuminate\View\Component;
-
+use Browser;
 
 class SingleImage extends Component
 {
@@ -29,6 +29,7 @@ class SingleImage extends Component
   public $width;
   public $dataFancybox;
   public $dataCaption;
+  public $isOldMacVersion;
   
   public function __construct($src = '', $alt = '', $title = null, $url = null, $isMedia = false, $mediaFiles = null,
                               $zone = 'mainimage', $extraLargeSrc = null, $largeSrc = null, $mediumSrc = null,
@@ -55,7 +56,7 @@ class SingleImage extends Component
    
     if($isMedia && !empty($mediaFiles)){
       $this->src = $mediaFiles->{$zone}->extraLargeThumb;
-      $this->fallback = $mediaFiles->{$zone}->relativePath;
+      $this->fallback = $mediaFiles->{$zone}->path;
       $this->extraLargeSrc = $mediaFiles->{$zone}->extraLargeThumb;
       $this->largeSrc = $mediaFiles->{$zone}->largeThumb;
       $this->mediumSrc = $mediaFiles->{$zone}->mediumThumb;
@@ -67,6 +68,10 @@ class SingleImage extends Component
       $this->smallSrc = $smallSrc;
     }
     
+    //Fix Safari version 14, does not support the webp images format
+    if(Browser::isSafari() && Browser::browserVersion()<=14){
+      $this->isOldMacVersion = true;
+    }
   }
   
   /**
