@@ -4,69 +4,72 @@ namespace Modules\Media\View\Components;
 
 use Illuminate\View\Component;
 
-
 class Gallery extends Component
 {
+  public $id;
+  public $zones;
+  public $mediaFiles;
+  public $margin;
+  public $responsiveClass;
+  public $autoplay;
+  public $autoplayHoverPause;
+  public $loop;
+  public $dots;
+  public $nav;
+  public $responsive;
+  public $gallery;
+  public $dataFancybox;
+  public $view;
+
+
   /**
    * Create a new component instance.
    *
    * @return void
    */
-  public $src;
-  public $alt;
-  public $title;
-  public $extension;
-  public $url;
-  public $extraLargeSrc;
-  public $fallback;
-  public $largeSrc;
-  public $mediumSrc;
-  public $smallSrc;
-  public $imgClasses;
-  public $imgStyles;
-  public $width;
-  
-  public function __construct($item, $title = null, $url = null, $isMedia = false, $mediaFiles = null,
-                              $zone = 'mainimage', $extraLargeSrc = null, $largeSrc = null, $mediumSrc = null,
-                              $smallSrc = null, $fallback = null, $imgClasses = '',  $imgStyles = '', $width = "300px")
+
+  public function __construct($id = "gallery", $zones = ["gallery"], $mediaFiles, $margin = 10, $responsiveClass = true, $autoplay = true,
+                              $autoplayHoverPause = true, $loop = true, $dots = true, $nav = true, $responsive = null, $dataFancybox = 'gallery',
+                              $layout = "gallery-layout-1")
   {
-    $this->src = $src;
-    $this->alt = $alt;
-    $this->title = $title;
-    $this->url = $url;
-    $this->imgClasses = $imgClasses;
-    $this->imgStyles = $imgStyles;
-    $this->width = $width;
-  
-    if (!empty($fallback)) {
-      $this->extension = pathinfo($fallback, PATHINFO_EXTENSION);
-      if ($this->extension == "jpg") $this->extension = "jpeg";
+    $this->id = $id;
+    $this->view = "media::frontend.components.gallery.layouts.$layout.index";
+    $this->zones = $zones;
+    $this->mediaFiles = $mediaFiles;
+    $this->margin = $margin;
+    $this->responsiveClass = $responsiveClass;
+    $this->autoplay = $autoplay;
+    $this->autoplayHoverPause = $autoplayHoverPause;
+    $this->loop = $loop;
+    $this->dots = $dots;
+    $this->nav = $nav;
+    $this->responsive = json_encode($responsive ?? [0 => ["items" => 1], 640 => ["items" => 2], 992 => ["items" => 4]]);
+    $this->dataFancybox = $dataFancybox;
+    $this->gallery = [];
+
+
+    if(!empty($mediaFiles)){
+      foreach ($zones as $zone){
+        if(is_array($mediaFiles->{$zone})){
+          foreach ($mediaFiles->{$zone} as $itemImage){
+            array_push($this->gallery,$itemImage);
+          }
+        }else{
+          array_push($this->gallery,$mediaFiles->{$zone});
+        }
+      }
     }
-  
-   
-    if($isMedia && !empty($mediaFiles)){
-      $this->src = $mediaFiles->{$zone}->extraLargeThumb;
-      $this->fallback = $mediaFiles->{$zone}->relativePath;
-      $this->extraLargeSrc = $mediaFiles->{$zone}->extraLargeThumb;
-      $this->largeSrc = $mediaFiles->{$zone}->largeThumb;
-      $this->mediumSrc = $mediaFiles->{$zone}->mediumThumb;
-      $this->smallSrc = $mediaFiles->{$zone}->smallThumb;
-    }else{
-      $this->extraLargeSrc = $extraLargeSrc;
-      $this->largeSrc = $largeSrc;
-      $this->mediumSrc = $mediumSrc;
-      $this->smallSrc = $smallSrc;
-    }
-    
   }
-  
   /**
    * Get the view / contents that represent the component.
    *
    * @return \Illuminate\View\View|string
    */
-  public function render()
+  public
+  function render()
   {
-    return view('media::frontend.components.singleimage');
+    return view($this->view);
   }
 }
+
+
