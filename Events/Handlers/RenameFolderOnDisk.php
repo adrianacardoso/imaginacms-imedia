@@ -41,11 +41,11 @@ class RenameFolderOnDisk
     {
     if($event->previousFolderData["filename"] != $event->folder->filename){
       $disk = is_null($event->folder->disk)? $this->getConfiguredFilesystem() : $event->folder->disk;
-  
+
       $this->filesystem->disk($disk)
         ->move(
-          $this->getDestinationPath($event->previousFolderData['path']->getRelativeUrl().$event->previousFolderData["filename"]),
-          $this->getDestinationPath($event->folder->path->getRelativeUrl().$event->folder->filename)
+          $this->getDestinationPath($event->previousFolderData['path']->getRelativeUrl()),
+          $this->getDestinationPath($event->folder->path->getRelativeUrl())
         );
     }
    
