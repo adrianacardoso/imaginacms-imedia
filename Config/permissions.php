@@ -9,6 +9,7 @@ return [
         'edit' => 'media::media.edit resource',
     'show' => 'media::media.show resource',
         'destroy' => 'media::media.destroy resource',
+        'download' => 'media::media.download resource',
     ],
     'media.folders' => [
         'index' => 'media::folders.list resource',
