@@ -12,13 +12,13 @@
                 <source data-srcset='{{$mediumSrc}}' type="image/webp" media="(max-width: 600px)">
             @endif
             @if(!empty($largeSrc))
-                <source data-srcset='{{$largeSrc}}' type="image/webp" media="(min-width: 900px)">
+                <source data-srcset='{{$largeSrc}}' type="image/webp" media="(max-width: 900px)">
             @endif
             @if(!empty($extraLargeSrc))
-                <source data-srcset='{{$extraLargeSrc}}' type="image/webp" media="(min-width: 1200px)">
+                <source data-srcset='{{$extraLargeSrc}}' type="image/webp" media="(min-width: 900px)">
             @endif
             @if(!empty($fallback))
-                <source data-srcset='{{$fallback}}' type="image/{{$fallbackExtension}}" media="(min-width: 900px)">
+                <source data-srcset='{{$fallback}}' type="image/{{$fallbackExtension}}">
             @endif
 
             <img data-src="{{$fallback}}" class="img-fluid lazyload {{$imgClasses}}"
