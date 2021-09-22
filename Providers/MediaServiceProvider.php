@@ -147,7 +147,7 @@ class MediaServiceProvider extends ServiceProvider
   {
     $this->app[ThumbnailManager::class]->registerThumbnail('smallThumb', [
     
-      'quality' => 80,
+      'quality' => 90,
       'resize' => [
         'width' => 300,
         'height' => null,
@@ -160,7 +160,7 @@ class MediaServiceProvider extends ServiceProvider
     );
   
     $this->app[ThumbnailManager::class]->registerThumbnail('mediumThumb', [
-      'quality' => 80,
+      'quality' => 90,
       'resize' => [
         'width' => 600,
         'height' => null,
@@ -173,7 +173,7 @@ class MediaServiceProvider extends ServiceProvider
     );
   
     $this->app[ThumbnailManager::class]->registerThumbnail('largeThumb', [
-      'quality' => 80,
+      'quality' => 90,
       'resize' => [
         'width' => 900,
         'height' => null,
@@ -186,7 +186,7 @@ class MediaServiceProvider extends ServiceProvider
     );
   
     $this->app[ThumbnailManager::class]->registerThumbnail('extraLargeThumb', [
-      'quality' => 80,
+      'quality' => 90,
       'resize' => [
         'width' => 1920,
         'height' => null,
