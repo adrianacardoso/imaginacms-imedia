@@ -45,7 +45,7 @@ trait MediaRelation
         $entityNamespace = get_class($this);
         $entityNamespaceExploded = explode('\\', strtolower($entityNamespace));
         $moduleName = $entityNamespaceExploded[1];//Get module name
-        $entityName = $entityNamespaceExploded[3];//Get entirty name
+        $entityName = $entityNamespaceExploded[3];//Get entity name
         //Get media fillable
         $mediaFillable = config("asgard.{$moduleName}.config.mediaFillable.{$entityName}") ?? [];
         //Define default image
@@ -85,8 +85,8 @@ trait MediaRelation
               $thumbnails = app(ThumbnailManager::class)->all();
               foreach ($thumbnails as $thumbnail){
                 $name = $thumbnail->name();
-                $fileTransformer->{$name} = $file && $file->isImage() ? $imagy->getThumbnail($file->path, $name) : $defaultPath;
-                $fileTransformer->{'relative'.ucfirst($name)} = $file  && $file->isImage() ? str_replace(url("/"),"",$imagy->getThumbnail($file->path, $name)) : $defaultPath;
+                $fileTransformer->{$name} = $file && $file->isImage() ? $imagy->getThumbnail($file, $name) : $defaultPath;
+                $fileTransformer->{'relative'.ucfirst($name)} = $file  && $file->isImage() ? str_replace(url("/"),"",$imagy->getThumbnail($file, $name)) : $defaultPath;
               }
              
                 //Add to response

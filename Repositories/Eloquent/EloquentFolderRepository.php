@@ -77,8 +77,8 @@ class EloquentFolderRepository extends EloquentBaseRepository implements FolderR
     public function destroy($folder)
     {
         event(new FolderIsDeleting($folder));
-
-        return $folder->delete();
+        $folder->delete();
+        return $folder->forceDelete();
     }
 
     /**

@@ -22,11 +22,11 @@
             @endif
 
             <img data-src="{{$fallback}}" class="img-fluid lazyload {{$imgClasses}}"
-                 alt="{{$alt}}" style="{{$imgStyles}}" data-sizes="auto" width="{{$width}}"/>
+                 alt="{{$alt}}" style="{{$imgStyles}}" data-sizes="auto" width="300" height="300"
+                 class="lazyload" />
         </picture>
 
         @if(!empty($url)|| $dataFancybox)
     </a>
 @endif
-
 

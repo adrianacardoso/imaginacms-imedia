@@ -30,6 +30,7 @@ class MediaTransformer extends JsonResource
 
   public function toArray($request)
   {
+
     $data = [
       'id' => $this->id,
       'filename' => $this->filename,
@@ -42,11 +43,12 @@ class MediaTransformer extends JsonResource
       'folderId' => $this->folder_id,
       'filesize' => $this->filesize,
       'extension' => $this->extension,
-      'smallThumb' => $this->imagy->getThumbnail($this->path, 'smallThumb'),
-      'mediumThumb' => $this->imagy->getThumbnail($this->path, 'mediumThumb'),
-      'largeThumb' => $this->imagy->getThumbnail($this->path, 'largeThumb'),
-      'extraLargeThumb' => $this->imagy->getThumbnail($this->path, 'extraLargeThumb'),
-      'createdBy' => $this->created_by
+      'smallThumb' => $this->imagy->getThumbnail($this->resource, 'smallThumb'),
+      'mediumThumb' => $this->imagy->getThumbnail($this->resource, 'mediumThumb'),
+      'largeThumb' => $this->imagy->getThumbnail($this->resource, 'largeThumb'),
+      'extraLargeThumb' => $this->imagy->getThumbnail($this->resource, 'extraLargeThumb'),
+      'createdBy' => $this->created_by,
+
     ];
 
     $data['createdByUser'] = new UserTransformer($this->createdBy);
@@ -56,7 +58,7 @@ class MediaTransformer extends JsonResource
 
       $data['thumbnails'][] = [
         'name' => $thumbnailName,
-        'path' => $this->imagy->getThumbnail($this->path, $thumbnailName),
+        'path' => $this->imagy->getThumbnail($this->resource, $thumbnailName),
         'size' => $thumbnail->size(),
       ];
     }

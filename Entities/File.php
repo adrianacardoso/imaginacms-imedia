@@ -12,15 +12,16 @@ use Modules\Media\ValueObjects\MediaPath;
 use Modules\Tag\Contracts\TaggableInterface;
 use Modules\Tag\Traits\TaggableTrait;
 use Modules\User\Entities\Sentinel\User;
-
+use Stancl\Tenancy\Database\Concerns\BelongsToTenant;
+use Modules\Core\Icrud\Entities\CrudModel;
 /**
  * Class File
  * @package Modules\Media\Entities
  * @property \Modules\Media\ValueObjects\MediaPath path
  */
-class File extends Model implements TaggableInterface, Responsable
+class File extends CrudModel implements TaggableInterface, Responsable
 {
-    use Translatable, NamespacedEntity, TaggableTrait;
+    use Translatable, NamespacedEntity, TaggableTrait, BelongsToTenant;
     /**
      * All the different images types where thumbnails should be created
      * @var array
@@ -60,7 +61,8 @@ class File extends Model implements TaggableInterface, Responsable
     {
         $disk = is_null($this->disk)? config('asgard.media.config.filesystem') : $this->disk;
 
-        return new MediaPath($disk == "privatemedia" ? config('asgard.media.config.files-path').$this->id : $value,$disk);
+     
+        return new MediaPath( ($disk == "privatemedia" ? config('asgard.media.config.files-path').$this->id : $value),$disk, $this->organization_id);
     }
 
     public function getPathStringAttribute()
@@ -102,7 +104,7 @@ class File extends Model implements TaggableInterface, Responsable
     public function getThumbnail($type)
     {
         if ($this->isImage() && $this->getKey()) {
-            return Imagy::getThumbnail($this->path, $type, $this->disk);
+            return Imagy::getThumbnail($this, $type, $this->disk);
         }
 
         return false;

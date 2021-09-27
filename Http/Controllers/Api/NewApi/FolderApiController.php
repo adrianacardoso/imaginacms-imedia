@@ -156,6 +156,7 @@ class FolderApiController extends BaseApiController
     try {
       //Get data
       $data = $request->input('attributes');
+  
       $params = $this->getParamsRequest($request);
       //Validate Request
       $this->validateRequestApi(new CreateFolderRequest((array)$data));
@@ -169,7 +170,7 @@ class FolderApiController extends BaseApiController
       event(new FileWasUploaded($folder));
       
       //Response
-      $response = ["data" => ""];
+      $response = ["data" => new MediaTransformer($folder)];
       \DB::commit(); //Commit to Data Base
     } catch (\Exception $e) {
       \Log::error($e->getMessage());

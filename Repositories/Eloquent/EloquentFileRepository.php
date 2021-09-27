@@ -446,7 +446,11 @@ class EloquentFileRepository extends EloquentBaseRepository implements FileRepos
     
     /*== REQUEST ==*/
     $model = $query->where($field ?? 'id', $criteria)->first();
-    $model ? $model->delete() : false;
+    
+    if(isset($model->id)){
+      $model->delete();
+      $model->forceDelete();
+    }
   }
   
   function validateIndexAllPermission(&$query, $params)
