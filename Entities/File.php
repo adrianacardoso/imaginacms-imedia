@@ -59,7 +59,7 @@ class File extends CrudModel implements TaggableInterface, Responsable
 
     public function getPathAttribute($value)
     {
-        $disk = is_null($this->disk)? config('asgard.media.config.filesystem') : $this->disk;
+        $disk = is_null($this->disk)? setting('media::filesystem') : $this->disk;
 
      
         return new MediaPath( ($disk == "privatemedia" ? config('asgard.media.config.files-path').$this->id : $value),$disk, $this->organization_id);
@@ -130,6 +130,15 @@ class File extends CrudModel implements TaggableInterface, Responsable
   public function createdBy()
   {
     return $this->belongsTo(User::class, 'created_by');
+  }
+
+  /**
+   * Imageable relation
+   * @return mixed
+   */
+  public function imageable()
+  {
+    return $this->hasMany(User::class, 'created_by');
   }
   /**
    * Created by relation

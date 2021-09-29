@@ -23,7 +23,7 @@ class MaxFolderSizeRule implements Rule
 
         preg_match('/([0-9]+)/', $folderSize, $match);
 
-        return ($match[0] + $value->getSize()) < config('asgard.media.config.max-total-size');
+        return ($match[0] + $value->getSize()) < setting('media::maxTotalSize');
     }
 
     /**
@@ -32,7 +32,7 @@ class MaxFolderSizeRule implements Rule
      */
     public function message()
     {
-        $bytes = config('asgard.media.config.max-total-size');
+        $bytes = setting('media::maxTotalSize');
         $size = $this->formatBytes($bytes);
 
         return trans('media::media.validation.max_size', ['size' => $size]);

@@ -9,7 +9,7 @@ class UploadMediaRequest extends FormRequest
 {
     public function rules()
     {
-        $extensions = 'mimes:' . str_replace('.', '', config('asgard.media.config.allowed-types'));
+        $extensions = 'mimes:' . join(',', setting('media::allowedTypes'));
         $maxFileSize = $this->getMaxFileSizeInKilobytes();
 
         return [
@@ -43,6 +43,6 @@ class UploadMediaRequest extends FormRequest
 
     private function getMaxFileSize()
     {
-        return config('asgard.media.config.max-file-size');
+        return setting('media::maxFileSize');
     }
 }

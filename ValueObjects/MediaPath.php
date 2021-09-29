@@ -41,7 +41,7 @@ class MediaPath
     public function getUrl($disk = null, $organizationId = null)
     {
         $path = ltrim($this->path, '/');
-        $disk = is_null($disk)? is_null($this->disk)? config('asgard.media.config.filesystem') : $this->disk : $disk;
+        $disk = is_null($disk)? is_null($this->disk)? setting('media::filesystem') : $this->disk : $disk;
         return Storage::disk($disk)->url(((!empty($organizationId) || !empty($this->organizationId)) ? 'organization'.($organizationId ?? $this->organizationId).'/' : '' ).$path);
     }
 

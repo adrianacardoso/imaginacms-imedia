@@ -86,7 +86,10 @@ class MediaServiceProvider extends ServiceProvider
     $this->publishConfig('media', 'config');
     $this->publishConfig('media', 'permissions');
     $this->publishConfig('media', 'assets');
-    
+    $this->mergeConfigFrom($this->getModuleConfigFilePath('media', 'settings'), "asgard.media.settings");
+    $this->mergeConfigFrom($this->getModuleConfigFilePath('media', 'settings-fields'), "asgard.media.settings-fields");
+  
+  
     $events->listen(StoringMedia::class, HandleMediaStorage::class);
     $events->listen(DeletingMedia::class, RemovePolymorphicLink::class);
     $events->listen(FolderWasCreated::class, CreateFolderOnDisk::class);
@@ -101,6 +104,7 @@ class MediaServiceProvider extends ServiceProvider
     $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
     
     $this->registerComponents();
+    $this->registerAwsCredentials();
   }
   
   /**
@@ -143,62 +147,48 @@ class MediaServiceProvider extends ServiceProvider
     $this->commands('command.media.refresh');
   }
   
+  /**
+   * Register registerAwsCredentials
+   */
+  private function registerAwsCredentials()
+  {
+    config(["filesystems.disks.s3" => [
+      'driver' => 's3',
+      'key' => setting('media::awsAccessKeyId'),
+      'secret' => setting('media::awsSecretAccessKey'),
+      'region' => setting('media::awsDefaultRegion'),
+      'bucket' => setting('media::awsBucket'),
+      'url' => setting('media::awsUrl'),
+      'endpoint' => setting('media::awsEndpoint'),
+    ]]);
+  //  dd(trans('media::media'));
+  }
+  
   private function registerThumbnails()
   {
-    $this->app[ThumbnailManager::class]->registerThumbnail('smallThumb', [
-    
-      'quality' => 80,
-      'resize' => [
-        'width' => 300,
-        'height' => null,
-        'callback' => function ($constraint) {
-          $constraint->aspectRatio();
-        },
-      ],
-    ],
-      'webp'
-    );
   
-    $this->app[ThumbnailManager::class]->registerThumbnail('mediumThumb', [
-      'quality' => 80,
-      'resize' => [
-        'width' => 600,
-        'height' => null,
-        'callback' => function ($constraint) {
-          $constraint->aspectRatio();
-        },
-      ],
-    ],
-      'webp'
-    );
-  
-    $this->app[ThumbnailManager::class]->registerThumbnail('largeThumb', [
-      'quality' => 80,
-      'resize' => [
-        'width' => 900,
-        'height' => null,
-        'callback' => function ($constraint) {
-          $constraint->aspectRatio();
-        },
-      ],
-    ],
-      'webp'
-    );
-  
-    $this->app[ThumbnailManager::class]->registerThumbnail('extraLargeThumb', [
-      'quality' => 80,
-      'resize' => [
-        'width' => 1920,
-        'height' => null,
-        'callback' => function ($constraint) {
-          $constraint->aspectRatio();
-        },
-      ],
-    ],
-      'webp'
-    );
+    $thumbnails = json_decode(setting("media::thumbnails",null,config("asgard.media.config.defaultThumbnails")));
     
+    foreach ($thumbnails as $key => $thumbnail){
+      $this->app[ThumbnailManager::class]->registerThumbnail($key, [
     
+        'quality' => $thumbnail->quality ?? 80,
+        'resize' => [
+          'width' => $thumbnail->width ?? 300,
+          'height' => $thumbnail->height ?? null,
+          'callback' => function ($constraint) use ($thumbnail){
+            if(isset($thumbnail->aspectRatio) && $thumbnail->aspectRatio){
+              $constraint->aspectRatio();
+            }
+            if(isset($thumbnail->upsize) && $thumbnail->upsize){
+              $constraint->upsize();
+            }
+          },
+        ],
+      ],
+        $thumbnail->format ?? "webp"
+      );
+    }
   }
   
   private function registerBladeTags()

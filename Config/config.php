@@ -22,7 +22,7 @@ return [
     | Specify all the allowed file extensions a user can upload on the server
     |--------------------------------------------------------------------------
     */
-    'allowed-types' => '.jpg,.png,.pdf,.jpeg,.mp4,.webm,.ogg',
+    'allowed-types' => 'jpg,png,pdf,jpeg,mp4,webm,ogg,svg',
     /*
     |--------------------------------------------------------------------------
     | Determine the max file size upload rate
@@ -77,4 +77,39 @@ return [
     'x' => 10,
     'y' => 10,
   ],
+  
+  "defaultThumbnails" => json_encode([
+    "smallThumb" => [
+      "quality" => 80,
+      "width" => 300,
+      "height" => null,
+      "aspectRatio" => true,
+      "upsize" => true,
+      "format" => "webp",
+    ],
+    "mediumThumb" => [
+      "quality" => 80,
+      "width" => 600,
+      "height" => null,
+      "aspectRatio" => true,
+      "upsize" => true,
+      "format" => "webp",
+    ],
+    "largeThumb" => [
+      "quality" => 80,
+      "width" => 900,
+      "height" => null,
+      "aspectRatio" => true,
+      "upsize" => true,
+      "format" => "webp",
+    ],
+    "extraLargeThumb" => [
+      "quality" => 80,
+      "width" => 1920,
+      "height" => null,
+      "aspectRatio" => true,
+      "upsize" => true,
+      "format" => "webp",
+    ]
+  ])
 ];

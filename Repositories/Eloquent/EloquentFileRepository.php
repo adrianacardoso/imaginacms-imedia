@@ -319,15 +319,15 @@ class EloquentFileRepository extends EloquentBaseRepository implements FileRepos
     }
 
     //Getting the disk name
-    $filterDisk = isset($params->filter) && isset($params->filter->disk) ? $params->filter->disk : config('asgard.media.config.filesystem');
+    $filterDisk = isset($params->filter) && isset($params->filter->disk) ? $params->filter->disk : setting('media::filesystem');
 
     //Validate disk name
-    $filterDisk = in_array($filterDisk, array_keys(config('filesystems.disks'))) ? $filterDisk : config('asgard.media.config.filesystem');
+    $filterDisk = in_array($filterDisk, array_keys(config('filesystems.disks'))) ? $filterDisk : setting('media::filesystem');
 
     //Filter by disk name
-    if ($filterDisk == config('asgard.media.config.filesystem')) {
+    if ($filterDisk == setting('media::filesystem')) {
       $query->where(function ($q) {
-        $q->where("disk", config('asgard.media.config.filesystem'))
+        $q->where("disk", setting('media::filesystem'))
           ->orWhereNull("disk");
       });
     } else {

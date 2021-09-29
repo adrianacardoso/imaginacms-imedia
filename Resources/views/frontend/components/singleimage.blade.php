@@ -6,24 +6,34 @@
     <!--Use data-srcset, data-src and specify lazyload class for images -->
         <picture>
             @if(!empty($smallSrc))
-                <source data-srcset='{{$smallSrc}}' type="image/webp" media="(max-width: 300px)">
+                <source data-srcset='{{$smallSrc}} 300w' type="image/webp" media="(max-width: 300px)">
             @endif
             @if(!empty($mediumSrc))
-                <source data-srcset='{{$mediumSrc}}' type="image/webp" media="(max-width: 600px)">
+                <source data-srcset='{{$mediumSrc}} 600w' type="image/webp" media="(max-width: 600px)">
             @endif
             @if(!empty($largeSrc))
-                <source data-srcset='{{$largeSrc}}' type="image/webp" media="(max-width: 900px)">
+                <source data-srcset='{{$largeSrc}} 900w' type="image/webp" media="(max-width: 900px)">
             @endif
             @if(!empty($extraLargeSrc))
-                <source data-srcset='{{$extraLargeSrc}}' type="image/webp" media="(min-width: 900px)">
+                <source data-srcset='{{$extraLargeSrc}} 1920w' type="image/webp" media="(min-width: 900px)">
             @endif
             @if(!empty($fallback))
                 <source data-srcset='{{$fallback}}' type="image/{{$fallbackExtension}}">
             @endif
 
-            <img data-src="{{$fallback}}" class="img-fluid lazyload {{$imgClasses}}"
-                 alt="{{$alt}}" style="{{$imgStyles}}" data-sizes="auto" width="300" height="300"
-                 class="lazyload" />
+            <img data-src="{{$fallback}}"
+                 data-srcset="{{!empty($smallSrc) ? $smallSrc." 300w" : ""}}
+                 {{!empty($mediumSrc) ? ", ".$mediumSrc." 600w" : ""}}
+                 {{!empty($largeSrc) ? ", ".$largeSrc." 900w" : ""}}
+                 {{!empty($extraLargeSrc) ? ", ".$extraLargeSrc." 1920w" : ""}}"
+                 class="lazyload {{$imgClasses}}"
+                 alt="{{$alt}}"
+                 style="{{$imgStyles}}"
+                 data-sizes="auto"
+                 data-parent-fit="contain"
+                 data-parent-container=".image-link"
+                 style="max-width: 100%; max-height: 100%;"
+            />
         </picture>
 
         @if(!empty($url)|| $dataFancybox)
