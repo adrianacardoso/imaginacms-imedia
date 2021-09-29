@@ -23,10 +23,10 @@ return [
     |--------------------------------------------------------------------------
     */
     'allowed-types' => 'jpg,png,pdf,jpeg,mp4,webm,ogg,svg',
-    'allowedImageTypes' => ["jpg", "png", "jpeg", "svg"],
-    'allowedFileTypes' => ["pdf", "doc", "docx", "xls", ".xlsx"],
-    'allowedVideoTypes' => ["mp4","webm","ogg"],
-    'allowedAudioTypes' => [ "mp3", "avi"],
+    'allowedImageTypes' => json_encode(["jpg", "png", "jpeg", "svg"]),
+    'allowedFileTypes' => json_encode(["pdf", "doc", "docx", "xls", "xlsx"]),
+    'allowedVideoTypes' => json_encode(["mp4","webm","ogg"]),
+    'allowedAudioTypes' => json_encode([ "mp3", "avi"]),
     /*
     |--------------------------------------------------------------------------
     | Determine the max file size upload rate

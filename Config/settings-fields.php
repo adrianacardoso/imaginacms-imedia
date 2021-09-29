@@ -27,7 +27,7 @@ return [
   'allowedImageTypes' => [
     "onlySuperAdmin" => true,
     'name' => 'media::allowedImageTypes',
-    'value' => ["jpg", "png", "jpeg", "svg"],
+    'value' => config("asgard.media.config.allowedImageTypes"),
     'type' => 'select',
     'columns' => 'col-12 col-md-6',
     'props' => [
@@ -44,7 +44,7 @@ return [
   'allowedFileTypes' => [
     "onlySuperAdmin" => true,
     'name' => 'media::allowedFileTypes',
-    'value' => ["pdf", "doc", "docx", "xls", ".xlsx"],
+    'value' => config("asgard.media.config.allowedFileTypes"),
     'type' => 'select',
     'columns' => 'col-12 col-md-6',
     'props' => [
@@ -61,7 +61,7 @@ return [
   'allowedVideoTypes' => [
     "onlySuperAdmin" => true,
     'name' => 'media::allowedVideoTypes',
-    'value' => ["mp4","webm","ogg"],
+    'value' => config("asgard.media.config.allowedVideoTypes"),
     'type' => 'select',
     'columns' => 'col-12 col-md-6',
     'props' => [
@@ -77,7 +77,7 @@ return [
   'allowedAudioTypes' => [
     "onlySuperAdmin" => true,
     'name' => 'media::allowedAudioTypes',
-    'value' => [ "mp3", "avi"],
+    'value' => config("asgard.media.config.allowedAudioTypes"),
     'type' => 'select',
     'columns' => 'col-12 col-md-6',
     'props' => [
