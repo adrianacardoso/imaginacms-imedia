@@ -12,7 +12,7 @@ return [
     'name' => 'media::filesystem',
     'value' => config("asgard.media.config.filesystem"),
     'type' => 'select',
-    'columns' => 'col-12 col-md-6',
+    'columns' => 'col-12',
     'props' => [
       'label' => 'media::settings.label.filesystem',
       'useInput' => false,
@@ -24,10 +24,10 @@ return [
     ]
   ],
   
-  'allowedTypes' => [
+  'allowedImageTypes' => [
     "onlySuperAdmin" => true,
-    'name' => 'media::allowedTypes',
-    'value' => ["jpg", "png", "pdf", "jpeg", "mp4", "webm", "ogg", "svg"],
+    'name' => 'media::allowedImageTypes',
+    'value' => ["jpg", "png", "jpeg", "svg"],
     'type' => 'select',
     'columns' => 'col-12 col-md-6',
     'props' => [
@@ -37,7 +37,57 @@ return [
       'hint' => 'media::settings.hint.allowedTypes',
       'hideDropdownIcon' => true,
       'newValueMode' => 'add-unique',
-      'label' => 'media::settings.label.allowedTypes'
+      'label' => 'media::settings.label.allowedImageTypes'
+    ],
+  ],
+  
+  'allowedFileTypes' => [
+    "onlySuperAdmin" => true,
+    'name' => 'media::allowedFileTypes',
+    'value' => ["pdf", "doc", "docx", "xls", ".xlsx"],
+    'type' => 'select',
+    'columns' => 'col-12 col-md-6',
+    'props' => [
+      'useInput' => true,
+      'useChips' => true,
+      'multiple' => true,
+      'hint' => 'media::settings.hint.allowedTypes',
+      'hideDropdownIcon' => true,
+      'newValueMode' => 'add-unique',
+      'label' => 'media::settings.label.allowedFileTypes'
+    ],
+  ],
+  
+  'allowedVideoTypes' => [
+    "onlySuperAdmin" => true,
+    'name' => 'media::allowedVideoTypes',
+    'value' => ["mp4","webm","ogg"],
+    'type' => 'select',
+    'columns' => 'col-12 col-md-6',
+    'props' => [
+      'useInput' => true,
+      'useChips' => true,
+      'multiple' => true,
+      'hint' => 'media::settings.hint.allowedTypes',
+      'hideDropdownIcon' => true,
+      'newValueMode' => 'add-unique',
+      'label' => 'media::settings.label.allowedVideoTypes'
+    ],
+  ],
+  'allowedAudioTypes' => [
+    "onlySuperAdmin" => true,
+    'name' => 'media::allowedAudioTypes',
+    'value' => [ "mp3", "avi"],
+    'type' => 'select',
+    'columns' => 'col-12 col-md-6',
+    'props' => [
+      'useInput' => true,
+      'useChips' => true,
+      'multiple' => true,
+      'hint' => 'media::settings.hint.allowedTypes',
+      'hideDropdownIcon' => true,
+      'newValueMode' => 'add-unique',
+      'label' => 'media::settings.label.allowedAudioTypes'
     ],
   ],
   

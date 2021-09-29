@@ -9,7 +9,10 @@ class UploadDropzoneMediaRequest extends FormRequest
 {
     public function rules()
     {
-        $extensions = 'mimes:' .  join(',', setting('media::allowedTypes'));
+        $extensions = 'mimes:' .  join(',', setting('media::allowedImageTypes'))
+          .  join(',', setting('media::allowedFileTypes'))
+          .  join(',', setting('media::allowedVideoTypes'))
+          .  join(',', setting('media::allowedAudioTypes'));
         $maxFileSize = $this->getMaxFileSizeInKilobytes();
 
         return [

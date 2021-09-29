@@ -2,6 +2,10 @@
 return [
   "label" => [
     "allowedTypes" => "Extensiones permitidas",
+    "allowedImageTypes" => "Extensiones de imágen permitidas",
+    "allowedFileTypes" => "Extensiones de archivo permitidas",
+    "allowedVideoTypes" => "Extensiones de video permitidas",
+    "allowedAudioTypes" => "Extensiones de audio permitidas",
     "maxFileSize" => "Tamaño máximo permitido por archivo (Mb)",
     "maxTotalSize" => "Tamaño máximo de todo el media (Bytes)",
     "filesystem" => "File System",
