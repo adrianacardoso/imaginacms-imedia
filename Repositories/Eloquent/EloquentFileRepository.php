@@ -301,7 +301,7 @@ class EloquentFileRepository extends EloquentBaseRepository implements FileRepos
           ->where('imageable.zone', $filter->zone)
           ->where('imageable.imageable_id', $filter->entityId)
           ->where('imageable.imageable_type', $filter->entity)
-          ->orderBy('order','asc')
+          ->orderBy('order', 'asc')
           ->get()->pluck("file_id")->toArray();
         $query->whereIn("id", $filesByZoneIds);
       }
@@ -315,6 +315,12 @@ class EloquentFileRepository extends EloquentBaseRepository implements FileRepos
             ->orWhere('updated_at', 'like', '%' . $filter->search . '%')
             ->orWhere('created_at', 'like', '%' . $filter->search . '%');
         });
+      }
+
+      //Filter by extension
+      if (isset($filter->extension)) {
+        if (!is_array($filter->extension)) $filter->extension = [$filter->extension];
+        $query->whereIn('extension', $filter->extension);
       }
     }
 
