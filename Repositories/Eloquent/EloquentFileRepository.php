@@ -295,7 +295,7 @@ class EloquentFileRepository extends EloquentBaseRepository implements FileRepos
         $query->where('is_folder', $filter->isFolder);
       }
 
-      //is Folder
+      //Zone
       if (isset($filter->zone)) {
         $filesByZoneIds = \DB::table("media__imageables as imageable")
           ->where('imageable.zone', $filter->zone)
@@ -304,6 +304,24 @@ class EloquentFileRepository extends EloquentBaseRepository implements FileRepos
           ->orderBy('order', 'asc')
           ->get()->pluck("file_id")->toArray();
         $query->whereIn("id", $filesByZoneIds);
+      }
+  
+      //Entity Type
+      if (isset($filter->entity)) {
+        $filesByEntity = \DB::table("media__imageables as imageable")
+          ->where('imageable.imageable_type', $filter->entity)
+          ->orderBy('order', 'asc')
+          ->get()->pluck("file_id")->toArray();
+        $query->whereIn("id", $filesByEntity);
+      }
+  
+      //Entity Id
+      if (isset($filter->entityId)) {
+        $filesByEntityId = \DB::table("media__imageables as imageable")
+          ->where('imageable.imageable_id', $filter->entityId)
+          ->orderBy('order', 'asc')
+          ->get()->pluck("file_id")->toArray();
+        $query->whereIn("id", $filesByEntityId);
       }
 
       //add filter by search

@@ -6,4 +6,5 @@ return [
     'folder updated' => 'Carpeta actualizada',
     'folder deleted' => 'Carpeta eliminada',
     'selected items deleted' => 'Los Archivo(s) selecionados fueron eliminado',
+   
 ];
