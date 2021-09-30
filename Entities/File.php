@@ -22,13 +22,7 @@ use Modules\Core\Icrud\Entities\CrudModel;
 class File extends CrudModel implements TaggableInterface, Responsable
 {
     use Translatable, NamespacedEntity, TaggableTrait, BelongsToTenant;
-    /**
-     * All the different images types where thumbnails should be created
-     * @var array
-     */
-    private $imageExtensions = ['jpg', 'png', 'jpeg', 'gif'];
-    private $videoExtensions = ['mp4', 'webm', 'ogg'];
-
+    
     protected $table = 'media__files';
     public $translatedAttributes = ['description', 'alt_attribute', 'keywords'];
     protected $fillable = [
@@ -59,7 +53,7 @@ class File extends CrudModel implements TaggableInterface, Responsable
 
     public function getPathAttribute($value)
     {
-        $disk = is_null($this->disk)? setting('media::filesystem') : $this->disk;
+        $disk = is_null($this->disk)? setting('media::filesystem', null, config("asgard.media.config.filesystem")) : $this->disk;
 
      
         return new MediaPath( ($disk == "privatemedia" ? config('asgard.media.config.files-path').$this->id : $value),$disk, $this->organization_id);
@@ -82,23 +76,25 @@ class File extends CrudModel implements TaggableInterface, Responsable
 
     public function isImage()
     {
+      $imageExtensions = json_decode(setting('media::allowedImageTypes',null,config("asgard.media.config.allowedImageTypes")));
       if( $this->disk == 'privatemedia' ){
         $privateDisk = config('filesystems.disks.privatemedia');
         $path = $privateDisk["root"]. config('asgard.media.config.files-path').$this->filename;
       }
-        
-        return in_array(pathinfo($path ?? $this->path, PATHINFO_EXTENSION), $this->imageExtensions);
+   
+        return in_array(pathinfo($path ?? $this->path, PATHINFO_EXTENSION), $imageExtensions);
     }
 
 
     public function isVideo()
     {
+      $videoExtensions = json_decode(setting('media::allowedVideoTypes',null,config("asgard.media.config.allowedVideoTypes")));
       if( $this->disk == 'privatemedia' ){
         $privateDisk = config('filesystems.disks.privatemedia');
         $path = $privateDisk["root"]. config('asgard.media.config.files-path').$this->filename;
       }
         
-        return in_array(pathinfo($path ?? $this->path, PATHINFO_EXTENSION), $this->videoExtensions);
+        return in_array(pathinfo($path ?? $this->path, PATHINFO_EXTENSION), $videoExtensions);
     }
 
     public function getThumbnail($type)

@@ -8,6 +8,7 @@ return [
     "allowedAudioTypes" => "Extensiones de audio permitidas",
     "maxFileSize" => "Tamaño máximo permitido por archivo (Mb)",
     "maxTotalSize" => "Tamaño máximo de todo el media (Bytes)",
+    "defaultImageSize" => "Redimensión por defecto de imagen",
     "filesystem" => "File System",
     "thumbnails" => "Thumbnails",
     "awsAccessKeyId" => "Access Key Id",

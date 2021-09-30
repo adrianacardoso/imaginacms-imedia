@@ -112,6 +112,7 @@ class MediaApiController extends BaseApiController
   {
     \DB::beginTransaction();
     try {
+      
       //Get Parameters from URL.
       $params = $this->getParamsRequest($request);
   
@@ -125,25 +126,6 @@ class MediaApiController extends BaseApiController
       $file = $request->file('file');
       $contentType = $request["Content-Type"];
       //return [$contentType];
-      if($contentType == 'image/jpeg'){
-    
-    
-        $image = \Image::make($request->file('file'));
-    
-        $imageSize = (Object) config('asgard.media.config.imageSize');
-        $watermark = (Object) config('asgard.media.config.watermark');
-    
-        $image->resize($imageSize->width, $imageSize->height, function ($constraint) {
-          $constraint->aspectRatio();
-          $constraint->upsize();
-        });
-    
-        if ($watermark->activated) {
-          $image->insert($watermark->url, $watermark->position, $watermark->x, $watermark->y);
-        }
-        $filePath = $file->getPathName();
-        \File::put($filePath, $image->stream('jpg',$imageSize->quality));
-      }
       
       $savedFile = $this->fileService->store($file, $request->get('parent_id'),$disk);
   

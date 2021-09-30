@@ -128,25 +128,6 @@ class MediaController extends Controller
         $file = $request->file('file');
         $extension = $file->extension();
 
-        //return [$contentType];
-        if($extension == 'jpeg'){
-            $image = \Image::make($request->file('file'));
-
-            $imageSize = (Object) config('asgard.media.config.imageSize');
-            $watermark = (Object) config('asgard.media.config.watermark');
-
-            $image->resize($imageSize->width, $imageSize->height, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            });
-
-            if ($watermark->activated) {
-                $image->insert(url($watermark->url), $watermark->position, $watermark->x, $watermark->y);
-            }
-            $filePath = $file->getPathName();
-            \File::put($filePath, $image->stream('jpg',$imageSize->quality));
-        }
-
         $savedFile = $this->fileService->store($file, $request->get('parent_id'), null, $disk);
         //$savedFile = $this->fileService->store($request->file('file'), null, $disk);
 

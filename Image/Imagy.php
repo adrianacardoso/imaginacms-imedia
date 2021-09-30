@@ -91,7 +91,7 @@ class Imagy
       $originalImage = $originalImage->path;
     }
     
-    $disk = is_null($disk) ? setting('media::filesystem') : $disk;
+    $disk = is_null($disk) ? setting('media::filesystem', null, config("asgard.media.config.filesystem")) : $disk;
     
     $tenantPrefix = "";
     if (isset($organizationId) && !empty($organizationId)) {
@@ -245,7 +245,7 @@ class Imagy
   
   private function getConfiguredFilesystem()
   {
-    return setting('media::filesystem');
+    return setting('media::filesystem', null, config("asgard.media.config.filesystem"));
   }
   
   /**

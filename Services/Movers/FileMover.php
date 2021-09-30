@@ -106,7 +106,7 @@ final class FileMover implements MoverInterface
 
     private function getConfiguredFilesystem() : string
     {
-        return setting('media::filesystem');
+        return setting('media::filesystem', null, config("asgard.media.config.filesystem"));
     }
 
     private function getNewPathFor(string $filename, int $folderId)

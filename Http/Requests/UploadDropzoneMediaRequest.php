@@ -46,6 +46,6 @@ class UploadDropzoneMediaRequest extends FormRequest
 
     private function getMaxFileSize()
     {
-        return setting('media::maxFileSize');
+        return setting('media::maxFileSize', null, config("asgard.media.config.max-file-size"));
     }
 }

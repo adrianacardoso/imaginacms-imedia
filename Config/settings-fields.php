@@ -112,6 +112,7 @@ return [
     ]
   ],
   
+  //TODO::falta convertir este setting s tipo json cuando ya esté el campo en el iadmin creado
   "thumbnails" => [
     "onlySuperAdmin" => true,
     'name' => 'media::thumbnails',
@@ -120,6 +121,20 @@ return [
     "type" => "input",
     "props" => [
       'label' => 'media::settings.label.thumbnails',
+      "type" => "textarea"
+    ]
+  
+  ],
+  
+  //TODO::falta convertir este setting s tipo json cuando ya esté el campo en el iadmin creado
+  "defaultImageSize" => [
+    "onlySuperAdmin" => true,
+    'name' => 'media::defaultImageSize',
+    "value" => config("asgard.media.config.defaultImageSize"),
+    'label' => 'Default Image Size',
+    "type" => "input",
+    "props" => [
+      'label' => 'media::settings.label.defaultImageSize',
       "type" => "textarea"
     ]
   

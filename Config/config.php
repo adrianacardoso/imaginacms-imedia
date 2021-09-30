@@ -72,7 +72,7 @@ return [
     ],
 
 
-  'imageSize' => ['width' => 1920, 'height' => 1080, 'quality' => 90],
+  'defaultImageSize' => json_encode(['width' => 1920, 'height' => 1080, 'quality' => 90]),
  
   'watermark' => [
     'activated' => false,

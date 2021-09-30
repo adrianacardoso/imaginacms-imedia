@@ -43,6 +43,6 @@ class BaseUrlResolver
      */
     private function getConfiguredFilesystem()
     {
-        return setting('media::filesystem');
+        return setting('media::filesystem', null, config("asgard.media.config.filesystem"));
     }
 }

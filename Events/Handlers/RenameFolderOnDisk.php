@@ -65,7 +65,7 @@ class RenameFolderOnDisk
      */
     private function getConfiguredFilesystem()
     {
-        return setting('media::filesystem');
+        return setting('media::filesystem', null, config("asgard.media.config.filesystem"));
     }
 
     private function replacePathReferences($folderId, $previousPath, $newPath)
