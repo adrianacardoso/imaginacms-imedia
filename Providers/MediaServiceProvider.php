@@ -16,6 +16,7 @@ use Modules\Media\Console\RefreshThumbnailCommand;
 use Modules\Media\Contracts\DeletingMedia;
 use Modules\Media\Contracts\StoringMedia;
 use Modules\Media\Entities\File;
+use Modules\Media\Entities\Zone;
 use Modules\Media\Events\FolderIsDeleting;
 use Modules\Media\Events\FolderWasCreated;
 use Modules\Media\Events\FolderWasUpdated;
@@ -29,8 +30,10 @@ use Modules\Media\Events\Handlers\RenameFolderOnDisk;
 use Modules\Media\Image\ThumbnailManager;
 use Modules\Media\Repositories\Eloquent\EloquentFileRepository;
 use Modules\Media\Repositories\Eloquent\EloquentFolderRepository;
+use Modules\Media\Repositories\Eloquent\EloquentZoneRepository;
 use Modules\Media\Repositories\FileRepository;
 use Modules\Media\Repositories\FolderRepository;
+use Modules\Media\Repositories\ZoneRepository;
 use Modules\Tag\Repositories\TagManager;
 use Illuminate\Support\Facades\Blade;
 
@@ -124,6 +127,9 @@ class MediaServiceProvider extends ServiceProvider
     });
     $this->app->bind(FolderRepository::class, function () {
       return new EloquentFolderRepository(new File());
+    });
+    $this->app->bind(ZoneRepository::class, function () {
+      return new EloquentZoneRepository(new Zone());
     });
   }
   
