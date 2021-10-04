@@ -87,8 +87,8 @@ class MediaServiceProvider extends ServiceProvider
   public function boot(DispatcherContract $events)
   {
     $this->publishConfig('media', 'config');
-    $this->publishConfig('media', 'permissions');
     $this->publishConfig('media', 'assets');
+    $this->mergeConfigFrom($this->getModuleConfigFilePath('media', 'permissions'), "asgard.media.permissions");
     $this->mergeConfigFrom($this->getModuleConfigFilePath('media', 'settings'), "asgard.media.settings");
     $this->mergeConfigFrom($this->getModuleConfigFilePath('media', 'settings-fields'), "asgard.media.settings-fields");
   
