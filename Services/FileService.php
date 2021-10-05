@@ -5,10 +5,12 @@ namespace Modules\Media\Services;
 use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Modules\Media\Entities\File;
+use Modules\Media\Http\Requests\UploadMediaRequest;
 use Modules\Media\Image\Imagy;
 use Modules\Media\Jobs\CreateThumbnails;
 use Modules\Media\Repositories\FileRepository;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Validator;
 
 class FileService
 {
@@ -45,13 +47,22 @@ class FileService
   {
     $disk = is_null($disk) ? $this->getConfiguredFilesystem() : $disk;
     
+    //validating avaiable extensions
+    $request = new UploadMediaRequest(["file" => $file]);
+    $validator = Validator::make($request->all(), $request->rules(), $request->messages());
+    //if get errors, throw errors
+    if ($validator->fails()) {
+      $errors = json_decode($validator->errors());
+      throw new \Exception(json_encode($errors), 400);
+    }
+    
     $savedFile = $this->file->createFromFile($file, $parentId, $disk);
     
-    $this->resizeImages($file,$savedFile);
+    $this->resizeImages($file, $savedFile);
     
     $path = $this->getDestinationPath($savedFile->getRawOriginal('path'));
     $stream = fopen($file->getRealPath(), 'r+');
-  
+    
     //call Method delete for all exist in the disk with the same filename
     $this->imagy->deleteAllFor($savedFile);
     
@@ -71,22 +82,23 @@ class FileService
    * @param UploadedFile $file
    * @param $savedFile
    */
-  private function resizeImages(UploadedFile $file, $savedFile){
-    if($savedFile->isImage()){
+  private function resizeImages(UploadedFile $file, $savedFile)
+  {
+    if ($savedFile->isImage()) {
       
       $image = \Image::make(fopen($file->getRealPath(), 'r+'));
-    
-      $imageSize = json_decode(setting("media::defaultImageSize",null,config('asgard.media.config.defaultImageSize')));
-
+      
+      $imageSize = json_decode(setting("media::defaultImageSize", null, config('asgard.media.config.defaultImageSize')));
+      
       $image->resize($imageSize->width, $imageSize->height, function ($constraint) {
         $constraint->aspectRatio();
         $constraint->upsize();
       });
-    
-    //TODO:: aquí falta la lógica para la marca de agua según la entidad zone
+      
+      //TODO:: aquí falta la lógica para la marca de agua según la entidad zone
       
       $filePath = $file->getPathName();
-      \File::put($filePath, $image->stream($savedFile->extension,$imageSize->quality));
+      \File::put($filePath, $image->stream($savedFile->extension, $imageSize->quality));
     }
   }
   

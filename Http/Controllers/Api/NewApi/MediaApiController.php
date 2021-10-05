@@ -117,20 +117,13 @@ class MediaApiController extends BaseApiController
       $params = $this->getParamsRequest($request);
   
       $disk = (in_array($request->get('disk'),array_keys(config('filesystems.disks'))))? $request->get('disk') : null;
-  
-      //Get data
-      // $data = $request->input('attributes');
       
-      //Validate Request
-      $this->validateRequestApi(new UploadMediaRequest($request->all()));
       $file = $request->file('file');
       $contentType = $request["Content-Type"];
       //return [$contentType];
       
       $savedFile = $this->fileService->store($file, $request->get('parent_id'),$disk);
   
-      $savedFile->created_by =  $params->user->id;
-      $savedFile->save();
       if (is_string($savedFile)) throw new \Exception($savedFile, 409);
       
       event(new FileWasUploaded($savedFile));
