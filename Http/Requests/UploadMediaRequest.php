@@ -16,7 +16,7 @@ class UploadMediaRequest extends FormRequest
       'file' => [
         'required',
         new MaxFolderSizeRule($this->disk ?? null),
-        mimesAvailableRule(),
+        mediaMimesAvailableRule(),
         "max:$maxFileSize",
       ],
     ];
