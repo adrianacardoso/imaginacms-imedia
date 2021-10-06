@@ -146,7 +146,8 @@ return [
     'name' => 'media::awsAccessKeyId',
     'value' => "",
     'type' => 'input',
-    "group" => "media::settings.groups.aws",
+    "groupName" => "aws",
+    "groupTitle" => "media::settings.groups.aws",
     'columns' => 'col-12 col-md-6',
     'props' => [
       'label' => 'media::settings.label.awsAccessKeyId'
@@ -157,7 +158,8 @@ return [
     'name' => 'media::awsSecretAccessKey',
     'value' => "",
     'type' => 'input',
-    "group" => "media::settings.groups.aws",
+    "groupName" => "aws",
+    "groupTitle" => "media::settings.groups.aws",
     'columns' => 'col-12 col-md-6',
     'props' => [
       'label' => 'media::settings.label.awsSecretAccessKey'
@@ -168,7 +170,8 @@ return [
     'name' => 'media::awsDefaultRegion',
     'value' => "",
     'type' => 'input',
-    "group" => "media::settings.groups.aws",
+    "groupName" => "aws",
+    "groupTitle" => "media::settings.groups.aws",
     'columns' => 'col-12 col-md-6',
     'props' => [
       'label' => 'media::settings.label.awsDefaultRegion'
@@ -179,7 +182,8 @@ return [
     'name' => 'media::awsBucket',
     'value' => "",
     'type' => 'input',
-    "group" => "media::settings.groups.aws",
+    "groupName" => "aws",
+    "groupTitle" => "media::settings.groups.aws",
     'columns' => 'col-12 col-md-6',
     'props' => [
       'label' => 'media::settings.label.awsBucket'
@@ -190,7 +194,8 @@ return [
     'name' => 'media::awsUrl',
     'value' => "",
     'type' => 'input',
-    "group" => "media::settings.groups.aws",
+    "groupName" => "aws",
+    "groupTitle" => "media::settings.groups.aws",
     'columns' => 'col-12 col-md-6',
     'props' => [
       'label' => 'media::settings.label.awsUrl'
@@ -201,7 +206,8 @@ return [
     'name' => 'media::awsEndpoint',
     'value' => "",
     'type' => 'input',
-    "group" => "media::settings.groups.aws",
+    "groupName" => "aws",
+    "groupTitle" => "media::settings.groups.aws",
     'columns' => 'col-12 col-md-6',
     'props' => [
       'label' => 'media::settings.label.awsEndpoint'
