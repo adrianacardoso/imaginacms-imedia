@@ -295,7 +295,6 @@ class EloquentFileRepository extends EloquentBaseRepository implements FileRepos
         $query->where('is_folder', $filter->isFolder);
       }
 
-      $whereIdsIn = [];
       //Zone
       if (isset($filter->zone)) {
         $filesByZoneIds = \DB::table("media__imageables as imageable")
@@ -305,34 +304,20 @@ class EloquentFileRepository extends EloquentBaseRepository implements FileRepos
           ->orderBy('order', 'asc')
           ->get()->pluck("file_id")->toArray();
   
-        $whereIdsIn = array_merge($whereIdsIn,$filesByZoneIds);
-        
+ 
+        $query->whereIn("id",$filesByZoneIds);
       }
   
       //Entity Type
-      if (isset($filter->entity)) {
+      if (isset($filter->entity) && !isset($filter->zone)) {
         $filesByEntity = \DB::table("media__imageables as imageable")
           ->where('imageable.imageable_type', $filter->entity)
           ->orderBy('order', 'asc')
           ->get()->pluck("file_id")->toArray();
   
-        $whereIdsIn = array_merge($whereIdsIn,$filesByEntity);
-        
-      }
-  
-      //Entity Id
-      if (isset($filter->entityId)) {
-        $filesByEntityId = \DB::table("media__imageables as imageable")
-          ->where('imageable.imageable_id', $filter->entityId)
-          ->orderBy('order', 'asc')
-          ->get()->pluck("file_id")->toArray();
-  
-        $whereIdsIn = array_merge($whereIdsIn,$filesByEntityId);
-        
+        $query->whereIn("id",$filesByEntity);
       }
       
-      if(!empty($whereIdsIn))
-        $query->whereIn("id",$whereIdsIn);
       
 
       //add filter by search
@@ -375,7 +360,7 @@ class EloquentFileRepository extends EloquentBaseRepository implements FileRepos
     if (isset($params->fields) && count($params->fields))
       $query->select($params->fields);
 
-    //dd($query->toSql(), $query->getBindings());
+   // dd($query->toSql(), $query->getBindings());
     /*== REQUEST ==*/
     if (isset($params->page) && $params->page) {
       $response = $query->paginate($params->take);
