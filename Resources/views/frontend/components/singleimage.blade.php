@@ -1,7 +1,7 @@
 @if(!empty($url) || $dataFancybox)
     <a href="{{ $dataFancybox ? $src : $url }}" title="{{$title}}" class="{{$defaultLinkClasses}} {{$linkClasses}}"
             {{$dataFancybox ? "data-fancybox=$dataFancybox" : ''}}
-            {{$dataCaption ? "data-caption=$dataCaption" : ''}} >
+            {{$dataCaption ? "data-caption=$dataCaption" : ''}} target="{{$target}}">
     @endif
     <!--Use data-srcset, data-src and specify lazyload class for images -->
         <picture>

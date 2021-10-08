@@ -28,11 +28,12 @@ class SingleImage extends Component
   public $width;
   public $dataFancybox;
   public $dataCaption;
+  public $target;
   
   public function __construct($src = '', $alt = '', $title = null, $url = null, $isMedia = false, $mediaFiles = null,
                               $zone = 'mainimage', $extraLargeSrc = null, $largeSrc = null, $mediumSrc = null,
                               $smallSrc = null, $fallback = null, $imgClasses = '', $linkClasses = '', $defaultLinkClasses = 'image-link w-100',
-                              $imgStyles = '', $width = "300px", $dataFancybox = null, $dataCaption = null)
+                              $imgStyles = '', $width = "300px", $dataFancybox = null, $dataCaption = null, $target = "_self")
   {
     $this->src = $src;
     $this->alt = $alt;
@@ -45,6 +46,7 @@ class SingleImage extends Component
     $this->width = $width;
     $this->dataFancybox = $dataFancybox;
     $this->dataCaption = $dataCaption;
+    $this->target = $target;
     
     if (!empty($fallback)) {
       $this->fallbackExtension = pathinfo($fallback, PATHINFO_EXTENSION);
