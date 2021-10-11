@@ -23,6 +23,7 @@ class SingleImage extends Component
   public $smallSrc;
   public $imgClasses;
   public $linkClasses;
+  public $linkRel;
   public $defaultLinkClasses;
   public $imgStyles;
   public $width;
@@ -32,7 +33,7 @@ class SingleImage extends Component
   
   public function __construct($src = '', $alt = '', $title = null, $url = null, $isMedia = false, $mediaFiles = null,
                               $zone = 'mainimage', $extraLargeSrc = null, $largeSrc = null, $mediumSrc = null,
-                              $smallSrc = null, $fallback = null, $imgClasses = '', $linkClasses = '', $defaultLinkClasses = 'image-link w-100',
+                              $smallSrc = null, $fallback = null, $imgClasses = '', $linkClasses = '', $linkRel = '', $defaultLinkClasses = 'image-link w-100',
                               $imgStyles = '', $width = "300px", $dataFancybox = null, $dataCaption = null, $target = "_self")
   {
     $this->src = $src;
@@ -43,6 +44,7 @@ class SingleImage extends Component
     $this->linkClasses = $linkClasses;
     $this->defaultLinkClasses = $defaultLinkClasses;
     $this->imgStyles = $imgStyles;
+    $this->linkRel = $linkRel;
     $this->width = $width;
     $this->dataFancybox = $dataFancybox;
     $this->dataCaption = $dataCaption;

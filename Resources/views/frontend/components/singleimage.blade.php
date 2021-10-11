@@ -1,7 +1,7 @@
 @if(!empty($url) || $dataFancybox)
     <a href="{{ $dataFancybox ? $src : $url }}" title="{{$title}}" class="{{$defaultLinkClasses}} {{$linkClasses}}"
             {{$dataFancybox ? "data-fancybox=$dataFancybox" : ''}}
-            {{$dataCaption ? "data-caption=$dataCaption" : ''}} target="{{$target}}">
+            {{$dataCaption ? "data-caption=$dataCaption" : ''}} target="{{$target}}" {{!empty($linkRel) ? "rel=$linkRel" : ""}}>
     @endif
     <!--Use data-srcset, data-src and specify lazyload class for images -->
         <picture>
@@ -32,7 +32,7 @@
                  data-sizes="auto"
                  data-parent-fit="contain"
                  data-parent-container=".image-link"
-                 style="max-width: 100%; max-height: 100%;"
+                 
             />
         </picture>
 
