@@ -33,8 +33,9 @@ class SingleImage extends Component
   
   public function __construct($src = '', $alt = '', $title = null, $url = null, $isMedia = false, $mediaFiles = null,
                               $zone = 'mainimage', $extraLargeSrc = null, $largeSrc = null, $mediumSrc = null,
-                              $smallSrc = null, $fallback = null, $imgClasses = '', $linkClasses = '', $linkRel = '', $defaultLinkClasses = 'image-link w-100',
-                              $imgStyles = '', $width = "300px", $dataFancybox = null, $dataCaption = null, $target = "_self", $setting = '')
+                              $smallSrc = null, $fallback = null, $imgClasses = '', $linkClasses = '', $linkRel = '',
+                              $defaultLinkClasses = 'image-link w-100', $imgStyles = '', $width = "300px",
+                              $dataFancybox = null, $dataCaption = null, $target = "_self", $setting = '')
   {
     $this->src = $src;
     $this->alt = $alt;
