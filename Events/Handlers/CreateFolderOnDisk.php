@@ -20,8 +20,7 @@ class CreateFolderOnDisk
     public function handle(FolderWasCreated $event)
     {
         $disk = is_null($event->folder->disk)? $this->getConfiguredFilesystem() : $event->folder->disk;
-   
-        $this->filesystem->disk($disk)->makeDirectory(config("asgard.media.config.files-path").$event->folder->filename);
+        $this->filesystem->disk($disk)->makeDirectory($this->getDestinationPath($event->folder->path->getRelativeUrl()));
     }
 
     private function getDestinationPath($path)

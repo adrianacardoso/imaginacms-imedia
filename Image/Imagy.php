@@ -89,6 +89,7 @@ class Imagy
       $disk = $originalImage->disk;
       $organizationId = $originalImage->organization_id ?? null;
       $originalImage = $originalImage->path;
+  
     }
     
     $disk = is_null($disk) ? setting('media::filesystem', null, config("asgard.media.config.filesystem")) : $disk;
@@ -102,13 +103,11 @@ class Imagy
       if ($originalImage instanceof MediaPath) {
         return $originalImage->getUrl($disk, $organizationId ?? null);
       }
-     
-      return (new MediaPath($tenantPrefix . $originalImage, $disk))->getRelativeUrl();
+      return (new MediaPath($tenantPrefix . $originalImage, $disk,$organizationId ?? null))->getRelativeUrl();
     }
     $path = $this->getFilenameFor($originalImage, $thumbnail);
-   // dd(new MediaPath($tenantPrefix . $path, $disk),(new MediaPath($tenantPrefix . $path, $disk))->getUrl());
-  
-    return (new MediaPath($tenantPrefix . $path, $disk,$organizationId ?? null))->getUrl($disk, $organizationId ?? null);
+    
+    return (new MediaPath($tenantPrefix . $path, $disk))->getUrl($disk);
   }
   
   /**

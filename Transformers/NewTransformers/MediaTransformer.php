@@ -92,7 +92,7 @@ class MediaTransformer extends JsonResource
   private function getPath()
   {
     if ($this->is_folder) {
-      return $this->path->getRelativeUrl();
+      return (string)$this->pathString;
     }
 
     return (string)$this->path;
