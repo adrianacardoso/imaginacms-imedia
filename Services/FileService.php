@@ -9,6 +9,7 @@ use Modules\Media\Http\Requests\UploadMediaRequest;
 use Modules\Media\Image\Imagy;
 use Modules\Media\Jobs\CreateThumbnails;
 use Modules\Media\Repositories\FileRepository;
+use Modules\Media\ValueObjects\MediaPath;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Validator;
 
@@ -65,8 +66,8 @@ class FileService
     
     //call Method delete for all exist in the disk with the same filename
     $this->imagy->deleteAllFor($savedFile);
-    
-    $this->filesystem->disk($disk)->writeStream($path, $stream, [
+
+    $this->filesystem->disk($disk)->writeStream($savedFile->path->getRelativeUrl(), $stream, [
       'visibility' => 'public',
       'mimetype' => $savedFile->mimetype,
     ]);
