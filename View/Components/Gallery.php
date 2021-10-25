@@ -20,6 +20,7 @@ class Gallery extends Component
   public $gallery;
   public $dataFancybox;
   public $view;
+  public $columnMasonry;
 
 
   /**
@@ -30,7 +31,7 @@ class Gallery extends Component
 
   public function __construct($id = "gallery", $zones = ["gallery"], $mediaFiles, $margin = 10, $responsiveClass = true, $autoplay = true,
                               $autoplayHoverPause = true, $loop = true, $dots = true, $nav = true, $responsive = null, $dataFancybox = 'gallery',
-                              $layout = "gallery-layout-1")
+                              $layout = "gallery-layout-1", $columnMasonry = 3 )
   {
     $this->id = $id;
     $this->view = "media::frontend.components.gallery.layouts.$layout.index";
@@ -46,6 +47,7 @@ class Gallery extends Component
     $this->responsive = json_encode($responsive ?? [0 => ["items" => 1], 640 => ["items" => 2], 992 => ["items" => 4]]);
     $this->dataFancybox = $dataFancybox;
     $this->gallery = [];
+    $this->columnMasonry = $columnMasonry;
 
 
     if(!empty($mediaFiles)){
