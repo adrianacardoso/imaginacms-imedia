@@ -33,7 +33,7 @@ class Gallery extends Component
 
   public function __construct($id = "gallery", $zones = ["gallery"], $mediaFiles, $margin = 10, $responsiveClass = true, $autoplay = true,
                               $autoplayHoverPause = true, $loop = true, $dots = true, $nav = true, $responsive = null, $dataFancybox = 'gallery',
-                              $layout = "gallery-layout-1", $columnMasonry = 3, $navText = "", $maxImages = 12)
+                              $layout = "gallery-layout-1", $columnMasonry = 3, $navText = "", $maxImages = null)
   {
     $this->id = $id;
     $this->view = "media::frontend.components.gallery.layouts.$layout.index";
@@ -58,7 +58,7 @@ class Gallery extends Component
       foreach ($zones as $zone){
         if(is_array($mediaFiles->{$zone})){
           foreach ($mediaFiles->{$zone} as $itemImage){
-            if($countImages<$maxImages){
+            if(empty($maxImages) || $countImages<$maxImages){
               $countImages++;
               array_push($this->gallery,$itemImage);
             }
