@@ -3,6 +3,12 @@
             {{$dataFancybox ? "data-fancybox=$dataFancybox" : ''}}
             {{$dataCaption ? "data-caption=$dataCaption" : ''}} target="{{$target}}" rel="{{!empty($linkRel) ? $linkRel : ""}}">
     @endif
+        @if($isVideo)
+                <video class="d-block h-100 cover-img" width="100%" loop autoplay muted>
+                    <source src="{{ $mediaFiles->{$zone}->path }}" />
+                </video>
+        @endif
+
     <!--Use data-srcset, data-src and specify lazyload class for images -->
         <picture>
             @if(!empty($smallSrc))

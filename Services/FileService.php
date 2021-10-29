@@ -58,7 +58,7 @@ class FileService
     }
     
     $savedFile = $this->file->createFromFile($file, $parentId, $disk);
-    
+
     $this->resizeImages($file, $savedFile);
     
     $path = $this->getDestinationPath($savedFile->getRawOriginal('path'));

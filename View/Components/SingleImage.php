@@ -12,6 +12,7 @@ class SingleImage extends Component
    * @return void
    */
   public $src;
+  public $zone;
   public $alt;
   public $title;
   public $fallbackExtension;
@@ -30,6 +31,9 @@ class SingleImage extends Component
   public $dataFancybox;
   public $dataCaption;
   public $target;
+  public $isVideo;
+  public $mediaFiles;
+  
   
   public function __construct($src = '', $alt = '', $title = null, $url = null, $isMedia = false, $mediaFiles = null,
                               $zone = 'mainimage', $extraLargeSrc = null, $largeSrc = null, $mediumSrc = null,
@@ -72,12 +76,15 @@ class SingleImage extends Component
     
    
     if($isMedia && !empty($mediaFiles)){
+      $this->mediaFiles = $mediaFiles;
+      $this->zone = $zone ?? "mainimage";
       $this->src = $mediaFiles->{$zone}->extraLargeThumb ?? $mediaFiles->extraLargeThumb;
       $this->fallback = $mediaFiles->{$zone}->path ?? $mediaFiles->path;
       $this->extraLargeSrc = $mediaFiles->{$zone}->extraLargeThumb ?? $mediaFiles->extraLargeThumb;
       $this->largeSrc = $mediaFiles->{$zone}->largeThumb ?? $mediaFiles->largeThumb;
       $this->mediumSrc = $mediaFiles->{$zone}->mediumThumb ?? $mediaFiles->mediumThumb;
       $this->smallSrc = $mediaFiles->{$zone}->smallThumb ?? $mediaFiles->smallThumb;
+      $this->isVideo = $mediaFiles->{$zone}->isVideo ?? false;
       
     }else{
       $this->extraLargeSrc = $extraLargeSrc;
