@@ -20,6 +20,9 @@ class Gallery extends Component
   public $gallery;
   public $dataFancybox;
   public $view;
+  public $columnMasonry;
+  public $navText;
+  public $maxImages;
 
 
   /**
@@ -30,7 +33,7 @@ class Gallery extends Component
 
   public function __construct($id = "gallery", $zones = ["gallery"], $mediaFiles, $margin = 10, $responsiveClass = true, $autoplay = true,
                               $autoplayHoverPause = true, $loop = true, $dots = true, $nav = true, $responsive = null, $dataFancybox = 'gallery',
-                              $layout = "gallery-layout-1")
+                              $layout = "gallery-layout-1", $columnMasonry = 3, $navText = "", $maxImages = null)
   {
     $this->id = $id;
     $this->view = "media::frontend.components.gallery.layouts.$layout.index";
@@ -46,20 +49,25 @@ class Gallery extends Component
     $this->responsive = json_encode($responsive ?? [0 => ["items" => 1], 640 => ["items" => 2], 992 => ["items" => 4]]);
     $this->dataFancybox = $dataFancybox;
     $this->gallery = [];
-
+    $this->columnMasonry = $columnMasonry;
+    $this->navText = json_encode($navText);
+    $this->maxImages = $maxImages;
 
     if(!empty($mediaFiles)){
+      $countImages = 0;
       foreach ($zones as $zone){
         if(is_array($mediaFiles->{$zone})){
           foreach ($mediaFiles->{$zone} as $itemImage){
-            array_push($this->gallery,$itemImage);
+            if(empty($maxImages) || $countImages<$maxImages){
+              $countImages++;
+              array_push($this->gallery,$itemImage);
+            }
           }
-        }else{
-          array_push($this->gallery,$mediaFiles->{$zone});
         }
       }
     }
   }
+
   /**
    * Get the view / contents that represent the component.
    *
