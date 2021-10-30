@@ -66,8 +66,11 @@ class FileService
     
     //call Method delete for all exist in the disk with the same filename
     $this->imagy->deleteAllFor($savedFile);
-
-    $this->filesystem->disk($disk)->writeStream($savedFile->path->getRelativeUrl(), $stream, [
+  
+    $mediaFilesPath = config('asgard.media.config.files-path');
+    $path = $mediaFilesPath.$savedFile->filename;
+  
+    $this->filesystem->disk($disk)->writeStream($path, $stream, [
       'visibility' => 'public',
       'mimetype' => $savedFile->mimetype,
     ]);
