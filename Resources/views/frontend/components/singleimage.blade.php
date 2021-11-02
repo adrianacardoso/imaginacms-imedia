@@ -10,7 +10,7 @@
         @endif
 
     <!--Use data-srcset, data-src and specify lazyload class for images -->
-        <picture>
+        <picture style="display: block">
             @if(!empty($smallSrc))
                 <source data-srcset='{{$smallSrc}} 300w' type="image/webp" media="(max-width: 300px)">
             @endif
@@ -28,13 +28,9 @@
             @endif
 
             <img data-src="{{$fallback}}"
-                 data-srcset="{{!empty($smallSrc) ? $smallSrc." 300w" : ""}}
-                 {{!empty($mediumSrc) ? ", ".$mediumSrc." 600w" : ""}}
-                 {{!empty($largeSrc) ? ", ".$largeSrc." 900w" : ""}}
-                 {{!empty($extraLargeSrc) ? ", ".$extraLargeSrc." 1920w" : ""}}"
                  class="lazyload {{$imgClasses}}"
                  alt="{{$alt}}"
-                 style="{{$imgStyles}}"
+                 style="width: 100%; {{$imgStyles}}"
                  data-sizes="auto"
                  data-parent-fit="contain"
                  data-parent-container=".image-link"
