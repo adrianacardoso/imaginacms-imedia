@@ -10,7 +10,7 @@
         @endif
 
     <!--Use data-srcset, data-src and specify lazyload class for images -->
-        <picture style="display: block; height: 100%; width: 100%">
+        <picture style="display: block; width: 100%">
             @if(!empty($smallSrc))
                 <source data-srcset='{{$smallSrc}} 300w' type="image/webp" media="(max-width: 300px)">
             @endif
