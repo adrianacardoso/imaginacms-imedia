@@ -115,5 +115,16 @@ return [
       "upsize" => true,
       "format" => "webp",
     ]
-  ])
+  ]),
+  
+  /*
+|--------------------------------------------------------------------------
+| Define config to the tenant with central data by model
+|--------------------------------------------------------------------------
+*/
+  
+  'tenantWithCentralData' => [
+    'imageable' => true
+  ]
+  
 ];

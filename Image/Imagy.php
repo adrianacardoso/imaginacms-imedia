@@ -222,7 +222,7 @@ class Imagy
    */
   public function deleteAllFor(File $file)
   {
-    
+   
     $disk = is_null($file->disk) ? $this->getConfiguredFilesystem() : $file->disk;
     
     if (!$this->isImage($file->path)) {
@@ -265,10 +265,10 @@ class Imagy
   private function getDestinationPath($path)
   {
     if ($this->getConfiguredFilesystem() === 'local') {
-      return basename(public_path()) . $path;
+      return basename(public_path()) .(isset(tenant()->id) ? "organization".tenant()->id : ""). $path;
     }
     
-    return $path;
+    return (isset(tenant()->id) ? "organization".tenant()->id : "").$path;
   }
   
   /**

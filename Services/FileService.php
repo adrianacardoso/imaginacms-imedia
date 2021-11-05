@@ -56,9 +56,8 @@ class FileService
       $errors = json_decode($validator->errors());
       throw new \Exception(json_encode($errors), 400);
     }
-    
     $savedFile = $this->file->createFromFile($file, $parentId, $disk);
-
+  
     $this->resizeImages($file, $savedFile);
     
     $path = $this->getDestinationPath($savedFile->getRawOriginal('path'));
@@ -66,8 +65,8 @@ class FileService
     
     //call Method delete for all exist in the disk with the same filename
     $this->imagy->deleteAllFor($savedFile);
-    
-    $this->filesystem->disk($disk)->writeStream($savedFile->path->getRelativeUrl(), $stream, [
+
+    $this->filesystem->disk($disk)->writeStream((isset(tenant()->id) ? "organization".tenant()->id : "").$savedFile->path->getRelativeUrl(), $stream, [
       'visibility' => 'public',
       'mimetype' => $savedFile->mimetype,
     ]);
