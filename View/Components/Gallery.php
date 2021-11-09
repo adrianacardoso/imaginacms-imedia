@@ -63,6 +63,8 @@ class Gallery extends Component
               array_push($this->gallery,$itemImage);
             }
           }
+        }else{
+          array_push($this->gallery,$mediaFiles->{$zone});
         }
       }
     }
