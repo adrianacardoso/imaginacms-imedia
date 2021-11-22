@@ -31,9 +31,11 @@ class Gallery extends Component
    * @return void
    */
 
-  public function __construct($id = "gallery", $zones = ["gallery"], $mediaFiles, $margin = 10, $responsiveClass = true, $autoplay = true,
-                              $autoplayHoverPause = true, $loop = true, $dots = true, $nav = true, $responsive = null, $dataFancybox = 'gallery',
-                              $layout = "gallery-layout-1", $columnMasonry = 3, $navText = "", $maxImages = null)
+  public function __construct($id = "gallery", $zones = ["gallery"], $mediaFiles, $margin = 10, $responsiveClass = true,
+                              $autoplay = true, $autoplayHoverPause = true, $loop = true, $dots = true, $nav = true,
+                              $responsive = null, $dataFancybox = 'gallery', $layout = "gallery-layout-1",
+                              $columnMasonry = 3, $navText = "", $maxImages = null, $onlyVideos = false,
+                              $onlyImages = false)
   {
     $this->id = $id;
     $this->view = "media::frontend.components.gallery.layouts.$layout.index";
@@ -56,16 +58,17 @@ class Gallery extends Component
     if(!empty($mediaFiles)){
       $countImages = 0;
       foreach ($zones as $zone){
-        if(is_array($mediaFiles->{$zone})){
+        !is_array($mediaFiles->{$zone}) ? $mediaFiles->{$zone} = [$mediaFiles->{$zone}] : false;
           foreach ($mediaFiles->{$zone} as $itemImage){
             if(empty($maxImages) || $countImages<$maxImages){
-              $countImages++;
-              array_push($this->gallery,$itemImage);
+              if(($onlyImages && $itemImage->isImage) || ($onlyVideos && $itemImage->isVideo) || (!$onlyVideos && !$onlyImages)){
+                $countImages++;
+                array_push($this->gallery,$itemImage);
+              }
+              
             }
           }
-        }else{
-          array_push($this->gallery,$mediaFiles->{$zone});
-        }
+        
       }
     }
   }

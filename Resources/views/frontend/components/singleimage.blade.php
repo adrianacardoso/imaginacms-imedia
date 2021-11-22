@@ -1,13 +1,16 @@
 @if(!empty($url) || $dataFancybox)
-    <a href="{{ $dataFancybox ? $src : $url }}" title="{{$title}}" class="{{$defaultLinkClasses}} {{$linkClasses}}"
+    <a href="{{ $dataFancybox ? ($isVideo ? "#mediaVideo".$uid : $src ) : $url }}" title="{{$title}}" class="{{$defaultLinkClasses}} {{$linkClasses}}"
             {{$dataFancybox ? "data-fancybox=$dataFancybox" : ''}}
             {{$dataCaption ? "data-caption=$dataCaption" : ''}} target="{{$target}}" rel="{{!empty($linkRel) ? $linkRel : ""}}">
     @endif
-        @if($isVideo)
+
+        @if($isVideo && (isset($mediaFiles->{$zone}->path) || isset($mediaFiles->path)))
                 <video class="d-block h-100 cover-img" width="100%" loop autoplay muted>
-                    <source src="{{ $mediaFiles->{$zone}->path }}" />
+                    <source src="{{ $mediaFiles->{$zone}->path ?? $mediaFiles->path }}" type="video/mp4">
+                    <source src="{{ $mediaFiles->{$zone}->path ?? $mediaFiles->path }}" type="video/webm">
+                    <source src="{{ $mediaFiles->{$zone}->path ?? $mediaFiles->path }}" type="video/ogg">
                 </video>
-        @endif
+        @else
 
     <!--Use data-srcset, data-src and specify lazyload class for images -->
         <picture style="display: contents; width: 100%">
@@ -37,8 +40,17 @@
                  
             />
         </picture>
-
+        @endif
         @if(!empty($url)|| $dataFancybox)
     </a>
+    
+    @if($isVideo && $dataFancybox)
+        <video width="100%" height="450" controls id="mediaVideo{{$uid}}" style="display:none;">
+            <source src="{{ $mediaFiles->{$zone}->path ?? $mediaFiles->path }}" type="video/mp4">
+            <source src="{{ $mediaFiles->{$zone}->path ?? $mediaFiles->path }}" type="video/webm">
+            <source src="{{ $mediaFiles->{$zone}->path ?? $mediaFiles->path }}" type="video/ogg">
+            Your browser doesn't support HTML5 video tag.
+        </video>
+        @endif
 @endif
 

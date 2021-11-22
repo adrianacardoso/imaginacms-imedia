@@ -3,6 +3,7 @@
 namespace Modules\Media\View\Components;
 
 use Illuminate\View\Component;
+use Illuminate\Support\Str;
 
 class SingleImage extends Component
 {
@@ -33,6 +34,7 @@ class SingleImage extends Component
   public $target;
   public $isVideo;
   public $mediaFiles;
+  public $uid;
   
   
   public function __construct($src = '', $alt = '', $title = null, $url = null, $isMedia = false, $mediaFiles = null,
@@ -54,7 +56,7 @@ class SingleImage extends Component
     $this->dataFancybox = $dataFancybox;
     $this->dataCaption = $dataCaption;
     $this->target = $target;
-    
+    $this->uid = Str::uuid();
     if(!empty($setting)){
       
       $settingRepository = app("Modules\Setting\Repositories\SettingRepository");
@@ -74,6 +76,7 @@ class SingleImage extends Component
       if ($this->fallbackExtension == "jpg") $this->fallbackExtension = "jpeg";
     }
     
+ 
    
     if($isMedia && !empty($mediaFiles)){
       $this->mediaFiles = $mediaFiles;
@@ -84,7 +87,7 @@ class SingleImage extends Component
       $this->largeSrc = $mediaFiles->{$zone}->largeThumb ?? $mediaFiles->largeThumb;
       $this->mediumSrc = $mediaFiles->{$zone}->mediumThumb ?? $mediaFiles->mediumThumb;
       $this->smallSrc = $mediaFiles->{$zone}->smallThumb ?? $mediaFiles->smallThumb;
-      $this->isVideo = $mediaFiles->{$zone}->isVideo ?? false;
+      $this->isVideo = $mediaFiles->{$zone}->isVideo ?? $mediaFiles->isVideo ?? false;
       
     }else{
       $this->extraLargeSrc = $extraLargeSrc;
