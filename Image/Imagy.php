@@ -133,7 +133,7 @@ class Imagy
       }
       
       $imageStream = $image->stream($thumbnail->format(), Arr::get($thumbnail->filters(), 'quality', 90));
-      $this->writeImage(preg_replace('/\\.[^.\\s]{3,4}$/', '', $filename) . '.' . $thumbnail->format(), $imageStream, $disk);
+      $this->writeImage(preg_replace('/\\.[^.\\s]{3,4}$/', '', $filename) . '.' . $thumbnail->format(), $imageStream, $disk, $path);
       $image->destroy();
     }
   }
@@ -169,11 +169,12 @@ class Imagy
    * @param string $filename
    * @param Stream $image
    */
-  private function writeImage($filename, Stream $image, $disk = null)
+  private function writeImage($filename, Stream $image, $disk = null, $path = null)
   {
     $disk = is_null($disk) ? $this->getConfiguredFilesystem() : $disk;
     
-    $filename = $this->getDestinationPath($filename);
+    $filename = $this->getDestinationPath($filename,$disk);
+
     $resource = $image->detach();
     $config = [
       'visibility' => 'public',
@@ -262,7 +263,7 @@ class Imagy
    * @param string $path
    * @return string
    */
-  private function getDestinationPath($path)
+  private function getDestinationPath($path, $disk = null)
   {
     if ($this->getConfiguredFilesystem() === 'local') {
       return basename(public_path()) .(isset(tenant()->id) ? "organization".tenant()->id : ""). $path;

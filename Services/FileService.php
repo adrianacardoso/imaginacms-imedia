@@ -47,7 +47,7 @@ class FileService
   public function store(UploadedFile $file, $parentId = 0, $disk = null, $createThumbnails = true)
   {
     $disk = is_null($disk) ? $this->getConfiguredFilesystem() : $disk;
-    
+
     //validating avaiable extensions
     $request = new UploadMediaRequest(["file" => $file]);
     $validator = Validator::make($request->all(), $request->rules(), $request->messages());
@@ -59,7 +59,7 @@ class FileService
     $savedFile = $this->file->createFromFile($file, $parentId, $disk);
   
     $this->resizeImages($file, $savedFile);
-    
+  
     $path = $this->getDestinationPath($savedFile->getRawOriginal('path'));
     $stream = fopen($file->getRealPath(), 'r+');
     
@@ -70,10 +70,10 @@ class FileService
       'visibility' => 'public',
       'mimetype' => $savedFile->mimetype,
     ]);
-    
+  
     if ($createThumbnails)
       $this->createThumbnails($savedFile);
-    
+ 
     return $savedFile;
   }
   

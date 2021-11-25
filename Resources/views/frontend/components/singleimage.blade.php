@@ -1,5 +1,5 @@
 @if(!empty($url) || $dataFancybox)
-    <a href="{{ $dataFancybox ? ($isVideo ? "#mediaVideo".$uid : $src ) : $url }}" title="{{$title}}" class="{{$defaultLinkClasses}} {{$linkClasses}}"
+    <a href="{{ $dataFancybox ? ($isVideo ? "#mediaVideo".$uid : $src ) : $url }}" data-caption="{{$dataFancybox ? ($mediaFiles->{$zone}->description ?? $mediaFiles->description) : ''}}" title="{{$title ?? $mediaFiles->{$zone}->description ?? $mediaFiles->description}}" class="{{$defaultLinkClasses}} {{$linkClasses}}"
             {{$dataFancybox ? "data-fancybox=$dataFancybox" : ''}}
             {{$dataCaption ? "data-caption=$dataCaption" : ''}} target="{{$target}}" rel="{{!empty($linkRel) ? $linkRel : ""}}">
     @endif
@@ -45,7 +45,7 @@
     </a>
     
     @if($isVideo && $dataFancybox)
-        <video width="100%" height="450" controls id="mediaVideo{{$uid}}" style="display:none;">
+        <video controls id="mediaVideo{{$uid}}" style="display:none;">
             <source src="{{ $mediaFiles->{$zone}->path ?? $mediaFiles->path }}" type="video/mp4">
             <source src="{{ $mediaFiles->{$zone}->path ?? $mediaFiles->path }}" type="video/webm">
             <source src="{{ $mediaFiles->{$zone}->path ?? $mediaFiles->path }}" type="video/ogg">

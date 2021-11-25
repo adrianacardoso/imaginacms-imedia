@@ -3,6 +3,7 @@
 namespace Modules\Media\View\Components;
 
 use Illuminate\View\Component;
+use Illuminate\Support\Str;
 
 class Gallery extends Component
 {
@@ -49,11 +50,12 @@ class Gallery extends Component
     $this->dots = $dots;
     $this->nav = $nav;
     $this->responsive = json_encode($responsive ?? [0 => ["items" => 1], 640 => ["items" => 2], 992 => ["items" => 4]]);
-    $this->dataFancybox = $dataFancybox;
+    $this->dataFancybox = $dataFancybox.Str::uuid();
     $this->gallery = [];
     $this->columnMasonry = $columnMasonry;
     $this->navText = json_encode($navText);
     $this->maxImages = $maxImages;
+
 
     if(!empty($mediaFiles)){
       $countImages = 0;

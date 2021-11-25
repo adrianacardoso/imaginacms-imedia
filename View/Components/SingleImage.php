@@ -44,7 +44,7 @@ class SingleImage extends Component
                               $dataFancybox = null, $dataCaption = null, $target = "_self", $setting = '')
   {
     $this->src = $src;
-    $this->alt = $alt;
+    $this->alt = !empty($alt) ? $alt : $mediaFiles->{$zone}->alt ?? $mediaFiles->alt ?? "";
     $this->title = $title;
     $this->url = $url;
     $this->imgClasses = $imgClasses;

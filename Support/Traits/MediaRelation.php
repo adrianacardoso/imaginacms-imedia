@@ -83,6 +83,8 @@ trait MediaRelation
                     'mediaType' => $file->media_type ?? null,
                     'createdAt' => $file->created_at ?? null,
                     'folderId' => $file->folder_id ?? null,
+                    'description' => $file->description ?? null,
+                    'alt' => $file->alt_attribute ?? null,
                     'createdBy' => $file->created_by ?? null
                 ];
                 //Add imagy
