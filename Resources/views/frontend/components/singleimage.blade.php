@@ -1,5 +1,8 @@
-@if(!empty($url) || $dataFancybox)
-    <a href="{{ $dataFancybox ? ($isVideo ? "#mediaVideo".$uid : $src ) : $url }}" data-caption="{{$dataFancybox ? ($mediaFiles->{$zone}->description ?? $mediaFiles->description) : ''}}" title="{{$title ?? $mediaFiles->{$zone}->description ?? $mediaFiles->description}}" class="{{$defaultLinkClasses}} {{$linkClasses}}"
+
+    <a href="{{ $dataFancybox ? ($isVideo ? "#mediaVideo".$uid : $src ) : $url }}"
+       data-caption="{{$dataFancybox ? ($mediaFiles->{$zone}->description ?? $mediaFiles->description ?? '') : ''}}"
+       title="{{$title ?? $mediaFiles->{$zone}->description ?? $mediaFiles->description ?? ''}}"
+       class="{{$defaultLinkClasses}} {{$linkClasses}}"
             {{$dataFancybox ? "data-fancybox=$dataFancybox" : ''}}
             {{$dataCaption ? "data-caption=$dataCaption" : ''}} target="{{$target}}" rel="{{!empty($linkRel) ? $linkRel : ""}}">
     @endif
