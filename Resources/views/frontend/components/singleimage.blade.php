@@ -1,4 +1,4 @@
-
+@if(!empty($url) || $dataFancybox)
     <a href="{{ $dataFancybox ? ($isVideo ? "#mediaVideo".$uid : $src ) : $url }}"
        data-caption="{{$dataFancybox ? ($mediaFiles->{$zone}->description ?? $mediaFiles->description ?? '') : ''}}"
        title="{{$title ?? $mediaFiles->{$zone}->description ?? $mediaFiles->description ?? ''}}"
