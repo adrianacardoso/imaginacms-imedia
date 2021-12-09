@@ -172,7 +172,7 @@ class Imagy
   private function writeImage($filename, Stream $image, $disk = null, $path = null)
   {
     $disk = is_null($disk) ? $this->getConfiguredFilesystem() : $disk;
-    
+
     $filename = $this->getDestinationPath($filename,$disk);
 
     $resource = $image->detach();
@@ -180,7 +180,9 @@ class Imagy
       'visibility' => 'public',
       'mimetype' => \GuzzleHttp\Psr7\mimetype_from_filename($filename),
     ];
-    if ($this->fileExists($filename)) {
+    
+  
+    if ($this->fileExists($filename,$disk)) {
       return $this->filesystem->disk($disk)->updateStream($filename, $resource, $config);
     }
     $this->filesystem->disk($disk)->writeStream($filename, $resource, $config);
@@ -230,7 +232,7 @@ class Imagy
       return $this->filesystem->disk($disk)->delete($this->getDestinationPath($file->path->getRelativeUrl()));
     }
     
-    $paths[] = $this->getDestinationPath($file->path->getRelativeUrl());
+    $paths[] = $this->getDestinationPath($file->path->getRelativeUrl(),$disk);
     
     foreach ($this->manager->all() as $thumbnail) {
       $path = $this->getFilenameFor($file->path, $thumbnail);
@@ -265,11 +267,17 @@ class Imagy
    */
   private function getDestinationPath($path, $disk = null)
   {
-    if ($this->getConfiguredFilesystem() === 'local') {
-      return basename(public_path()) .(isset(tenant()->id) ? "organization".tenant()->id : ""). $path;
-    }
     
-    return (isset(tenant()->id) ? "organization".tenant()->id : "").$path;
+    
+      if ($this->getConfiguredFilesystem() === 'local') {
+        return basename(public_path()) .(isset(tenant()->id) ? "organization".tenant()->id : ""). $path;
+      }
+  
+      return (isset(tenant()->id) ? "organization".tenant()->id : "").$path;
+  
+    
+    
+    
   }
   
   /**
