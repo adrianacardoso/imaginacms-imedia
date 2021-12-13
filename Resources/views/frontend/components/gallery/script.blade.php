@@ -13,7 +13,7 @@
         autoplay: {!! $autoplay ? 'true' : 'false' !!},
         autoplayHoverPause: {!! $autoplayHoverPause ? 'true' : 'false' !!},
         nav: {!! $nav ? 'true' : 'false' !!},
-        responsive: {!! $responsive!!}
+        responsive: {!!$responsive!!}
       });
 
     });
