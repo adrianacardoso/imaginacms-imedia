@@ -38,7 +38,7 @@ class SingleImage extends Component
   public $dataTarget;
   public $dataSlideTo;
   public $autoplayVideo;
-  public $loop;
+  public $loopVideo;
 
 
   public function __construct($src = '', $alt = '', $title = null, $url = null, $isMedia = false, $mediaFiles = null,
