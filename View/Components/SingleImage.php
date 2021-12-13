@@ -38,6 +38,7 @@ class SingleImage extends Component
   public $dataTarget;
   public $dataSlideTo;
   public $autoplayVideo;
+  public $mutedVideo;
   public $loopVideo;
 
 
