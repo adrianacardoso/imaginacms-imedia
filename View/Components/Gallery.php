@@ -24,6 +24,9 @@ class Gallery extends Component
   public $columnMasonry;
   public $navText;
   public $maxImages;
+  public $autoplayVideo;
+  public $mutedVideo;
+  public $loopVideo;
 
 
   /**
@@ -36,7 +39,7 @@ class Gallery extends Component
                               $autoplay = true, $autoplayHoverPause = true, $loop = true, $dots = true, $nav = true,
                               $responsive = null, $dataFancybox = 'gallery', $layout = "gallery-layout-1",
                               $columnMasonry = 3, $navText = "", $maxImages = null, $onlyVideos = false,
-                              $onlyImages = false)
+                              $onlyImages = false, $autoplayVideo = false, $mutedVideo = false, $loopVideo = false)
   {
     $this->id = $id;
     $this->view = "media::frontend.components.gallery.layouts.$layout.index";
@@ -50,12 +53,14 @@ class Gallery extends Component
     $this->dots = $dots;
     $this->nav = $nav;
     $this->responsive = json_encode($responsive ?? [0 => ["items" => 1], 640 => ["items" => 2], 992 => ["items" => 4]]);
-    $this->dataFancybox = $dataFancybox.Str::uuid();
+    $this->dataFancybox = $dataFancybox ? $dataFancybox.Str::uuid() : null;
     $this->gallery = [];
     $this->columnMasonry = $columnMasonry;
     $this->navText = json_encode($navText);
     $this->maxImages = $maxImages;
-
+    $this->autoplayVideo = $autoplayVideo;
+    $this->mutedVideo = $mutedVideo;
+    $this->loopVideo = $loopVideo;
 
     if(!empty($mediaFiles)){
       $countImages = 0;

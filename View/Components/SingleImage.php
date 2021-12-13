@@ -35,13 +35,18 @@ class SingleImage extends Component
   public $isVideo;
   public $mediaFiles;
   public $uid;
-  
-  
+  public $dataTarget;
+  public $dataSlideTo;
+  public $autoplayVideo;
+  public $loop;
+
+
   public function __construct($src = '', $alt = '', $title = null, $url = null, $isMedia = false, $mediaFiles = null,
                               $zone = 'mainimage', $extraLargeSrc = null, $largeSrc = null, $mediumSrc = null,
                               $smallSrc = null, $fallback = null, $imgClasses = '', $linkClasses = '', $linkRel = '',
                               $defaultLinkClasses = 'image-link w-100', $imgStyles = '', $width = "300px",
-                              $dataFancybox = null, $dataCaption = null, $target = "_self", $setting = '')
+                              $dataFancybox = null, $dataTarget = null, $dataSlideTo = null, $dataCaption = null,
+                              $target = "_self", $setting = '', $autoplayVideo = true, $loopVideo = true, $mutedVideo = true)
   {
     $this->src = $src;
     $this->alt = !empty($alt) ? $alt : $mediaFiles->{$zone}->alt ?? $mediaFiles->alt ?? "";
@@ -55,30 +60,34 @@ class SingleImage extends Component
     $this->width = $width;
     $this->dataFancybox = $dataFancybox;
     $this->dataCaption = $dataCaption;
+    $this->dataTarget = $dataTarget;
+    $this->dataSlideTo = $dataSlideTo;
     $this->target = $target;
     $this->uid = Str::uuid();
-    if(!empty($setting)){
-      
+    $this->autoplayVideo = $autoplayVideo;
+    $this->loopVideo = $loopVideo;
+    $this->mutedVideo = $mutedVideo;
+    if (!empty($setting)) {
+
       $settingRepository = app("Modules\Setting\Repositories\SettingRepository");
-  
+
       $setting = $settingRepository->findByName($setting);
-      
-      if(isset($setting->id)){
+
+      if (isset($setting->id)) {
         $isMedia = true;
         $zone = "setting::mainimage";
         $mediaFiles = $setting->mediaFiles();
       }
-      
+
     }
-    
+
     if (!empty($fallback)) {
       $this->fallbackExtension = pathinfo($fallback, PATHINFO_EXTENSION);
       if ($this->fallbackExtension == "jpg") $this->fallbackExtension = "jpeg";
     }
-    
- 
-   
-    if($isMedia && !empty($mediaFiles)){
+
+
+    if ($isMedia && !empty($mediaFiles)) {
       $this->mediaFiles = $mediaFiles;
       $this->zone = $zone ?? "mainimage";
       $this->src = $mediaFiles->{$zone}->extraLargeThumb ?? $mediaFiles->extraLargeThumb;
@@ -88,17 +97,17 @@ class SingleImage extends Component
       $this->mediumSrc = $mediaFiles->{$zone}->mediumThumb ?? $mediaFiles->mediumThumb;
       $this->smallSrc = $mediaFiles->{$zone}->smallThumb ?? $mediaFiles->smallThumb;
       $this->isVideo = $mediaFiles->{$zone}->isVideo ?? $mediaFiles->isVideo ?? false;
-      
-    }else{
+
+    } else {
       $this->extraLargeSrc = $extraLargeSrc;
       $this->largeSrc = $largeSrc;
       $this->mediumSrc = $mediumSrc;
       $this->smallSrc = $smallSrc;
       $this->fallback = $fallback ?? $src;
     }
- 
+
   }
-  
+
   /**
    * Get the view / contents that represent the component.
    *

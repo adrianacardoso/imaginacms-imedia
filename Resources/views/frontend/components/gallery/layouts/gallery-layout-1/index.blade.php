@@ -1,8 +1,9 @@
 @if(count($gallery) > 0)
   <div id="{{$id}}Carousel" class="owl-carousel owl-theme">
-    @foreach($gallery as $item)
+    @foreach($gallery as $key=>$item)
       <div class="item">
-        <x-media::single-image :isMedia="true" :mediaFiles="$item" :dataFancybox="$dataFancybox"/>
+        <x-media::single-image :isMedia="true" :mediaFiles="$item" :dataFancybox="$dataFancybox"
+                               :autoplayVideo="$autoplayVideo" :loopVideo="$loopVideo" :mutedVideo="$mutedVideo"/>
       </div>
     @endforeach
   </div>

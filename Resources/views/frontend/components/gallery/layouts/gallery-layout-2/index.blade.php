@@ -3,7 +3,8 @@
     @foreach($gallery as $item)
       <article>
         <figure>
-          <x-media::single-image :isMedia="true" :mediaFiles="$item" :dataFancybox="$dataFancybox"/>
+          <x-media::single-image :isMedia="true" :mediaFiles="$item" :dataFancybox="$dataFancybox"
+                                 :autoplayVideo="$autoplayVideo" :loopVideo="$loopVideo" :mutedVideo="$mutedVideo"/>
         </figure>
       </article>
     @endforeach
@@ -24,12 +25,14 @@
         /*-webkit-column-rule: 1px solid #bbb;*/
         /*column-rule: 1px solid #bbb;*/
     }
+
     @media (max-width: 767px) {
         #galeria {
             columns: 2;
         }
 
     }
+
     @media (max-width: 480px) {
         #galeria {
             columns: 1;
