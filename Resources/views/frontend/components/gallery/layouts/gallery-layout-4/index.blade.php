@@ -1,6 +1,6 @@
 @if(count($gallery) > 0)
   <div id="galleryWithHorizontalThumbs">
-    <div id="{{$id}}PrimaryCarousel" class="carousel slide" data-ride="carousel">
+    <div id="{{$id}}PrimaryCarousel" class="primary-gallery carousel slide" data-ride="carousel">
       <a class="carousel-control-prev" href="#{{$id}}PrimaryCarousel" role="button" data-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
         <span class="sr-only">Previous</span>
@@ -18,7 +18,7 @@
         @endforeach
       </div>
     </div>
-    <div id="{{$id}}Carousel" class="owl-carousel owl-image-mini owl-image-mini{{$id}} owl-theme">
+    <div id="{{$id}}Carousel" class="thumbs-gallery owl-carousel owl-image-mini owl-image-mini{{$id}} owl-theme">
       @foreach($gallery as $key=>$item)
         <div class="item">
           <x-media::single-image :isMedia="true" :mediaFiles="$item" :dataFancybox="$dataFancybox" :data-slide-to="$key"
@@ -27,6 +27,6 @@
         </div>
       @endforeach
     </div>
-    @include("media::frontend.components.gallery.script")
+    @include("media::frontend.components.gallery.script",["responsive" => json_encode([ 0 => ["items" => 4]])])
   </div>
 @endif

@@ -1,0 +1,13 @@
+#galleryWithHorizontalThumbs{
+  .primary-gallery{
+    max-height: 450px;
+    overflow: hidden;
+    margin-bottom: 15px;
+  }
+  .thumbs-gallery{
+    .item{
+      max-height: 100px;
+      overflow: hidden;
+    }
+  }
+}
