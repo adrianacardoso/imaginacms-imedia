@@ -52,7 +52,7 @@
   </a>
 
   @if($isVideo && $dataFancybox)
-    <video controls id="mediaVideo{{$uid}}" style="display:none;">
+    <video controls id="mediaVideo{{$uid}}" class="single-media-video" style="display:none;">
       <source src="{{ $mediaFiles->{$zone}->path ?? $mediaFiles->path }}" type="video/mp4">
       <source src="{{ $mediaFiles->{$zone}->path ?? $mediaFiles->path }}" type="video/webm">
       <source src="{{ $mediaFiles->{$zone}->path ?? $mediaFiles->path }}" type="video/ogg">
@@ -60,4 +60,5 @@
     </video>
   @endif
 @endif
+
 
