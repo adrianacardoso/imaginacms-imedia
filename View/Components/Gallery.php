@@ -27,6 +27,7 @@ class Gallery extends Component
   public $autoplayVideo;
   public $mutedVideo;
   public $loopVideo;
+  public $aspectRatio;
 
 
   /**
@@ -39,7 +40,8 @@ class Gallery extends Component
                               $autoplay = true, $autoplayHoverPause = true, $loop = true, $dots = true, $nav = true,
                               $responsive = null, $dataFancybox = 'gallery', $layout = "gallery-layout-1",
                               $columnMasonry = 3, $navText = "", $maxImages = null, $onlyVideos = false,
-                              $onlyImages = false, $autoplayVideo = false, $mutedVideo = false, $loopVideo = false)
+                              $onlyImages = false, $autoplayVideo = false, $mutedVideo = false, $loopVideo = false,
+                              $aspectRatio = "1-1")
   {
     $this->id = $id;
     $this->view = "media::frontend.components.gallery.layouts.$layout.index";
@@ -61,6 +63,7 @@ class Gallery extends Component
     $this->autoplayVideo = $autoplayVideo;
     $this->mutedVideo = $mutedVideo;
     $this->loopVideo = $loopVideo;
+    $this->aspectRatio = $aspectRatio;
 
     if(!empty($mediaFiles)){
       $countImages = 0;
