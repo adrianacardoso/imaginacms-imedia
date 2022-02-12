@@ -1,6 +1,6 @@
 @if(count($gallery) > 0)
   <div id="galleryWithHorizontalThumbs">
-    <div id="{{$id}}PrimaryCarousel" class="carousel slide" data-ride="carousel">
+    <div id="{{$id}}PrimaryCarousel" class="primary-gallery carousel slide" data-ride="carousel">
       <a class="carousel-control-prev" href="#{{$id}}PrimaryCarousel" role="button" data-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
         <span class="sr-only">Previous</span>
@@ -11,22 +11,22 @@
       </a>
       <div class="carousel-inner">
         @foreach($gallery as $key=>$item)
-          <div class="carousel-item @if($key == 0) active @endif">
+          <div class="carousel-item @if($key == 0) active @endif aspect-ratio-{{$aspectRatio}}">
             <x-media::single-image :isMedia="true" :mediaFiles="$item" :dataFancybox="$dataFancybox"
                                    :autoplayVideo="$autoplayVideo" :loopVideo="$loopVideo" :mutedVideo="$mutedVideo"/>
           </div>
         @endforeach
       </div>
     </div>
-    <div id="{{$id}}Carousel" class="owl-carousel owl-image-mini owl-image-mini{{$id}} owl-theme">
+    <div id="{{$id}}Carousel" class="thumbs-gallery owl-carousel owl-image-mini owl-image-mini{{$id}} owl-theme">
       @foreach($gallery as $key=>$item)
-        <div class="item">
+        <div class="item aspect-ratio-{{$aspectRatio}}">
           <x-media::single-image :isMedia="true" :mediaFiles="$item" :dataFancybox="$dataFancybox" :data-slide-to="$key"
                                  :dataTarget="'#'.$id.'PrimaryCarousel'" :autoplayVideo="$autoplayVideo"
                                  :loopVideo="$loopVideo" :mutedVideo="$mutedVideo"/>
         </div>
       @endforeach
     </div>
-    @include("media::frontend.components.gallery.script")
+    @include("media::frontend.components.gallery.script",["responsive" => [],"items" => 4])
   </div>
 @endif

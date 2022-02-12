@@ -29,6 +29,8 @@ class Gallery extends Component
   public $loopVideo;
   public $stagePadding;
   public $autoplayTimeout;
+  public $aspectRatio;
+
 
 
   /**
@@ -42,7 +44,8 @@ class Gallery extends Component
                               $responsive = null, $dataFancybox = 'gallery', $layout = "gallery-layout-1",
                               $columnMasonry = 3, $navText = "", $maxImages = null, $onlyVideos = false,
                               $onlyImages = false, $autoplayVideo = false, $mutedVideo = false, $loopVideo = false,
-                              $stagePadding = 0, $autoplayTimeout = 5000)
+                              $stagePadding = 0, $autoplayTimeout = 5000, $aspectRatio = "1-1")
+
   {
     $this->id = $id;
     $this->view = "media::frontend.components.gallery.layouts.$layout.index";
@@ -66,6 +69,7 @@ class Gallery extends Component
     $this->loopVideo = $loopVideo;
     $this->stagePadding = $stagePadding;
     $this->autoplayTimeout = $autoplayTimeout;
+    $this->aspectRatio = $aspectRatio;
 
     if (!empty($mediaFiles)) {
       $countImages = 0;
@@ -96,5 +100,3 @@ class Gallery extends Component
     return view($this->view);
   }
 }
-
-
