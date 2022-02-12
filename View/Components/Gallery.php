@@ -14,7 +14,7 @@ class Gallery extends Component
   public $responsiveClass;
   public $autoplay;
   public $autoplayHoverPause;
-  public $loop;
+  public $loopGallery;
   public $dots;
   public $nav;
   public $responsive;
@@ -27,6 +27,8 @@ class Gallery extends Component
   public $autoplayVideo;
   public $mutedVideo;
   public $loopVideo;
+  public $stagePadding;
+  public $autoplayTimeout;
 
 
   /**
@@ -36,10 +38,11 @@ class Gallery extends Component
    */
 
   public function __construct($id = "gallery", $zones = ["gallery"], $mediaFiles, $margin = 10, $responsiveClass = true,
-                              $autoplay = true, $autoplayHoverPause = true, $loop = true, $dots = true, $nav = true,
+                              $autoplay = true, $autoplayHoverPause = true, $loopGallery = true, $dots = true, $nav = true,
                               $responsive = null, $dataFancybox = 'gallery', $layout = "gallery-layout-1",
                               $columnMasonry = 3, $navText = "", $maxImages = null, $onlyVideos = false,
-                              $onlyImages = false, $autoplayVideo = false, $mutedVideo = false, $loopVideo = false)
+                              $onlyImages = false, $autoplayVideo = false, $mutedVideo = false, $loopVideo = false,
+                              $stagePadding = 0, $autoplayTimeout = 5000)
   {
     $this->id = $id;
     $this->view = "media::frontend.components.gallery.layouts.$layout.index";
@@ -49,11 +52,11 @@ class Gallery extends Component
     $this->responsiveClass = $responsiveClass;
     $this->autoplay = $autoplay;
     $this->autoplayHoverPause = $autoplayHoverPause;
-    $this->loop = $loop;
+    $this->loopGallery = $loopGallery;
     $this->dots = $dots;
     $this->nav = $nav;
     $this->responsive = json_encode($responsive ?? [0 => ["items" => 1], 640 => ["items" => 2], 992 => ["items" => 4]]);
-    $this->dataFancybox = $dataFancybox ? $dataFancybox.Str::uuid() : null;
+    $this->dataFancybox = $dataFancybox ? $dataFancybox . Str::uuid() : null;
     $this->gallery = [];
     $this->columnMasonry = $columnMasonry;
     $this->navText = json_encode($navText);
@@ -61,21 +64,23 @@ class Gallery extends Component
     $this->autoplayVideo = $autoplayVideo;
     $this->mutedVideo = $mutedVideo;
     $this->loopVideo = $loopVideo;
+    $this->stagePadding = $stagePadding;
+    $this->autoplayTimeout = $autoplayTimeout;
 
-    if(!empty($mediaFiles)){
+    if (!empty($mediaFiles)) {
       $countImages = 0;
-      foreach ($zones as $zone){
+      foreach ($zones as $zone) {
         !is_array($mediaFiles->{$zone}) ? $mediaFiles->{$zone} = [$mediaFiles->{$zone}] : false;
-          foreach ($mediaFiles->{$zone} as $itemImage){
-            if(empty($maxImages) || $countImages<$maxImages){
-              if(($onlyImages && $itemImage->isImage) || ($onlyVideos && $itemImage->isVideo) || (!$onlyVideos && !$onlyImages)){
-                $countImages++;
-                array_push($this->gallery,$itemImage);
-              }
-              
+        foreach ($mediaFiles->{$zone} as $itemImage) {
+          if (empty($maxImages) || $countImages < $maxImages) {
+            if (($onlyImages && $itemImage->isImage) || ($onlyVideos && $itemImage->isVideo) || (!$onlyVideos && !$onlyImages)) {
+              $countImages++;
+              array_push($this->gallery, $itemImage);
             }
+
           }
-        
+        }
+
       }
     }
   }
