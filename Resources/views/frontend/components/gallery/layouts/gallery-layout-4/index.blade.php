@@ -27,6 +27,6 @@
         </div>
       @endforeach
     </div>
-    @include("media::frontend.components.gallery.script",["responsive" => [],"items" => 4])
+    @include("media::frontend.components.gallery.script",["responsive" => json_encode([]),"items" => 4])
   </div>
 @endif
