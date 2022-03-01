@@ -92,6 +92,7 @@ class MediaServiceProvider extends ServiceProvider
     $this->mergeConfigFrom($this->getModuleConfigFilePath('media', 'settings'), "asgard.media.settings");
     $this->mergeConfigFrom($this->getModuleConfigFilePath('media', 'settings-fields'), "asgard.media.settings-fields");
     $this->mergeConfigFrom($this->getModuleConfigFilePath('media', 'cmsPages'), "asgard.media.cmsPages");
+    $this->mergeConfigFrom($this->getModuleConfigFilePath('media', 'cmsSidebar'), "asgard.media.cmsSidebar");
 
 
     $events->listen(StoringMedia::class, HandleMediaStorage::class);
