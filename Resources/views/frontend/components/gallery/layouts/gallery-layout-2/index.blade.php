@@ -1,5 +1,5 @@
 @if(count($gallery) > 0)
-  <section id="galeria" class="{{$container}}">
+  <section id="galeria">
     @foreach($gallery as $item)
       <article>
         <figure>
