@@ -1,5 +1,5 @@
 @if(count($gallery) > 0)
-  <section id="galeria">
+  <section id="galeria" class="{{$container}}">
     @foreach($gallery as $item)
       <article>
         <figure>
@@ -15,7 +15,6 @@
     #galeria {
         margin: 1rem auto;
         width: 100%;
-        max-width: 960px;
         column-count: {{$columnMasonry}};
         -webkit-column-span: all;
         column-span: all;

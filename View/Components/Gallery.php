@@ -30,6 +30,7 @@ class Gallery extends Component
   public $stagePadding;
   public $autoplayTimeout;
   public $aspectRatio;
+  public $container;
 
 
 
@@ -44,7 +45,7 @@ class Gallery extends Component
                               $responsive = null, $dataFancybox = 'gallery', $layout = "gallery-layout-1",
                               $columnMasonry = 3, $navText = "", $maxImages = null, $onlyVideos = false,
                               $onlyImages = false, $autoplayVideo = false, $mutedVideo = false, $loopVideo = false,
-                              $stagePadding = 0, $autoplayTimeout = 5000, $aspectRatio = "1-1")
+                              $stagePadding = 0, $autoplayTimeout = 5000, $aspectRatio = "1-1", $container = "container" )
 
   {
     $this->id = $id;
@@ -70,6 +71,7 @@ class Gallery extends Component
     $this->stagePadding = $stagePadding;
     $this->autoplayTimeout = $autoplayTimeout;
     $this->aspectRatio = $aspectRatio;
+    $this->container = $container;
 
     if (!empty($mediaFiles)) {
       $countImages = 0;
