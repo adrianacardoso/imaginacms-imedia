@@ -1,13 +1,14 @@
-#galleryWithHorizontalThumbs{
-  .primary-gallery{
+#galleryWithHorizontalThumbs {
+  .primary-gallery {
     overflow: hidden;
     margin-bottom: 15px;
-  
-    .carousel-item{
+
+    .carousel-item {
       height: unset !important;
       position: relative;
       padding: unset !important;
-      img{
+
+      img {
         position: absolute;
         top: 0;
         left: 0;
@@ -17,19 +18,23 @@
         object-fit: contain;
       }
     }
-    .carousel-item.aspect-ratio-1-1{
+
+    .carousel-item.aspect-ratio-1-1 {
       padding-bottom: calc(100%) !important;
     }
-    .carousel-item.aspect-ratio-4-3{
-      padding-bottom: calc(100%*4/3) !important;
+
+    .carousel-item.aspect-ratio-4-3 {
+      padding-bottom: calc(100% * 4 / 3) !important;
     }
   }
-  .thumbs-gallery{
-    .item{
+
+  .thumbs-gallery {
+    .item {
       position: relative;
       height: unset !important;
       padding: unset !important;
-      img{
+
+      img {
         position: absolute;
         top: 0;
         left: 0;
@@ -39,16 +44,78 @@
         object-fit: contain;
       }
     }
-    .item.aspect-ratio-1-1{
+
+    .item.aspect-ratio-1-1 {
       padding-bottom: calc(100%) !important;
     }
-    .item.aspect-ratio-4-3{
-      padding-bottom: calc(100%*4/3) !important;
+
+    .item.aspect-ratio-4-3 {
+      padding-bottom: calc(100% * 4 / 3) !important;
     }
   }
 }
-.single-media-video{
+
+.single-media-video {
   @media screen and (max-width: 576px) {
     width: 100%;
+  }
+}
+
+.gallery-layout-2 {
+  #galeria {
+    margin: 1rem auto;
+    width: 100%;
+    max-width: 960px;
+    -webkit-column-span: all;
+    column-span: all;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    /*-moz-column-rule: 1px solid #bbb;*/
+    /*-webkit-column-rule: 1px solid #bbb;*/
+    /*column-rule: 1px solid #bbb;*/
+  }
+
+  @media (max-width: 767px) {
+    #galeria {
+      columns: 2;
+    }
+
+  }
+
+  @media (max-width: 480px) {
+    #galeria {
+      columns: 1;
+    }
+  }
+}
+
+.gallery-layout-3 {
+  main {
+    display: grid;
+    grid-gap: 1rem;
+    grid-template-columns: 200px 200px 200px;
+    grid-template-rows: 150px 150px;
+  }
+}
+
+.gallery-layout-6 {
+  .items-gallery {
+    display: grid;
+  }
+
+  picture img {
+    width: 100%;
+    height: 100%;
+    transition: width 1s, height 1s, transform 1s;
+    -moz-transition: width 1s, height 1s, -moz-transform 1s;
+    -webkit-transition: width 1s, height 1s, -webkit-transform 1s;
+    -o-transition: width 1s, height 1s, -o-transform 1s;
+  }
+
+  picture img:hover {
+    transform: scale(1.2);
+    -moz-transform: scale(1.2); /* Firefox */
+    -webkit-transform: scale(1.2); /* Chrome - Safari */
+    -o-transform: scale(1.2); /* Opera */
   }
 }
