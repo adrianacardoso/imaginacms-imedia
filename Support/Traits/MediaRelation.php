@@ -17,9 +17,9 @@ trait MediaRelation
       $tenantWithCentralData = config("asgard.media.config.tenantWithCentralData.imageable");
       
       if($tenantWithCentralData)
-        return $this->morphToMany(File::class, 'imageable', 'media__imageables')->withPivot('zone', 'id')->withTimestamps()->orderBy('order')->withoutTenancy();
+        return $this->morphToMany(File::class, 'imageable', 'media__imageables')->with('translations')->withPivot('zone', 'id')->withTimestamps()->orderBy('order')->withoutTenancy();
       else
-        return $this->morphToMany(File::class, 'imageable', 'media__imageables')->withPivot('zone', 'id')->withTimestamps()->orderBy('order');
+        return $this->morphToMany(File::class, 'imageable', 'media__imageables')->with('translations')->withPivot('zone', 'id')->withTimestamps()->orderBy('order');
     }
 
     /**

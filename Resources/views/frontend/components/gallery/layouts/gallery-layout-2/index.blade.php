@@ -15,7 +15,6 @@
     #galeria {
         margin: 1rem auto;
         width: 100%;
-        max-width: 960px;
         column-count: {{$columnMasonry}};
         -webkit-column-span: all;
         column-span: all;

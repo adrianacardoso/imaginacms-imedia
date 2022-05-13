@@ -18,6 +18,7 @@
         @endforeach
       </div>
     </div>
+    @if(count($gallery)>1)
     <div id="{{$id}}Carousel" class="thumbs-gallery owl-carousel owl-image-mini owl-image-mini{{$id}} owl-theme">
       @foreach($gallery as $key=>$item)
         <div class="item aspect-ratio-{{$aspectRatio}}">
@@ -27,6 +28,7 @@
         </div>
       @endforeach
     </div>
-    @include("media::frontend.components.gallery.script",["responsive" => [],"items" => 4])
+    @include("media::frontend.components.gallery.script",["responsive" => json_encode([]),"items" => 4])
+      @endif
   </div>
 @endif
