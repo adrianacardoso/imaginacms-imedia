@@ -1,21 +1,24 @@
 @if(count($gallery) > 0)
-  <section id="galeria">
-    @foreach($gallery as $item)
-      <article>
-        <figure>
-          <x-media::single-image :isMedia="true" :mediaFiles="$item" :dataFancybox="$dataFancybox"
-                                 :autoplayVideo="$autoplayVideo" :loopVideo="$loopVideo" :mutedVideo="$mutedVideo"/>
-        </figure>
-      </article>
-    @endforeach
-  </section>
+  <div class="gallery-layout-2">
+    <section id="galeria">
+      @foreach($gallery as $item)
+        <article>
+          <figure>
+            <x-media::single-image :isMedia="true" :mediaFiles="$item" :dataFancybox="$dataFancybox"
+                                   :autoplayVideo="$autoplayVideo" :loopVideo="$loopVideo" :mutedVideo="$mutedVideo"/>
+          </figure>
+        </article>
+      @endforeach
+    </section>
+  </div>
 @endif
 
 <style>
     #galeria {
+        column-count: {{$columnMasonry}};
         margin: 1rem auto;
         width: 100%;
-        column-count: {{$columnMasonry}};
+        max-width: 960px;
         -webkit-column-span: all;
         column-span: all;
         break-inside: avoid;
@@ -37,4 +40,5 @@
             columns: 1;
         }
     }
+
 </style>
