@@ -49,9 +49,16 @@ class MaxFolderSizeRule implements Rule
   {
 
     $size = 0;
-    foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS)) as $file) {
-      $size += $file->getSize();
+  
+    //adding this try catch to avoid the error 500 when the path don't exist
+    try {
+      foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS)) as $file) {
+        $size += $file->getSize();
+      }
+    }catch(\Exception $e){
+      \Log::info("Media::MaxFolderSizeRule | Error getting Dir Size: ".$e->getMessage());
     }
+    
     
     return $size;
   }
