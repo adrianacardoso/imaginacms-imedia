@@ -16,5 +16,29 @@
 <style>
     #galeria {
         column-count: {{$columnMasonry}};
+        margin: 1rem auto;
+        width: 100%;
+        max-width: 960px;
+        -webkit-column-span: all;
+        column-span: all;
+        break-inside: avoid;
+        page-break-inside: avoid;
+        /*-moz-column-rule: 1px solid #bbb;*/
+        /*-webkit-column-rule: 1px solid #bbb;*/
+        /*column-rule: 1px solid #bbb;*/
     }
+
+    @media (max-width: 767px) {
+        #galeria {
+            columns: 2;
+        }
+
+    }
+
+    @media (max-width: 480px) {
+        #galeria {
+            columns: 1;
+        }
+    }
+
 </style>

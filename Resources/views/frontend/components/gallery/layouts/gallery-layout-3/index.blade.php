@@ -10,3 +10,12 @@
     </main>
   </div>
 @endif
+
+<style>
+    main {
+        display: grid;
+        grid-gap: 1rem;
+        grid-template-columns: 200px 200px 200px;
+        grid-template-rows: 150px 150px;
+    }
+</style>
