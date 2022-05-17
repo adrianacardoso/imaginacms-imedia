@@ -3,7 +3,8 @@
 return [
   "sidebar" => [
     "adminGroup" => "Media",
-    "adminIndex" => "Lista de Archivos"
+    "adminIndex" => "Lista de Archivos",
+    "adminZones" => "Zonas de Archivos"
   ],
   "title" => "Multimedia Listar/Buscar",
   "newFile" => "Nuevo Archivo",
@@ -28,6 +29,8 @@ return [
     "addYourImages" => "Agrega tus imagenes aquí",
     "limitFiles" => "Limite de Archivos",
     "messageLimitFiles" => "El limite de archivos es de <b>{quantity}</b>. para seleccionar otro archivo primero debes quitar algunos de los seleccionados"
-  ]
+  ],
+  "newZone" => "Nueva Zona",
+  "updateZone" => "Actualizar Zona",
 ];
 
