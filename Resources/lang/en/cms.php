@@ -3,7 +3,8 @@
 return [
   "sidebar" => [
     "adminGroup" => "Media",
-    "adminIndex" => "File List"
+    "adminIndex" => "File List",
+    "adminZones" => "Media Zones"
   ],
   "title" => "Multimedia List/Search",
   "newFile" => "New File",
@@ -28,6 +29,8 @@ return [
     "addYourImages" => "Add your images here",
     "limitFiles" => "Limit Files",
     "messageLimitFiles" => "The file limit is <b>{quantity}</b>. to select another file you must first remove some of the selected ones"
-  ]
+  ],
+  "newZone" => "New Zone",
+  "updateZone" => "Update Zone",
 ];
 

@@ -1,13 +1,14 @@
-#galleryWithHorizontalThumbs{
-  .primary-gallery{
+#galleryWithHorizontalThumbs {
+  .primary-gallery {
     overflow: hidden;
     margin-bottom: 15px;
-  
-    .carousel-item{
+
+    .carousel-item {
       height: unset !important;
       position: relative;
       padding: unset !important;
-      img{
+
+      img {
         position: absolute;
         top: 0;
         left: 0;
@@ -17,19 +18,23 @@
         object-fit: contain;
       }
     }
-    .carousel-item.aspect-ratio-1-1{
+
+    .carousel-item.aspect-ratio-1-1 {
       padding-bottom: calc(100%) !important;
     }
-    .carousel-item.aspect-ratio-4-3{
-      padding-bottom: calc(100%*4/3) !important;
+
+    .carousel-item.aspect-ratio-4-3 {
+      padding-bottom: calc(100% * 4 / 3) !important;
     }
   }
-  .thumbs-gallery{
-    .item{
+
+  .thumbs-gallery {
+    .item {
       position: relative;
       height: unset !important;
       padding: unset !important;
-      img{
+
+      img {
         position: absolute;
         top: 0;
         left: 0;
@@ -39,15 +44,18 @@
         object-fit: contain;
       }
     }
-    .item.aspect-ratio-1-1{
+
+    .item.aspect-ratio-1-1 {
       padding-bottom: calc(100%) !important;
     }
-    .item.aspect-ratio-4-3{
-      padding-bottom: calc(100%*4/3) !important;
+
+    .item.aspect-ratio-4-3 {
+      padding-bottom: calc(100% * 4 / 3) !important;
     }
   }
 }
-.single-media-video{
+
+.single-media-video {
   @media screen and (max-width: 576px) {
     width: 100%;
   }
