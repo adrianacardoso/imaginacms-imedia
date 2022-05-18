@@ -125,6 +125,18 @@ return [
   
   'tenantWithCentralData' => [
     'imageable' => true
-  ]
+  ],
   
+   /*
+   |--------------------------------------------------------------------------
+   | Define config to the mediaFillable trait for each entity
+   |--------------------------------------------------------------------------
+   */
+  "mediaFillable" => [
+  'zone' => [
+    'watermark' => 'single'
+  ],
+  
+],
+
 ];

@@ -4,6 +4,8 @@ namespace Modules\Media\Events\Handlers;
 
 use Illuminate\Support\Arr;
 use Modules\Media\Contracts\StoringMedia;
+use Modules\Media\Entities\File;
+use Modules\Media\Entities\Zone;
 
 class HandleMediaStorage
 {
@@ -24,12 +26,19 @@ class HandleMediaStorage
     {
         $entity = $event->getEntity();
         $postMedias = Arr::get($event->getSubmissionData(), 'medias_multi', []);
-
-        foreach ($postMedias as $zone => $attributes) {
+        $fileService = app("Modules\Media\Services\FileService");
+        $zoneEntity = Zone::where("entity_type",get_class($entity))->first();
+  
+      foreach ($postMedias as $zone => $attributes) {
             $syncList = [];
             $orders = $this->getOrdersFrom($attributes);
             foreach (Arr::get($attributes, 'files', []) as $fileId) {
-                $syncList[$fileId] = [];
+              if(!empty($zoneEntity)){
+                $file = File::find($fileId);
+                $fileService->addWatermark($file,$zoneEntity);
+              }
+  
+              $syncList[$fileId] = [];
                 $syncList[$fileId]['imageable_type'] = get_class($entity);
                 $syncList[$fileId]['zone'] = $zone;
                 $syncList[$fileId]['order'] = (int) array_search($fileId, $orders);
@@ -37,7 +46,7 @@ class HandleMediaStorage
             $entity->filesByZone($zone)->sync($syncList);
         }
     }
-
+  
     /**
      * Handle the request to parse single media partials
      * @param StoringMedia $event
@@ -46,9 +55,17 @@ class HandleMediaStorage
     {
         $entity = $event->getEntity();
         $postMedia = Arr::get($event->getSubmissionData(), 'medias_single', []);
-
+        $fileService = app("Modules\Media\Services\FileService");
+        $zoneEntity = Zone::where("entity_type",get_class($entity))->first();
+        
         foreach ($postMedia as $zone => $fileId) {
-            if (!empty($fileId)) {
+          
+          if(!empty($zoneEntity)){
+            $file = File::find($fileId);
+            $fileService->addWatermark($file,$zoneEntity);
+          }
+  
+          if (!empty($fileId)) {
                 $entity->filesByZone($zone)->sync([$fileId => ['imageable_type' => get_class($entity), 'zone' => $zone, 'order' => null]]);
             } else {
                 $entity->filesByZone($zone)->sync([]);

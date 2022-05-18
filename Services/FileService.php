@@ -95,8 +95,6 @@ class FileService
         $constraint->upsize();
       });
       
-      //TODO:: aquí falta la lógica para la marca de agua según la entidad zone
-      
       $filePath = $file->getPathName();
       \File::put($filePath, $image->stream($savedFile->extension, $imageSize->quality));
     }
@@ -130,5 +128,25 @@ class FileService
   private function getConfiguredFilesystem()
   {
     return setting('media::filesystem', null, config("asgard.media.config.filesystem"));
+  }
+  
+  public function addWatermark($file, $zone){
+  
+    if(isset($zone->mediaFiles()->watermark->id) && $file->isImage()){
+      $watermarkFile = File::find($zone->mediaFiles()->watermark->id);
+ 
+      $disk = is_null($file->disk) ? $this->getConfiguredFilesystem() : $file->disk;
+      $image = \Image::make($this->filesystem->disk($disk)->get((isset(tenant()->id) ? "organization".tenant()->id : "").$file->path->getRelativeUrl()));
+      
+      /* insert watermark at bottom-right corner with 10px offset */
+      $image->insert($this->filesystem->disk($disk)->path((isset(tenant()->id) ? "organization".tenant()->id : "").$watermarkFile->path->getRelativeUrl()), "center", 0, 0);
+
+    //  $this->imagy->deleteAllFor($file);
+
+      $this->filesystem->disk($disk)->put((isset(tenant()->id) ? "organization".tenant()->id : "").$file->path->getRelativeUrl(), $image->stream($file->extension,100));
+  
+      $this->createThumbnails($file);
+    }
+    
   }
 }
