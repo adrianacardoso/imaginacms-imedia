@@ -7,7 +7,7 @@ return [
       "icon" => "fas fa-photo-video",
       "children" => [
         "media_cms_admin_index",
-        "media_cms_admin_zonez"
+        "media_cms_admin_zones"
       ]
     ]
   ],
