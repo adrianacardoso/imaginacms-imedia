@@ -1,8 +1,8 @@
 <?php
 $filesystems = config("filesystems.disks");
 $disksOptions = [];
-foreach ($filesystems as $index => $disk){
-  array_push($disksOptions,["label" => $index, "value" => $index]);
+foreach ($filesystems as $index => $disk) {
+  array_push($disksOptions, ["label" => $index, "value" => $index]);
 }
 
 return [
@@ -90,7 +90,22 @@ return [
       'label' => 'media::settings.label.allowedAudioTypes'
     ],
   ],
-
+  'allowedRatios' => [
+    "onlySuperAdmin" => true,
+    'name' => 'media::allowedRatios',
+    'value' => config("asgard.media.config.allowedRatios"),
+    'type' => 'select',
+    'columns' => 'col-12 col-md-6',
+    'props' => [
+      'useInput' => true,
+      'useChips' => true,
+      'multiple' => true,
+      'hint' => 'media::settings.hint.allowedTypes',
+      'hideDropdownIcon' => true,
+      'newValueMode' => 'add-unique',
+      'label' => 'media::settings.label.allowedRatios'
+    ],
+  ],
   'maxFileSize' => [
     "onlySuperAdmin" => true,
     'name' => 'media::maxFileSize',
@@ -118,6 +133,7 @@ return [
     "value" => config("asgard.media.config.defaultThumbnails"),
     'label' => 'Thumbnail Config',
     "type" => "json",
+    'columns' => 'col-12',
     "props" => [
       'label' => 'media::settings.label.thumbnails',
       "type" => "textarea"
@@ -131,6 +147,7 @@ return [
     "value" => config("asgard.media.config.defaultImageSize"),
     'label' => 'Default Image Size',
     "type" => "json",
+    'columns' => 'col-12',
     "props" => [
       'label' => 'media::settings.label.defaultImageSize',
       "type" => "textarea"
