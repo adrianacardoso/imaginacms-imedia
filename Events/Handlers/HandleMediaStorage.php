@@ -30,17 +30,21 @@ class HandleMediaStorage
   {
     $entity = $event->getEntity();
     $postMedias = Arr::get($event->getSubmissionData(), 'medias_multi', []);
-    
-    //getting Zone with custom features to this file
-    $entityZone = Zone::where("entity_type", get_class($entity))->first();
+
     
     foreach ($postMedias as $zone => $attributes) {
       $syncList = [];
       $orders = $this->getOrdersFrom($attributes);
+      
+      //getting Zone with custom features to this file
+      $entityZone = Zone::where("entity_type", get_class($entity))->where("name",$zone)->first();
+      
       foreach (Arr::get($attributes, 'files', []) as $fileId) {
-        
-        //Add watermark from the Zone
-        $this->addWatermark($fileId,$entityZone);
+  
+        if(isset($entityZone->id) and $entityZone->name == $zone){
+          //Add watermark from the Zone
+          $this->addWatermark($fileId,$entityZone);
+        }
         
         $syncList[$fileId] = [];
         $syncList[$fileId]['imageable_type'] = get_class($entity);
@@ -60,13 +64,15 @@ class HandleMediaStorage
     $entity = $event->getEntity();
     $postMedia = Arr::get($event->getSubmissionData(), 'medias_single', []);
     
-    //getting Zone with custom features to this file
-    $entityZone = Zone::where("entity_type", get_class($entity))->first();
-    
     foreach ($postMedia as $zone => $fileId) {
-      
-      //Add watermark from the Zone
-      $this->addWatermark($fileId,$entityZone);
+  
+      //getting Zone with custom features to this file
+      $entityZone = Zone::where("entity_type", get_class($entity))->where("name",$zone)->first();
+  
+      if(isset($entityZone->id) and $entityZone->name == $zone){
+        //Add watermark from the Zone
+        $this->addWatermark($fileId,$entityZone);
+      }
       
       if (!empty($fileId)) {
         $entity->filesByZone($zone)->sync([$fileId => ['imageable_type' => get_class($entity), 'zone' => $zone, 'order' => null]]);
