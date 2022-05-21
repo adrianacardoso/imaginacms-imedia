@@ -135,17 +135,33 @@ class FileService
     if(isset($zone->mediaFiles()->watermark->id) && $file->isImage()){
       $watermarkFile = File::find($zone->mediaFiles()->watermark->id);
  
-      $disk = is_null($file->disk) ? $this->getConfiguredFilesystem() : $file->disk;
-      $image = \Image::make($this->filesystem->disk($disk)->get((isset(tenant()->id) ? "organization".tenant()->id : "").$file->path->getRelativeUrl()));
-      
-      /* insert watermark at bottom-right corner with 10px offset */
-      $image->insert($this->filesystem->disk($disk)->path((isset(tenant()->id) ? "organization".tenant()->id : "").$watermarkFile->path->getRelativeUrl()), "center", 0, 0);
-
-    //  $this->imagy->deleteAllFor($file);
-
-      $this->filesystem->disk($disk)->put((isset(tenant()->id) ? "organization".tenant()->id : "").$file->path->getRelativeUrl(), $image->stream($file->extension,100));
+      if(isset($watermarkFile->id)){
+        
+        $disk = is_null($file->disk) ? $this->getConfiguredFilesystem() : $file->disk;
+        $image = \Image::make($this->filesystem->disk($disk)->get((isset(tenant()->id) ? "organization".tenant()->id : "").$file->path->getRelativeUrl()));
   
-      $this->createThumbnails($file);
+        /* insert watermark at bottom-right corner with 10px offset */
+        $image->insert(
+          //file path from specific disk
+          $this->filesystem->disk($disk)->path((isset(tenant()->id) ? "organization".tenant()->id : "").$watermarkFile->path->getRelativeUrl()),
+          //position inside the base image
+          $zone->options->watermarkPosition ?? "center",
+          //X axis position
+          $zone->options->watermarkXAxis ?? 0,
+          //Y axis position
+          $zone->options->watermarkYAxis ?? 0
+        );
+  
+        $this->filesystem->disk($disk)->put((isset(tenant()->id) ? "organization".tenant()->id : "").$file->path->getRelativeUrl(), $image->stream($file->extension,100));
+  
+        $this->createThumbnails($file);
+  
+        $file->has_watermark = true;
+  
+        $file->save();
+        
+      }
+      
     }
     
   }

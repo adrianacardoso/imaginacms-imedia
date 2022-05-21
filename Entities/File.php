@@ -41,6 +41,7 @@ class File extends CrudModel implements TaggableInterface, Responsable
     'filesize',
     'folder_id',
     'created_by',
+    'has_watermark',
     'disk'
   ];
   protected $appends = ['path_string', 'media_type'];

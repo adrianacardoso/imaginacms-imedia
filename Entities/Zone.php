@@ -28,6 +28,6 @@ class Zone extends CrudModel
   ];
   
   protected $casts = [
-    'options' => 'array'
+    'options' => 'object'
   ];
 }
