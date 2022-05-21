@@ -132,18 +132,28 @@ class FileService
   
   public function addWatermark($file, $zone){
   
+    //if the watermark zone exist in DB and if is image exclusively
     if(isset($zone->mediaFiles()->watermark->id) && $file->isImage()){
+      
+      //getting watermark file from the DB
       $watermarkFile = File::find($zone->mediaFiles()->watermark->id);
  
+      //if exist the watermark file in the DB
       if(isset($watermarkFile->id)){
         
+        //watermark file disk
+        $watermarkDisk = is_null($watermarkFile->disk) ? $this->getConfiguredFilesystem() : $watermarkFile->disk;
+        
+        //file entity disk
         $disk = is_null($file->disk) ? $this->getConfiguredFilesystem() : $file->disk;
+        
+        //creating image in memory
         $image = \Image::make($this->filesystem->disk($disk)->get((isset(tenant()->id) ? "organization".tenant()->id : "").$file->path->getRelativeUrl()));
-  
-        /* insert watermark at bottom-right corner with 10px offset */
+        
+        // insert watermark at center corner with 0px offset by default
         $image->insert(
           //file path from specific disk
-          $this->filesystem->disk($disk)->path((isset(tenant()->id) ? "organization".tenant()->id : "").$watermarkFile->path->getRelativeUrl()),
+          $this->filesystem->disk($watermarkDisk)->path((isset(tenant()->id) ? "organization".tenant()->id : "").$watermarkFile->path->getRelativeUrl()),
           //position inside the base image
           $zone->options->watermarkPosition ?? "center",
           //X axis position
@@ -152,12 +162,16 @@ class FileService
           $zone->options->watermarkYAxis ?? 0
         );
   
+        //put the new file in the same location of the current entity file
         $this->filesystem->disk($disk)->put((isset(tenant()->id) ? "organization".tenant()->id : "").$file->path->getRelativeUrl(), $image->stream($file->extension,100));
   
+        //regenerate thumbnails
         $this->createThumbnails($file);
   
+        //updating entity has_watermark field
         $file->has_watermark = true;
-  
+        
+        //saving has_watermark field
         $file->save();
         
       }
