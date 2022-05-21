@@ -15,7 +15,22 @@ return [
       "subHeader" => [
         "refresh" => true
       ]
-    ]
+    ],
+    "zones" => [
+      "permission" => 'media.zones.manage',
+      "activated" => true,
+      "path" => '/media/zones',
+      "name" => 'app.media.zones',
+      "crud" => 'qmedia/_crud/zones',
+      "page" => 'qcrud/_pages/admin/crudPage',
+      "layout" => 'qsite/_layouts/master.vue',
+      "title" => 'media.cms.sidebar.adminZones',
+      "icon" => 'fas fa-file-invoice',
+      "authenticated" => true,
+      "subHeader" => [
+        "refresh" => true
+      ]
+    ],
   ],
   'panel' => [],
   'main' => [

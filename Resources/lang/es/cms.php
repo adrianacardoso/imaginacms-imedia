@@ -28,9 +28,14 @@ return [
     "addYourFiles" => "Agrega tus archivos aquí",
     "addYourImages" => "Agrega tus imagenes aquí",
     "limitFiles" => "Limite de Archivos",
-    "messageLimitFiles" => "El limite de archivos es de <b>{quantity}</b>. para seleccionar otro archivo primero debes quitar algunos de los seleccionados"
+    "messageLimitFiles" => "El limite de archivos es de <b>{quantity}</b>. para seleccionar otro archivo primero debes quitar algunos de los seleccionados",
+    "failedUploadFiles" => "Error al cargar los archivos",
+    "errorMaxFileSize" => "Los Archivos superan el tamaño permitido de {size}MB"
   ],
   "newZone" => "Nueva Zona",
   "updateZone" => "Actualizar Zona",
+  "maxFileSize" => "Tamaño maximo por archivo (MB)",
+  "maxFiles" => "Cantidad maxima de archivos seleccionados",
+  "directUpload" => "Subida directa"
 ];
 

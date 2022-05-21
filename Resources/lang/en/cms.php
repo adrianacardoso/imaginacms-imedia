@@ -28,9 +28,14 @@ return [
     "addYourFiles" => "Add your files here",
     "addYourImages" => "Add your images here",
     "limitFiles" => "Limit Files",
-    "messageLimitFiles" => "The file limit is <b>{quantity}</b>. to select another file you must first remove some of the selected ones"
+    "messageLimitFiles" => "The file limit is <b>{quantity}</b>. to select another file you must first remove some of the selected ones",
+    "failedUploadFiles" => "Error uploading files",
+    "errorMaxFileSize" => "Files exceed the allowed size of {size}MB"
   ],
   "newZone" => "New Zone",
   "updateZone" => "Update Zone",
+  "maxFileSize" => "Max file size (MB)",
+  "maxFiles" => "Max files selected",
+  "directUpload" => "Direct Upload"
 ];
 
