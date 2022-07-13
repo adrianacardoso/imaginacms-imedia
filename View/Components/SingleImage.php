@@ -5,6 +5,8 @@ namespace Modules\Media\View\Components;
 use Illuminate\View\Component;
 use Illuminate\Support\Str;
 
+use Modules\Setting\Entities\Setting;
+
 class SingleImage extends Component
 {
   /**
@@ -47,7 +49,7 @@ class SingleImage extends Component
                               $smallSrc = null, $fallback = null, $imgClasses = '', $linkClasses = '', $linkRel = '',
                               $defaultLinkClasses = 'image-link w-100', $imgStyles = '', $width = "300px",
                               $dataFancybox = null, $dataTarget = null, $dataSlideTo = null, $dataCaption = null,
-                              $target = "_self", $setting = '', $autoplayVideo = true, $loopVideo = true, $mutedVideo = true)
+                              $target = "_self", $setting = '', $autoplayVideo = true, $loopVideo = true, $mutedVideo = true,$central=false)
   {
     $this->src = $src;
     $this->alt = !empty($alt) ? $alt : $mediaFiles->{$zone}->alt ?? $mediaFiles->alt ?? "";
@@ -70,10 +72,18 @@ class SingleImage extends Component
     $this->mutedVideo = $mutedVideo;
     if (!empty($setting)) {
 
-      $settingRepository = app("Modules\Setting\Repositories\SettingRepository");
+      // Old
+      //$settingRepository = app("Modules\Setting\Repositories\SettingRepository");
+      //$setting = $settingRepository->findByName($setting);
+      
+      // New
+      $setting = Setting::where("name", $setting);
 
-      $setting = $settingRepository->findByName($setting);
+      if($central)
+        $setting->withoutTenancy()->whereNull("organization_id");
 
+      $setting= $setting->with('files')->first();
+     
       if (isset($setting->id)) {
         $isMedia = true;
         $zone = "setting::mainimage";
