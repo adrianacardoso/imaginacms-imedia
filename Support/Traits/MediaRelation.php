@@ -75,7 +75,7 @@ trait MediaRelation
                     'filename' => $file->filename ?? null,
                     'mimeType' => $file->mimetype ?? null,
                     'fileSize' => $file->filesize ?? null,
-                    'path' => $file ? ($file->is_folder ? $file->path->getRelativeUrl() : (string)$file->path) : $defaultPath,
+                    'path' => ($file ? ($file->is_folder ? $file->path->getRelativeUrl() : (string)$file->path)."?u=".$file->updated_at->timestamp : $defaultPath),
                     'relativePath' => $file ? $file->path->getRelativeUrl() : '',
                     'isImage' => $file ? $file->isImage() : false,
                     'isVideo' => $file ? $file->isVideo() : false,
@@ -85,6 +85,7 @@ trait MediaRelation
                     'folderId' => $file->folder_id ?? null,
                     'description' => $file->description ?? null,
                     'alt' => $file->alt_attribute ?? null,
+                    'updatedAt' => $file->updated_at ?? null,
                     'createdBy' => $file->created_by ?? null
                 ];
                 //Add imagy
