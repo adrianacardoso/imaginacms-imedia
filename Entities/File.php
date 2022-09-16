@@ -14,6 +14,7 @@ use Modules\Tag\Traits\TaggableTrait;
 use Modules\User\Entities\Sentinel\User;
 use Stancl\Tenancy\Database\Concerns\BelongsToTenant;
 use Modules\Core\Icrud\Entities\CrudModel;
+use Modules\Isite\Traits\Tokenable;
 
 /**
  * Class File
@@ -22,9 +23,12 @@ use Modules\Core\Icrud\Entities\CrudModel;
  */
 class File extends CrudModel implements TaggableInterface, Responsable
 {
-  use Translatable, NamespacedEntity, TaggableTrait, BelongsToTenant;
+  use Translatable, NamespacedEntity, TaggableTrait, BelongsToTenant, Tokenable;
   
   protected $table = 'media__files';
+  public $transformer = 'Modules\Media\Transformers\MediaTransformer';
+  public $entity = 'Modules\Media\Entities\File';
+  public $repository = 'Modules\Media\Repositories\FileRepository';
   public $translatedAttributes = ['description', 'alt_attribute', 'keywords'];
   protected $fillable = [
     'id',
