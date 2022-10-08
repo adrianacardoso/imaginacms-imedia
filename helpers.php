@@ -19,11 +19,11 @@ if (!function_exists('mediaExtensionsAvailable')) {
 
   function mediaExtensionsAvailable()
   {
-    return  array_merge(json_decode(setting('media::allowedImageTypes', null, config("asgard.media.config.allowedImageTypes"))),
-  json_decode(setting('media::allowedFileTypes', null, config("asgard.media.config.allowedFileTypes"))),
-  json_decode(setting('media::allowedVideoTypes', null, config("asgard.media.config.allowedVideoTypes"))),
-  json_decode(setting('media::allowedAudioTypes', null, config("asgard.media.config.allowedAudioTypes")))
-  );
+    return array_merge(json_decode(setting('media::allowedImageTypes', null, config("asgard.media.config.allowedImageTypes"))),
+      json_decode(setting('media::allowedFileTypes', null, config("asgard.media.config.allowedFileTypes"))),
+      json_decode(setting('media::allowedVideoTypes', null, config("asgard.media.config.allowedVideoTypes"))),
+      json_decode(setting('media::allowedAudioTypes', null, config("asgard.media.config.allowedAudioTypes")))
+    );
 
   }
 }
@@ -34,8 +34,8 @@ if (!function_exists('mediaPrivatePath')) {
     $path = "";
     $argv = explode("/", $file->path->getRelativeUrl());
     $fileName = end($argv);
-    foreach ($argv as $key => $str) if($key == 0) $path .= "$str"; elseif($str != $fileName) $path .= "/$str";
-    $path .= "/".$file->filename;
+    foreach ($argv as $key => $str) if ($key == 0) $path .= "$str"; elseif ($str != $fileName) $path .= "/$str";
+    $path .= "/" . $file->filename;
 
     return $path;
   }
@@ -75,12 +75,14 @@ if (!function_exists('getUploadedFileFromBase64')) {
 }
 
 if (!function_exists('getUploadedFileFromUrl')) {
-  function getUploadedFileFromUrl(string $url): UploadedFile
+  function getUploadedFileFromUrl(string $url, array $context = []): UploadedFile
   {
     //Instance the tmp location
     $tmpLocation = "/tmp/" . basename($url);
+    //Instance request context
+    $requestContext = ["http" => array_merge_recursive(['method' => 'GET'], $context)];
     //Get File and save as tmp
-    $result = copy($url, $tmpLocation);
+    $result = copy($url, $tmpLocation, stream_context_create($requestContext));
     //Instance uplaodedFile
     $tmpFileObject = new File($tmpLocation);
     return new UploadedFile(
