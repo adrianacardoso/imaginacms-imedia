@@ -74,6 +74,11 @@ class File extends CrudModel implements TaggableInterface, Responsable
   {
     return FileHelper::getTypeByMimetype($this->mimetype);
   }
+
+  public function getUrlAttribute()
+  {
+    return (string)$this->path;
+  }
   
   public function isFolder(): bool
   {
