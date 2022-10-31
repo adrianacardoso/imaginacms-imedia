@@ -24,7 +24,7 @@ use Modules\Isite\Traits\Tokenable;
 class File extends CrudModel implements TaggableInterface, Responsable
 {
   use Translatable, NamespacedEntity, TaggableTrait, BelongsToTenant, Tokenable;
-  
+
   protected $table = 'media__files';
   public $transformer = 'Modules\Media\Transformers\MediaTransformer';
   public $entity = 'Modules\Media\Entities\File';
@@ -51,25 +51,25 @@ class File extends CrudModel implements TaggableInterface, Responsable
   protected $appends = ['path_string', 'media_type'];
   protected $casts = ['is_folder' => 'boolean'];
   protected static $entityNamespace = 'asgardcms/media';
-  
+
   public function parent_folder()
   {
     return $this->belongsTo(__CLASS__, 'folder_id');
   }
-  
+
   public function getPathAttribute($value)
   {
     $disk = is_null($this->disk) ? setting('media::filesystem', null, config("asgard.media.config.filesystem")) : $this->disk;
-    
-    
+
+
     return new MediaPath($value, $disk, $this->organization_id);
   }
-  
+
   public function getPathStringAttribute()
   {
     return (string)$this->path;
   }
-  
+
   public function getMediaTypeAttribute()
   {
     return FileHelper::getTypeByMimetype($this->mimetype);
@@ -77,36 +77,40 @@ class File extends CrudModel implements TaggableInterface, Responsable
 
   public function getUrlAttribute()
   {
-    return (string)$this->path;
+    if ($this->disk == 'privatemedia') {
+      return \URL::route('public.media.media.show', [ 'criteria' => $this->id]);
+    } else {
+      return (string)$this->path;
+    }
   }
-  
+
   public function isFolder(): bool
   {
     return $this->is_folder;
   }
-  
+
   public function isImage()
   {
     $imageExtensions = json_decode(setting('media::allowedImageTypes', null, config("asgard.media.config.allowedImageTypes")));
     return in_array(pathinfo($this->path, PATHINFO_EXTENSION), $imageExtensions);
   }
-  
-  
+
+
   public function isVideo()
   {
     $videoExtensions = json_decode(setting('media::allowedVideoTypes', null, config("asgard.media.config.allowedVideoTypes")));
     return in_array(pathinfo($this->path, PATHINFO_EXTENSION), $videoExtensions);
   }
-  
+
   public function getThumbnail($type)
   {
     if ($this->isImage() && $this->getKey()) {
       return Imagy::getThumbnail($this, $type, $this->disk);
     }
-    
+
     return false;
   }
-  
+
   /**
    * Create an HTTP response that represents the object.
    * @param \Illuminate\Http\Request $request
@@ -119,7 +123,7 @@ class File extends CrudModel implements TaggableInterface, Responsable
         'Content-Type' => $this->mimetype,
       ]);
   }
-  
+
   /**
    * Created by relation
    * @return mixed
@@ -128,7 +132,7 @@ class File extends CrudModel implements TaggableInterface, Responsable
   {
     return $this->belongsTo(User::class, 'created_by');
   }
-  
+
   /**
    * Imageable relation
    * @return mixed
@@ -137,7 +141,7 @@ class File extends CrudModel implements TaggableInterface, Responsable
   {
     return $this->hasMany(User::class, 'created_by');
   }
-  
+
   /**
    * Created by relation
    * @return mixed
@@ -146,6 +150,6 @@ class File extends CrudModel implements TaggableInterface, Responsable
   {
     return $this->belongsTo(File::class, 'folder_id');
   }
-  
-  
+
+
 }
