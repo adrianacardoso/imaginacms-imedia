@@ -19,8 +19,8 @@ class MaxFolderSizeRule implements Rule
   public function passes($attribute, $value)
   {
     //check if the tenant its initialized and the folder size must be calculated of the organization folder
-    $organization = tenant();
-    $mediaPath = public_path((isset($organization->id) ? "/organization$organization->id" : "").config('asgard.media.config.files-path'));
+    $tenantPrefix = mediaOrganizationPrefix(null,"/");
+    $mediaPath = public_path(($tenantPrefix).config('asgard.media.config.files-path'));
     
     $activateCheckOfDirSize = json_decode(setting('media::activateCheckOfDirSize',null,"1"));
  

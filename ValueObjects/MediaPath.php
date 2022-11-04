@@ -42,7 +42,8 @@ class MediaPath
     {
         $path = ltrim($this->path, '/');
         $disk = is_null($disk)? is_null($this->disk)? setting('media::filesystem', null, config("asgard.media.config.filesystem")) : $this->disk : $disk;
-        return Storage::disk($disk)->url(((!empty($organizationId) || !empty($this->organizationId)) ? 'organization'.($organizationId ?? $this->organizationId).'/' : '' ).$path);
+        $organizationPrefix = mediaOrganizationPrefix(null,"","/", $organizationId,true);
+        return Storage::disk($disk)->url(($organizationPrefix).$path);
     }
 
     /**

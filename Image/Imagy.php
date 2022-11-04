@@ -96,7 +96,7 @@ class Imagy
     
     $tenantPrefix = "";
     if (isset($organizationId) && !empty($organizationId)) {
-      $tenantPrefix = "/".config("tenancy.filesystem.suffix_base") . $organizationId;
+      $tenantPrefix = mediaOrganizationPrefix(null,"/","",$organizationId);
     }
     
     if (!$this->isImage($originalImage)) {
@@ -267,13 +267,13 @@ class Imagy
    */
   private function getDestinationPath($path, $disk = null)
   {
-    
+      $tenantPrefix = mediaOrganizationPrefix();
     
       if ($this->getConfiguredFilesystem() === 'local') {
-        return basename(public_path()) .(isset(tenant()->id) ? "organization".tenant()->id : ""). $path;
+        return basename(public_path()) .($tenantPrefix). $path;
       }
   
-      return (isset(tenant()->id) ? "organization".tenant()->id : "").$path;
+      return ($tenantPrefix).$path;
   
     
     
