@@ -31,12 +31,11 @@ if (!function_exists('mediaOrganizationPrefix')) {
   
   function mediaOrganizationPrefix($file = null, $prefix = "", $suffix = "", $organizationId = null, $forced = false)
   {
-    $bootstrappers = config("tenancy.bootstrappers",[]);
-    $foundBootstrapper = array_search(Stancl\Tenancy\Bootstrappers\DatabaseTenancyBootstrapper::class,$bootstrappers);
-  
-    if(isset(tenant()->id) || (isset($file->id) && !empty($file->organization_id)) || !empty($organizationId)){
+    $tenancyMode = config("tenancy.mode",null);
+
+    if((isset($file->id) && !empty($file->organization_id)) && (isset(tenant()->id) || !empty($organizationId))){
       $organizationId = tenant()->id ?? $file->organization_id ?? $organizationId ?? "";
-      if((!($foundBootstrapper>=0) || $forced) && !empty($organizationId)){
+      if((!($tenancyMode=="multiDatabase") || $forced) && !empty($organizationId)){
         return $prefix.config("tenancy.filesystem.suffix_base").$organizationId.$suffix;
       }
     }
