@@ -32,8 +32,8 @@ if (!function_exists('mediaOrganizationPrefix')) {
   function mediaOrganizationPrefix($file = null, $prefix = "", $suffix = "", $organizationId = null, $forced = false)
   {
     $tenancyMode = config("tenancy.mode",null);
-
-    if((isset($file->id) && !empty($file->organization_id)) && (isset(tenant()->id) || !empty($organizationId))){
+    
+    if((isset($file->id) && !empty($file->organization_id)) && (isset(tenant()->id) || !empty($organizationId)) || $tenancyMode=="multiDatabase"){
       $organizationId = tenant()->id ?? $file->organization_id ?? $organizationId ?? "";
       if((!($tenancyMode=="multiDatabase") || $forced) && !empty($organizationId)){
         return $prefix.config("tenancy.filesystem.suffix_base").$organizationId.$suffix;
