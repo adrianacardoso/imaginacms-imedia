@@ -12,7 +12,7 @@ if (!function_exists('mediaMimesAvailableRule')) {
       . "," . join(',', json_decode(setting('media::allowedFileTypes', null, config("asgard.media.config.allowedFileTypes"))))
       . "," . join(',', json_decode(setting('media::allowedVideoTypes', null, config("asgard.media.config.allowedVideoTypes"))))
       . "," . join(',', json_decode(setting('media::allowedAudioTypes', null, config("asgard.media.config.allowedAudioTypes"))));
-    
+
   }
 }
 if (!function_exists('mediaExtensionsAvailable')) {
@@ -28,18 +28,18 @@ if (!function_exists('mediaExtensionsAvailable')) {
   }
 }
 if (!function_exists('mediaOrganizationPrefix')) {
-  
+
   function mediaOrganizationPrefix($file = null, $prefix = "", $suffix = "", $organizationId = null, $forced = false)
   {
-    $tenancyMode = config("tenancy.mode",null);
-    
-    if((isset($file->id) && !empty($file->organization_id)) && (isset(tenant()->id) || !empty($organizationId)) || $tenancyMode=="multiDatabase"){
+    $tenancyMode = config("tenancy.mode", null);
+
+    if ((isset($file->id) && !empty($file->organization_id)) && (isset(tenant()->id) || !empty($organizationId)) || $tenancyMode == "multiDatabase") {
       $organizationId = tenant()->id ?? $file->organization_id ?? $organizationId ?? "";
-      if((!($tenancyMode=="multiDatabase") || $forced) && !empty($organizationId)){
-        return $prefix.config("tenancy.filesystem.suffix_base").$organizationId.$suffix;
+      if ((!($tenancyMode == "multiDatabase") || $forced) && !empty($organizationId)) {
+        return $prefix . config("tenancy.filesystem.suffix_base") . $organizationId . $suffix;
       }
     }
-    
+
     return "";
   }
 }
@@ -95,8 +95,13 @@ if (!function_exists('getUploadedFileFromBase64')) {
 if (!function_exists('getUploadedFileFromUrl')) {
   function getUploadedFileFromUrl(string $url, array $context = []): UploadedFile
   {
+    $tmpRootPath = "/tmp/" . config("app.name");
+    //Validate app folder
+    if (!file_exists($tmpRootPath)) {
+      mkdir($tmpRootPath, 0777, true);
+    }
     //Instance the tmp location
-    $tmpLocation = "/tmp/" . basename($url);
+    $tmpLocation = $tmpRootPath . "/" . basename($url);
     //Instance request context
     $requestContext = ["http" => array_merge_recursive(['method' => 'GET'], $context)];
     //Get File and save as tmp
