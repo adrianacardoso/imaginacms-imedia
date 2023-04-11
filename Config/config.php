@@ -145,4 +145,8 @@ return [
 
   ],
 
+  'documentation' => [
+    'medias' => "media::cms.documentation.medias",
+    'zones' => "media::cms.documentation.zones",
+  ]
 ];
