@@ -46,7 +46,7 @@ class FileService
    */
   public function store(UploadedFile $file, $parentId = 0, $disk = null, $createThumbnails = true)
   {
-    $disk = is_null($disk) ? $this->getConfiguredFilesystem() : $disk;
+    $disk = $this->getConfiguredFilesystem($disk);
 
     //validating avaiable extensions
     $request = new UploadMediaRequest(["file" => $file]);
@@ -127,9 +127,11 @@ class FileService
   /**
    * @return string
    */
-  private function getConfiguredFilesystem()
+  private function getConfiguredFilesystem($disk = "publicmedia")
   {
-    return setting('media::filesystem', null, config("asgard.media.config.filesystem"));
+    $settingDisk = setting('media::filesystem', null, config("asgard.media.config.filesystem"));
+    if($disk == "publicmedia" && $settingDisk == "s3") return $settingDisk;
+    return $disk;
   }
   
   public function addWatermark($file, $zone){
