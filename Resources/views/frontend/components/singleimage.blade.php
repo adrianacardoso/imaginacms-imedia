@@ -12,7 +12,7 @@
 
     @if($isVideo && (isset($mediaFiles->{$zone}->path) || isset($mediaFiles->path)))
       <video class="d-block h-100 cover-img" width="100%" @if($loopVideo) loop @endif @if($autoplayVideo) autoplay
-             @endif @if($mutedVideo) muted @endif>
+             @endif @if($mutedVideo) muted @endif @if($withVideoControls) controls @endif>
         <source src="{{ $mediaFiles->{$zone}->path ?? $mediaFiles->path }}" type="video/mp4">
         <source src="{{ $mediaFiles->{$zone}->path ?? $mediaFiles->path }}" type="video/webm">
         <source src="{{ $mediaFiles->{$zone}->path ?? $mediaFiles->path }}" type="video/ogg">

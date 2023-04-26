@@ -42,6 +42,7 @@ class SingleImage extends Component
   public $autoplayVideo;
   public $mutedVideo;
   public $loopVideo;
+  public $withVideoControls;
 
 
   public function __construct($src = '', $alt = '', $title = null, $url = null, $isMedia = false, $mediaFiles = null,
@@ -49,7 +50,8 @@ class SingleImage extends Component
                               $smallSrc = null, $fallback = null, $imgClasses = '', $linkClasses = '', $linkRel = '',
                               $defaultLinkClasses = 'image-link w-100', $imgStyles = '', $width = "300px",
                               $dataFancybox = null, $dataTarget = null, $dataSlideTo = null, $dataCaption = null,
-                              $target = "_self", $setting = '', $autoplayVideo = true, $loopVideo = true, $mutedVideo = true,$central=false)
+                              $target = "_self", $setting = '', $autoplayVideo = false, $loopVideo = true,
+                              $mutedVideo = true, $central = false, $withVideoControls = false)
   {
     $this->src = $src;
     $this->alt = !empty($alt) ? $alt : $mediaFiles->{$zone}->alt ?? $mediaFiles->alt ?? "";
@@ -70,6 +72,7 @@ class SingleImage extends Component
     $this->autoplayVideo = $autoplayVideo;
     $this->loopVideo = $loopVideo;
     $this->mutedVideo = $mutedVideo;
+    $this->withVideoControls = $withVideoControls;
     if (!empty($setting)) {
 
       // Old
