@@ -17,7 +17,7 @@
         <source src="{{ $mediaFiles->{$zone}->path ?? $mediaFiles->path }}" type="video/ogg">
       </video>
     @elseif ($isSVG)
-    <img src="{{$mediaFiles->{$zone}->path}}"
+    <img src="{{$mediaFiles->{$zone}->path ?? $mediaFiles->path}}"
          alt="{{$alt}}"
          class="lazyload {{$imgClasses}}"
          style="width: 100%; {{$imgStyles}}"

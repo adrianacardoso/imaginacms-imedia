@@ -75,7 +75,8 @@ class SingleImage extends Component
     $this->mutedVideo = $mutedVideo;
     $this->withVideoControls = $withVideoControls;
     $this->isSVG = false;
-    if (isset($mediaFiles->{$zone}->mimeType) && $mediaFiles->{$zone}->mimeType == "image/svg+xml") {
+    if (isset($mediaFiles->{$zone}->mimeType) && $mediaFiles->{$zone}->mimeType == "image/svg+xml" ||
+      isset($mediaFiles->mimeType) && $mediaFiles->mimeType == "image/svg+xml") {
       $this->isSVG = true;
     }
     if (!empty($setting)) {
