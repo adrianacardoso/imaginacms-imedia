@@ -111,6 +111,9 @@ class SingleImage extends Component
       $this->mediaFiles = $mediaFiles;
       $this->zone = $zone ?? "mainimage";
       $this->src = $mediaFiles->{$zone}->extraLargeThumb ?? $mediaFiles->extraLargeThumb;
+      if ($this->isSVG) {
+        $this->src = $mediaFiles->{$zone}->path ?? $mediaFiles->path;
+      }
       $this->fallback = $mediaFiles->{$zone}->path ?? $mediaFiles->path;
       $this->extraLargeSrc = $mediaFiles->{$zone}->extraLargeThumb ?? $mediaFiles->extraLargeThumb;
       $this->largeSrc = $mediaFiles->{$zone}->largeThumb ?? $mediaFiles->largeThumb;
