@@ -18,7 +18,13 @@
       </video>
     @elseif ($isSVG)
     <img src="{{$mediaFiles->{$zone}->path}}"
-         alt="{{$alt}}">
+         alt="{{$alt}}"
+         class="lazyload {{$imgClasses}}"
+         style="width: 100%; {{$imgStyles}}"
+         data-sizes="auto"
+         data-parent-fit="contain"
+         data-parent-container=".image-link"
+    >
     @else
     <!--Use data-srcset, data-src and specify lazyload class for images -->
       <picture style="display: contents; width: 100%">
