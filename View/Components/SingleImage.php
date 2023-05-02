@@ -43,6 +43,7 @@ class SingleImage extends Component
   public $mutedVideo;
   public $loopVideo;
   public $withVideoControls;
+  public $isSVG;
 
 
   public function __construct($src = '', $alt = '', $title = null, $url = null, $isMedia = false, $mediaFiles = null,
@@ -73,20 +74,24 @@ class SingleImage extends Component
     $this->loopVideo = $loopVideo;
     $this->mutedVideo = $mutedVideo;
     $this->withVideoControls = $withVideoControls;
+    $this->isSVG = false;
+    if (isset($mediaFiles->{$zone}->mimeType) && $mediaFiles->{$zone}->mimeType == "image/svg+xml") {
+      $this->isSVG = true;
+    }
     if (!empty($setting)) {
 
       // Old
       //$settingRepository = app("Modules\Setting\Repositories\SettingRepository");
       //$setting = $settingRepository->findByName($setting);
-      
+
       // New
       $setting = Setting::where("name", $setting);
 
-      if($central)
+      if ($central)
         $setting->withoutTenancy()->whereNull("organization_id");
 
-      $setting= $setting->with('files')->first();
-     
+      $setting = $setting->with('files')->first();
+
       if (isset($setting->id)) {
         $isMedia = true;
         $zone = "setting::mainimage";
