@@ -131,7 +131,7 @@ class FileService
   {
     $settingDisk = setting('media::filesystem', null, config("asgard.media.config.filesystem"));
     if($disk == "publicmedia" && $settingDisk == "s3") return $settingDisk;
-    return $disk;
+    return $disk ?? "publicmedia";
   }
   
   public function addWatermark($file, $zone){
