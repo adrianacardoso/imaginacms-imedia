@@ -84,7 +84,7 @@ class Imagy
    */
   public function getThumbnail($originalImage, $thumbnail, $disk = null)
   {
-  
+    $file = $originalImage;
     if ($originalImage instanceof File) {
       $disk = $originalImage->disk;
       $organizationId = $originalImage->organization_id ?? null;
@@ -96,18 +96,18 @@ class Imagy
     
     $tenantPrefix = "";
     if (isset($organizationId) && !empty($organizationId)) {
-      $tenantPrefix = mediaOrganizationPrefix(null,"/","",$organizationId);
+      $tenantPrefix = mediaOrganizationPrefix($file,"/","",$organizationId);
     }
     
     if (!$this->isImage($originalImage)) {
       if ($originalImage instanceof MediaPath) {
         return $originalImage->getUrl($disk, $organizationId ?? null);
       }
-      return (new MediaPath($tenantPrefix . $originalImage, $disk,$organizationId ?? null))->getRelativeUrl();
+      return (new MediaPath($tenantPrefix . $originalImage, $disk,$organizationId ?? null, $file))->getRelativeUrl();
     }
     $path = $this->getFilenameFor($originalImage, $thumbnail);
-    
-    return (new MediaPath($tenantPrefix . $path, $disk))->getUrl($disk);
+ 
+    return (new MediaPath( $path, $disk, $organizationId ?? null, $file))->getUrl($disk);
   }
   
   /**

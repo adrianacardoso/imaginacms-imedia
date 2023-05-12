@@ -66,7 +66,7 @@ class FileService
     //call Method delete for all exist in the disk with the same filename
     $this->imagy->deleteAllFor($savedFile);
   
-    $organizationPrefix = mediaOrganizationPrefix();
+    $organizationPrefix = mediaOrganizationPrefix($savedFile);
     
     $this->filesystem->disk($disk)->writeStream(($organizationPrefix).$savedFile->path->getRelativeUrl(), $stream, [
       'visibility' => 'public',
@@ -131,7 +131,7 @@ class FileService
   {
     $settingDisk = setting('media::filesystem', null, config("asgard.media.config.filesystem"));
     if($disk == "publicmedia" && $settingDisk == "s3") return $settingDisk;
-    return $disk;
+    return $disk ?? "publicmedia";
   }
   
   public function addWatermark($file, $zone){
@@ -151,7 +151,7 @@ class FileService
         //file entity disk
         $disk = is_null($file->disk) ? $this->getConfiguredFilesystem() : $file->disk;
         
-        $tenantPrefix = mediaOrganizationPrefix();
+        $tenantPrefix = mediaOrganizationPrefix($file);
         //creating image in memory
         $image = \Image::make($this->filesystem->disk($disk)->get(($tenantPrefix).$file->path->getRelativeUrl()));
         
