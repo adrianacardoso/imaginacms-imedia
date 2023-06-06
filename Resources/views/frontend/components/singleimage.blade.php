@@ -44,6 +44,7 @@
              data-sizes="auto"
              data-parent-fit="contain"
              data-parent-container=".image-link"
+             fetchpriority="{{$fetchPriority}}"
 
         />
       </picture>
