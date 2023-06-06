@@ -44,6 +44,7 @@ class SingleImage extends Component
   public $loopVideo;
   public $withVideoControls;
   public $fetchPriority;
+  public $isSVG;
 
 
   public function __construct($src = '', $alt = '', $title = null, $url = null, $isMedia = false, $mediaFiles = null,
@@ -74,6 +75,11 @@ class SingleImage extends Component
     $this->loopVideo = $loopVideo;
     $this->mutedVideo = $mutedVideo;
     $this->withVideoControls = $withVideoControls;
+    $this->isSVG = false;
+    if (isset($mediaFiles->{$zone}->mimeType) && $mediaFiles->{$zone}->mimeType == "image/svg+xml" ||
+      isset($mediaFiles->mimeType) && $mediaFiles->mimeType == "image/svg+xml") {
+      $this->isSVG = true;
+    }
     $this->fetchPriority = $fetchPriority;
     if (!empty($setting)) {
       
@@ -98,6 +104,9 @@ class SingleImage extends Component
       $this->mediaFiles = $mediaFiles;
       $this->zone = $zone ?? "mainimage";
       $this->src = $mediaFiles->{$zone}->extraLargeThumb ?? $mediaFiles->extraLargeThumb;
+      if ($this->isSVG) {
+        $this->src = $mediaFiles->{$zone}->path ?? $mediaFiles->path;
+      }
       $this->fallback = $mediaFiles->{$zone}->path ?? $mediaFiles->path;
       $this->extraLargeSrc = $mediaFiles->{$zone}->extraLargeThumb ?? $mediaFiles->extraLargeThumb;
       $this->largeSrc = $mediaFiles->{$zone}->largeThumb ?? $mediaFiles->largeThumb;

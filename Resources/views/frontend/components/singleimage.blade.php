@@ -9,7 +9,6 @@
      {{$dataCaption ? "data-caption=$dataCaption" : ''}} target="{{$target}}"
      rel="{{!empty($linkRel) ? $linkRel : ""}}">
     @endif
-
     @if($isVideo && (isset($mediaFiles->{$zone}->path) || isset($mediaFiles->path)))
       <video class="d-block h-100 cover-img" width="100%" @if($loopVideo) loop @endif @if($autoplayVideo) autoplay
              @endif @if($mutedVideo) muted @endif @if($withVideoControls) controls @endif>
@@ -17,8 +16,17 @@
         <source src="{{ $mediaFiles->{$zone}->path ?? $mediaFiles->path }}" type="video/webm">
         <source src="{{ $mediaFiles->{$zone}->path ?? $mediaFiles->path }}" type="video/ogg">
       </video>
+    @elseif ($isSVG)
+    <img src="{{$mediaFiles->{$zone}->path ?? $mediaFiles->path}}"
+         alt="{{$alt}}"
+         class="lazyload {{$imgClasses}}"
+         style="width: 100%; {{$imgStyles}}"
+         data-sizes="auto"
+         data-parent-fit="contain"
+         data-parent-container=".image-link"
+         fetchpriority="{{$fetchPriority}}"
+    >
     @else
-
     <!--Use data-srcset, data-src and specify lazyload class for images -->
       <picture style="display: contents; width: 100%">
         @if(!empty($smallSrc))

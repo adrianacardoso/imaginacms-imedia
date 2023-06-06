@@ -61,8 +61,7 @@ class File extends CrudModel implements TaggableInterface, Responsable
   {
     $disk = is_null($this->disk) ? setting('media::filesystem', null, config("asgard.media.config.filesystem")) : $this->disk;
 
-
-    return new MediaPath($value, $disk, $this->organization_id);
+    return new MediaPath($value, $disk, $this->organization_id,$this);
   }
 
   public function getPathStringAttribute()

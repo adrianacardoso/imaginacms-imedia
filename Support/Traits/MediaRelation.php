@@ -103,6 +103,7 @@ trait MediaRelation
       'updatedAt' => $file->updated_at ?? null,
       'createdBy' => $file->created_by ?? null
     ];
+  
     //Add imagy
     $thumbnails = app(ThumbnailManager::class)->all();
     foreach ($thumbnails as $thumbnail) {
@@ -110,6 +111,7 @@ trait MediaRelation
       $transformedFile->{$name} = $file && $file->isImage() ? $imagy->getThumbnail($file, $name) : $defaultPath;
       $transformedFile->{'relative' . ucfirst($name)} = $file && $file->isImage() ? str_replace(url("/"), "", $imagy->getThumbnail($file, $name)) : $defaultPath;
     }
+
     //Response
     return $transformedFile;
   }

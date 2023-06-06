@@ -23,8 +23,8 @@ return [
   |--------------------------------------------------------------------------
   */
   'allowed-types' => 'jpg,png,pdf,jpeg,mp4,webm,ogg,svg,webp',
-  'allowedImageTypes' => json_encode(["jpg", "png", "jpeg", "svg", "webp"]),
-  'allowedFileTypes' => json_encode(["pdf", "doc", "docx", "xls", "xlsx"]),
+  'allowedImageTypes' => json_encode(["jpg", "png", "jpeg", "webp"]),
+  'allowedFileTypes' => json_encode(["pdf", "doc", "docx", "xls", "xlsx", "svg"]),
   'allowedVideoTypes' => json_encode(["mp4", "webm", "ogg"]),
   'allowedAudioTypes' => json_encode(["mp3", "avi"]),
   /*

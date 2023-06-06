@@ -35,6 +35,7 @@ if (!function_exists('mediaOrganizationPrefix')) {
 
     if ((isset($file->id) && !empty($file->organization_id)) && (isset(tenant()->id) || !empty($organizationId)) || $tenancyMode == "singleDatabase") {
       $organizationId = tenant()->id ?? $file->organization_id ?? $organizationId ?? "";
+      if(isset($file->id) && empty($file->organization_id)) return "";
       if ((!($tenancyMode == "multiDatabase") || $forced) && !empty($organizationId)) {
         return $prefix . config("tenancy.filesystem.suffix_base") . $organizationId . $suffix;
       }
