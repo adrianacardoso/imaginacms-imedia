@@ -108,8 +108,17 @@ trait MediaRelation
     $thumbnails = app(ThumbnailManager::class)->all();
     foreach ($thumbnails as $thumbnail) {
       $name = $thumbnail->name();
+
       $transformedFile->{$name} = $file && $file->isImage() ? $imagy->getThumbnail($file, $name) : $defaultPath;
       $transformedFile->{'relative' . ucfirst($name)} = $file && $file->isImage() ? str_replace(url("/"), "", $imagy->getThumbnail($file, $name)) : $defaultPath;
+
+      if(isset($file->disk) && $file->disk!="publicmedia"){
+        $thumbnailUrl = app("Modules\Media\Services\\".ucfirst($file->disk)."Service")->getThumbnail($file,$name);
+          
+        $transformedFile->{$name} = $thumbnailUrl;
+        $transformedFile->{'relative' . ucfirst($name)} = $thumbnailUrl;
+      }
+
     }
 
     //Response

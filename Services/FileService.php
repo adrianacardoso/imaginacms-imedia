@@ -78,7 +78,31 @@ class FileService
  
     return $savedFile;
   }
-  
+
+  /**
+   * @param $path - Url from External
+   * @param string $disk - External Name (splash)
+   * @return mixed
+   */
+  public function storeHotLinked($path, $disk = null)
+  {
+
+    $data = app("Modules\Media\Services\\".ucfirst($disk)."Service")->getDataFromUrl($path,$disk);
+ 
+    $data = [
+      'filename' => $data['fileName'],
+      'path' => $path,
+      'extension' => $data['extension'] ?? null,
+      'folder_id' => 0,
+      'is_folder' => 0,
+      'disk' => $disk
+    ];
+    
+    $savedFile = $this->file->create($data);
+ 
+    return $savedFile;
+  }
+
   /**
    * Resize Images based in the setting defaultImageSize
    * @param UploadedFile $file
