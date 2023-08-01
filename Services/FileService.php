@@ -132,7 +132,7 @@ class FileService
    */
   private function createThumbnails(File $savedFile)
   {
-    $this->dispatch(new CreateThumbnails($savedFile->path, $savedFile->disk))->onQueue("media");
+    $this->dispatch(new CreateThumbnails($savedFile->path, $savedFile->disk));
   }
   
   /**

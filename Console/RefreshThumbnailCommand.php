@@ -33,7 +33,7 @@ class RefreshThumbnailCommand extends Command
         $this->line('Preparing to regenerate all thumbnails...');
 
         $allFiles = $this->file->all();
-        $this->dispatch(new RebuildThumbnails($allFiles->pluck('path')))->onQueue("media");
+        $this->dispatch(new RebuildThumbnails($allFiles->pluck('path')));
         
       foreach ($allFiles as $file){
           $file->touch();
