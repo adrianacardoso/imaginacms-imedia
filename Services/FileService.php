@@ -91,7 +91,7 @@ class FileService
  
     $data = [
       'filename' => $data['fileName'],
-      'path' => $path,
+      'path' => $data['path'],
       'extension' => $data['extension'] ?? null,
       'folder_id' => 0,
       'is_folder' => 0,
