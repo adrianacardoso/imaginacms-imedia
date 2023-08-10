@@ -22,6 +22,17 @@ class UnsplashService
         if(isset($query['fm']))
           $data['extension'] = $query['fm'];
 
+        //\Log::info("First Url: ".$url);
+        
+        //Clean Params
+        unset($query['ixid']);
+        unset($query['ixlib']);
+        $newParams = http_build_query($query);
+
+        //New Path (size restriction per DB)
+        $newPath = $parts['scheme']."://".$parts['host'].$parts['path']."?".$newParams;
+        $data['path'] = $newPath;
+
         return $data;
 
     }
