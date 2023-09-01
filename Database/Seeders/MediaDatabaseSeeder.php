@@ -16,10 +16,9 @@ class MediaDatabaseSeeder extends Seeder
   public function run()
   {
     Model::unguard();
-    Model::unguard();
     ProcessSeeds::dispatch([
       "baseClass" => "\Modules\Media\Database\Seeders",
-      "seeds" => ["MediaModuleTableSeeder", "DeleteSvgOfImageTypes"]
+      "seeds" => ["MediaModuleTableSeeder", "DeleteSvgOfImageTypes", "ValidateHasThumbnailsTableSeeder"]
     ]);
   }
 }

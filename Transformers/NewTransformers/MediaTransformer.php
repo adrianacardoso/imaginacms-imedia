@@ -30,11 +30,12 @@ class MediaTransformer extends JsonResource
 
   public function toArray($request)
   {
+    $filePath = $this->getPath();
 
     $data = [
       'id' => $this->id,
       'filename' => $this->filename,
-      'path' => $this->getPath(),
+      'path' => $filePath,
       'isImage' => $this->isImage(),
       'isFolder' => $this->isFolder(),
       'mediaType' => $this->media_type,
@@ -45,13 +46,12 @@ class MediaTransformer extends JsonResource
       'disk' => $this->disk,
       'extension' => $this->extension,
       'zone' => $this->when(isset($this->pivot->zone) && !empty($this->pivot->zone), $this->pivot->zone ?? null),
-      'smallThumb' => $this->imagy->getThumbnail($this->resource, 'smallThumb'),
-      'mediumThumb' => $this->imagy->getThumbnail($this->resource, 'mediumThumb'),
-      'largeThumb' => $this->imagy->getThumbnail($this->resource, 'largeThumb'),
-      'extraLargeThumb' => $this->imagy->getThumbnail($this->resource, 'extraLargeThumb'),
+      'smallThumb' => $this->has_thumbnails ? $this->imagy->getThumbnail($this->resource, 'smallThumb') : $filePath,
+      'mediumThumb' => $this->has_thumbnails ? $this->imagy->getThumbnail($this->resource, 'mediumThumb') : $filePath,
+      'largeThumb' => $this->has_thumbnails ? $this->imagy->getThumbnail($this->resource, 'largeThumb') : $filePath,
+      'extraLargeThumb' => $this->has_thubmnails ? $this->imagy->getThumbnail($this->resource, 'extraLargeThumb') : $filePath,
       'createdBy' => $this->created_by,
       'url' => $this->url ?? '#',
-
     ];
 
     $data['createdByUser'] = new UserTransformer($this->createdBy);
@@ -65,14 +65,14 @@ class MediaTransformer extends JsonResource
         'size' => $thumbnail->size(),
       ];
     }
-  
+
     $filter = json_decode($request->filter);
-  
+
     // Return data with available translations
     if (isset($filter->allTranslations) && $filter->allTranslations) {
       // Get langs avaliables
       $languages = \LaravelLocalization::getSupportedLocales();
-    
+
       foreach ($languages as $lang => $value) {
         $data[$lang]['description'] = $this->hasTranslation($lang) ?
           $this->translate("$lang")['description'] : '';
@@ -82,7 +82,7 @@ class MediaTransformer extends JsonResource
           $this->translate("$lang")['keywords'] : '';
       }
     }
-    
+
 
     foreach ($this->tags as $tag) {
       $data['tags'][] = $tag->name;

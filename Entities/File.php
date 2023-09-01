@@ -46,6 +46,7 @@ class File extends CrudModel implements TaggableInterface, Responsable
     'folder_id',
     'created_by',
     'has_watermark',
+    'has_thumbnails',
     'disk'
   ];
   protected $appends = ['path_string', 'media_type'];
@@ -61,7 +62,7 @@ class File extends CrudModel implements TaggableInterface, Responsable
   {
     $disk = is_null($this->disk) ? setting('media::filesystem', null, config("asgard.media.config.filesystem")) : $this->disk;
 
-    return new MediaPath($value, $disk, $this->organization_id,$this);
+    return new MediaPath($value, $disk, $this->organization_id, $this);
   }
 
   public function getPathStringAttribute()
@@ -77,7 +78,7 @@ class File extends CrudModel implements TaggableInterface, Responsable
   public function getUrlAttribute()
   {
     if ($this->disk == 'privatemedia') {
-      return \URL::route('public.media.media.show', [ 'criteria' => $this->id]);
+      return \URL::route('public.media.media.show', ['criteria' => $this->id]);
     } else {
       return (string)$this->path;
     }
