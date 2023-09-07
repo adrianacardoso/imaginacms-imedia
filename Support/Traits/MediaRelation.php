@@ -45,16 +45,9 @@ trait MediaRelation
   public function mediaFiles()
   {
     $files = $this->files;//Get files
-
-    //Get entity attributes
-    $entityNamespace = get_class($this);
-    $entityNamespaceExploded = explode('\\', strtolower($entityNamespace));
-    $moduleName = $entityNamespaceExploded[1];//Get module name
-    $entityName = $entityNamespaceExploded[3];//Get entity name
+    $classInfo = $this->getClassInfo();
     //Get media fillable
-    $mediaFillable = config("asgard.{$moduleName}.config.mediaFillable.{$entityName}") ?? [];
-    //Define default image
-    $defaultPath = strtolower(url("modules/{$moduleName}/img/{$entityName}/default.jpg"));
+    $mediaFillable = config("asgard.{$classInfo["moduleName"]}.config.mediaFillable.{$classInfo["entityName"]}") ?? [];
     $response = [];//Default response
 
     //Transform Files
@@ -70,7 +63,7 @@ trait MediaRelation
 
       //Transform files
       foreach ($filesByZone as $file) {
-        $transformedFile = $this->transformFile($file, $defaultPath);
+        $transformedFile = $this->transformFile($file);
         //Add to response
         if ($fileType == 'multiple') {
           if ($file) array_push($response[$zone], $transformedFile);
@@ -81,11 +74,27 @@ trait MediaRelation
     return (object)$response;
   }
 
-  public function transformFile($file, $defaultPath)
+  public function transformFile($file, $defaultPath = null)
   {
     //Create a mokup of a file if not exist
-    if (!$file) $file = new File(['path' => $defaultPath, 'is_folder' => 0]);
+    if (!$file){
+      if(!$defaultPath) {
+        $classInfo = $this->getClassInfo();
+        $defaultPath = strtolower(url("modules/{$classInfo["moduleName"]}/img/{$classInfo["entityName"]}/default.jpg"));
+      }
+      $file = new File(['path' => $defaultPath, 'is_folder' => 0]);
+    }
     //Transform the file
     return json_decode(json_encode(new MediaTransformer($file)));
+  }
+
+  private function getClassInfo()
+  {
+    $entityNamespace = get_class($this);
+    $entityNamespaceExploded = explode('\\', strtolower($entityNamespace));
+    return [
+      "moduleName" => $entityNamespaceExploded[1],
+      "entityName" => $entityNamespaceExploded[3],
+    ];
   }
 }
