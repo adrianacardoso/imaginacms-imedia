@@ -73,7 +73,7 @@ class MediaTransformer extends JsonResource
       $data['relative' . ucfirst($thumbnailName)] = str_replace(url("/"), "", $thumbnailPath);
     }
 
-    $filter = json_decode($request->filter);
+    $filter = json_decode(json_encode($request->filter));
     // Return data with available translations
     if (isset($filter->allTranslations) && $filter->allTranslations) {
       // Get langs avaliables
