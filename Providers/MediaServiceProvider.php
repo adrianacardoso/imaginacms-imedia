@@ -36,6 +36,8 @@ use Modules\Media\Repositories\FolderRepository;
 use Modules\Media\Repositories\ZoneRepository;
 use Modules\Tag\Repositories\TagManager;
 use Illuminate\Support\Facades\Blade;
+use Modules\Media\Events\FileWasCreated;
+use Modules\Media\Events\Handlers\GenerateTokenFilePrivate;
 
 class MediaServiceProvider extends ServiceProvider
 {
@@ -101,6 +103,7 @@ class MediaServiceProvider extends ServiceProvider
     $events->listen(FolderWasUpdated::class, RenameFolderOnDisk::class);
     $events->listen(FolderIsDeleting::class, DeleteFolderOnDisk::class);
     $events->listen(FolderIsDeleting::class, DeleteAllChildrenOfFolder::class);
+    $events->listen(FileWasCreated::class, GenerateTokenFilePrivate::class);
 
     $this->app[TagManager::class]->registerNamespace(new File());
     $this->registerThumbnails();

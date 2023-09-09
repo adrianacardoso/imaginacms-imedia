@@ -51,7 +51,7 @@ class File extends CrudModel implements TaggableInterface, Responsable
   ];
   protected $appends = ['path_string', 'media_type'];
   protected $casts = ['is_folder' => 'boolean'];
-  protected $with = ["createdBy","tags"];
+  protected $with = ["createdBy", "tags"];
   protected static $entityNamespace = 'asgardcms/media';
 
   public function parent_folder()
@@ -79,7 +79,8 @@ class File extends CrudModel implements TaggableInterface, Responsable
   public function getUrlAttribute()
   {
     if ($this->disk == 'privatemedia') {
-      return \URL::route('public.media.media.show', ['criteria' => $this->id]);
+      $itemToken = \DB::table('isite__tokenables')->where('entity_id', '=', $this->id)->first();
+      return \URL::route('public.media.media.show', ['criteria' => $this->id, 'token' => $itemToken->token ?? null]);
     } else {
       return (string)$this->path;
     }
