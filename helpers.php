@@ -96,7 +96,8 @@ if (!function_exists('getUploadedFileFromBase64')) {
 if (!function_exists('getUploadedFileFromUrl')) {
   function getUploadedFileFromUrl(string $url, array $context = [], array $params = []): UploadedFile
   {
-    $basename = $params["file_name"] ?? basename($url);
+    $path = parse_url($url, PHP_URL_PATH);
+    $basename = $params["file_name"] ?? basename($path);
     $tmpRootPath = "/tmp/" . config("app.name");
     //Validate app folder
     if (!file_exists($tmpRootPath)) {
