@@ -94,15 +94,17 @@ if (!function_exists('getUploadedFileFromBase64')) {
 }
 
 if (!function_exists('getUploadedFileFromUrl')) {
-  function getUploadedFileFromUrl(string $url, array $context = []): UploadedFile
+  function getUploadedFileFromUrl(string $url, array $context = [], array $params = []): UploadedFile
   {
+    $path = parse_url($url, PHP_URL_PATH);
+    $basename = $params["file_name"] ?? basename($path);
     $tmpRootPath = "/tmp/" . config("app.name");
     //Validate app folder
     if (!file_exists($tmpRootPath)) {
       mkdir($tmpRootPath, 0777, true);
     }
     //Instance the tmp location
-    $tmpLocation = $tmpRootPath . "/" . basename($url);
+    $tmpLocation = $tmpRootPath . "/" .$basename;
     //Instance request context
     $requestContext = ["http" => array_merge_recursive(['method' => 'GET'], $context)];
     //Get File and save as tmp
