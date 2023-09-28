@@ -3,14 +3,12 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddSortable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('media__imageables', function (Blueprint $table) {
             $table->integer('order')->nullable()->after('zone');
@@ -19,13 +17,11 @@ class AddSortable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('media__imageables', function (Blueprint $table) {
             $table->dropColumn('order');
         });
     }
-}
+};
