@@ -29,6 +29,7 @@
     "intervention/image": "^2.5",
     "imagina/tag-module": "v10.x-dev",
     "guzzlehttp/psr7": "^2.6.*"
+    
   },
   "require-dev": {
     "orchestra/testbench": "^8.5",
