@@ -377,7 +377,7 @@ class EloquentFileRepository extends EloquentBaseRepository implements FileRepos
     if (isset($params->page) && $params->page) {
       $response = $query->paginate($params->take);
     } else {
-      $params->take ? $query->take($params->take) : false;//Take
+      isset($params->take) ? $query->take($params->take) : false;//Take
       $response = $query->get();
     }
 
@@ -506,11 +506,11 @@ class EloquentFileRepository extends EloquentBaseRepository implements FileRepos
     if (!isset($params->permissions['media.medias.index-all']) ||
       (isset($params->permissions['media.medias.index-all']) &&
         !$params->permissions['media.medias.index-all'])) {
-      $user = $params->user;
+      $user = $params->user ?? null;
 
-      $role = $params->role;
+      $role = $params->role ?? null;
       // if is salesman or salesman manager or salesman sub manager
-      $query->where('created_by', $user->id);
+      $query->where('created_by', $user->id ?? null);
 
 
     }
