@@ -48,6 +48,14 @@ class EloquentFileRepository extends EloquentBaseRepository implements FileRepos
   {
     $fileName = FileHelper::slug($file->getClientOriginalName());
 
+    $existFile = $this->model->where('filename', $fileName)
+      ->where('extension', substr(strrchr($fileName, '.'), 1))
+      ->where('filesize', $file->getFileInfo()->getSize())
+      ->where('is_folder', 0)
+      ->first();
+
+    if($existFile) return $existFile;
+
     $exists = $this->model->where('filename', $fileName)->where('folder_id', $parentId)->where('disk', $disk)->first();
 
     if ($exists) {
