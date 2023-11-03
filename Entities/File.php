@@ -93,8 +93,19 @@ class File extends CrudModel implements TaggableInterface, Responsable
 
   public function isImage()
   {
+
     $imageExtensions = json_decode(setting('media::allowedImageTypes', null, config("asgard.media.config.allowedImageTypes")));
-    return in_array(pathinfo($this->path, PATHINFO_EXTENSION), $imageExtensions);
+    
+    // Case external disk
+    if (isset($this->disk) && !in_array($this->disk, array_keys(config("filesystems.disks")))){
+
+      $dataExternalImg = app("Modules\Media\Services\\" . ucfirst($this->disk) . "Service")->getDataFromUrl($this->path);
+      return in_array($dataExternalImg['extension'], $imageExtensions);
+
+    }else{
+      return in_array(pathinfo($this->path, PATHINFO_EXTENSION), $imageExtensions);
+    } 
+    
   }
 
 
