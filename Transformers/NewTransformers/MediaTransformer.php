@@ -122,11 +122,16 @@ class MediaTransformer extends JsonResource
 
   private function getValidatedThumbnail($thumbnailName)
   {
-    //Validate the attribute has_thumbnail
-    if (!$this->has_thumbnails) return $this->getPath();
+    
+    //\Log::info("Media|Transformers|getValidatedThumbnail|: ".$thumbnailName);
+
     //Validate if not is in disk
     if (isset($this->disk) && !in_array($this->disk, array_keys(config("filesystems.disks"))))
-      return app("Modules\Media\Services\\" . ucfirst($this->disk) . "Service")->getThumbnail($this->resource, $name);
+      return app("Modules\Media\Services\\" . ucfirst($this->disk) . "Service")->getThumbnail($this->resource, $thumbnailName);
+    
+    //Validate the attribute has_thumbnail
+    if (!$this->has_thumbnails) return $this->getPath();
+    
     //Default thumbnails
     return $this->imagy->getThumbnail($this->resource, $thumbnailName);
   }
