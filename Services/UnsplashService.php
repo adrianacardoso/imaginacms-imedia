@@ -22,9 +22,9 @@ class UnsplashService
     /**
      * Get data from url (needed to save to the database later)
      */
-    public function getDataFromUrl(string $url,string $disk)
+    public function getDataFromUrl(string $url,string $disk = null)
     {
-        \Log::info($this->log."getDataFromUrl");
+        //\Log::info($this->log."getDataFromUrl");
 
         $parts = parse_url($url);
         $data['fileName'] = substr($parts['path'], 1);
