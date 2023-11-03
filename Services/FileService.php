@@ -95,7 +95,8 @@ class FileService
       'extension' => $data['extension'] ?? null,
       'folder_id' => 0,
       'is_folder' => 0,
-      'disk' => $disk
+      'disk' => $disk,
+      'mimetype' => $data['mimetype'] ?? null
     ];
 
     $savedFile = $this->file->create($data);
