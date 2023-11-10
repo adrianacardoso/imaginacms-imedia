@@ -19,6 +19,12 @@ return [
   'files-path' => '/assets/media/',
   /*
   |--------------------------------------------------------------------------
+  | Specify all file extensions that do not require resizing images and creating thumbnails.
+  |--------------------------------------------------------------------------
+  */
+  'typesWithoutResizeImagesAndCreateThumbnails' => ['gif'],
+  /*
+  |--------------------------------------------------------------------------
   | Specify all the allowed file extensions a user can upload on the server
   |--------------------------------------------------------------------------
   */
