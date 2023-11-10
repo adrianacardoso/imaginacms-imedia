@@ -48,6 +48,8 @@ class FileService
   {
     $disk = $this->getConfiguredFilesystem($disk);
 
+    $typesWithoutResizeImagesAndCreateThumbnails = config("asgard.media.config.typesWithoutResizeImagesAndCreateThumbnails");
+
     //validating avaiable extensions
     $request = new UploadMediaRequest(["file" => $file]);
     $validator = Validator::make($request->all(), $request->rules(), $request->messages());
@@ -58,7 +60,9 @@ class FileService
     }
     $savedFile = $this->file->createFromFile($file, $parentId, $disk);
 
-    $this->resizeImages($file, $savedFile);
+    if (!in_array($savedFile->extension, $typesWithoutResizeImagesAndCreateThumbnails)) {
+      $this->resizeImages($file, $savedFile);
+    }
 
     $path = $this->getDestinationPath($savedFile->getRawOriginal('path'));
     $stream = fopen($file->getRealPath(), 'r+');
@@ -68,13 +72,14 @@ class FileService
 
     $organizationPrefix = mediaOrganizationPrefix($savedFile);
 
-    $this->filesystem->disk($disk)->writeStream(($organizationPrefix).$savedFile->path->getRelativeUrl(), $stream, [
+    $this->filesystem->disk($disk)->writeStream(($organizationPrefix) . $savedFile->path->getRelativeUrl(), $stream, [
       'visibility' => 'public',
       'mimetype' => $savedFile->mimetype,
     ]);
 
-    if ($createThumbnails)
+    if (!in_array($savedFile->extension, $typesWithoutResizeImagesAndCreateThumbnails) && $createThumbnails) {
       $this->createThumbnails($savedFile);
+    }
 
     return $savedFile;
   }
@@ -87,7 +92,7 @@ class FileService
   public function storeHotLinked($path, $disk = null)
   {
 
-    $data = app("Modules\Media\Services\\".ucfirst($disk)."Service")->getDataFromUrl($path,$disk);
+    $data = app("Modules\Media\Services\\" . ucfirst($disk) . "Service")->getDataFromUrl($path, $disk);
 
     $data = [
       'filename' => $data['fileName'],
@@ -155,20 +160,21 @@ class FileService
   private function getConfiguredFilesystem($disk = "publicmedia")
   {
     $settingDisk = setting('media::filesystem', null, config("asgard.media.config.filesystem"));
-    if($disk == "publicmedia" && $settingDisk == "s3") return $settingDisk;
+    if ($disk == "publicmedia" && $settingDisk == "s3") return $settingDisk;
     return $disk ?? "publicmedia";
   }
 
-  public function addWatermark($file, $zone){
+  public function addWatermark($file, $zone)
+  {
 
     //if the watermark zone exist in DB and if is image exclusively
-    if(isset($zone->mediaFiles()->watermark->id) && $file->isImage()){
+    if (isset($zone->mediaFiles()->watermark->id) && $file->isImage()) {
 
       //getting watermark file from the DB
       $watermarkFile = File::find($zone->mediaFiles()->watermark->id);
 
       //if exist the watermark file in the DB
-      if(isset($watermarkFile->id)){
+      if (isset($watermarkFile->id)) {
 
         //watermark file disk
         $watermarkDisk = is_null($watermarkFile->disk) ? $this->getConfiguredFilesystem() : $watermarkFile->disk;
@@ -178,12 +184,12 @@ class FileService
 
         $tenantPrefix = mediaOrganizationPrefix($file);
         //creating image in memory
-        $image = \Image::make($this->filesystem->disk($disk)->get(($tenantPrefix).$file->path->getRelativeUrl()));
+        $image = \Image::make($this->filesystem->disk($disk)->get(($tenantPrefix) . $file->path->getRelativeUrl()));
 
         // insert watermark at center corner with 0px offset by default
         $image->insert(
-          //file path from specific disk
-          $this->filesystem->disk($watermarkDisk)->path(($tenantPrefix).$watermarkFile->path->getRelativeUrl()),
+        //file path from specific disk
+          $this->filesystem->disk($watermarkDisk)->path(($tenantPrefix) . $watermarkFile->path->getRelativeUrl()),
           //position inside the base image
           $zone->options->watermarkPosition ?? "center",
           //X axis position
@@ -193,7 +199,7 @@ class FileService
         );
 
         //put the new file in the same location of the current entity file
-        $this->filesystem->disk($disk)->put(($tenantPrefix).$file->path->getRelativeUrl(), $image->stream($file->extension,100));
+        $this->filesystem->disk($disk)->put(($tenantPrefix) . $file->path->getRelativeUrl(), $image->stream($file->extension, 100));
 
         //regenerate thumbnails
         $this->createThumbnails($file);
