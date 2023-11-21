@@ -76,22 +76,28 @@ trait MediaRelation
 
   public function transformFile($file, $defaultPath = null)
   {
+    $classInfo = $this->getClassInfo();
     //Create a mokup of a file if not exist
     if (!$file){
       if(!$defaultPath) {
-        $classInfo = $this->getClassInfo();
         $defaultPath = strtolower(url("modules/{$classInfo["moduleName"]}/img/{$classInfo["entityName"]}/default.jpg"));
       }
       $file = new File(['path' => $defaultPath, 'is_folder' => 0]);
     }
+
     //Transform the file
-    return json_decode(json_encode(new MediaTransformer($file)));
+    $transformerParams = $classInfo['entityName'] == 'user' ? ['ignoreUser' => true] : [];
+    return json_decode(json_encode(new MediaTransformer($file, $transformerParams)));
   }
 
   private function getClassInfo()
   {
     $entityNamespace = get_class($this);
     $entityNamespaceExploded = explode('\\', strtolower($entityNamespace));
+
+    //Custom Rvalidation to user ent¡ty
+    if($entityNamespaceExploded[3] == 'sentinel') $entityNamespaceExploded[3] = 'user';
+
     return [
       "moduleName" => $entityNamespaceExploded[1],
       "entityName" => $entityNamespaceExploded[3],
