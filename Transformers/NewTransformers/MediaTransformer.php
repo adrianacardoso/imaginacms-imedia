@@ -21,12 +21,15 @@ class MediaTransformer extends JsonResource
   private $thumbnailManager;
   private $defaultUrl;
 
-  public function __construct($resource)
+  private $params;
+
+  public function __construct($resource, $params = [])
   {
     parent::__construct($resource);
 
     $this->imagy = app(Imagy::class);
     $this->thumbnailManager = app(ThumbnailManager::class);
+    $this->params = $params;
     $this->instancesDefaultUrl();
   }
 
@@ -57,7 +60,7 @@ class MediaTransformer extends JsonResource
       'extension' => $this->extension,
       'zone' => $this->when(isset($this->pivot->zone) && !empty($this->pivot->zone), $this->pivot->zone ?? null),
       'url' => $this->url ?? '#',
-      'createdByUser' => new UserTransformer($this->createdBy),
+      'createdByUser' => isset($this->params["ignoreUser"]) ? null : new UserTransformer($this->createdBy),
       'tags' => $this->tags->pluck('name')->toArray(),
     ];
 
@@ -122,16 +125,16 @@ class MediaTransformer extends JsonResource
 
   private function getValidatedThumbnail($thumbnailName)
   {
-    
+
     //\Log::info("Media|Transformers|getValidatedThumbnail|: ".$thumbnailName);
 
     //Validate if not is in disk
     if (isset($this->disk) && !in_array($this->disk, array_keys(config("filesystems.disks"))))
       return app("Modules\Media\Services\\" . ucfirst($this->disk) . "Service")->getThumbnail($this->resource, $thumbnailName);
-    
+
     //Validate the attribute has_thumbnail
     if (!$this->has_thumbnails) return $this->getPath();
-    
+
     //Default thumbnails
     return $this->imagy->getThumbnail($this->resource, $thumbnailName);
   }
