@@ -18,7 +18,7 @@ class ValidateHasThumbnailsTableSeeder extends Seeder
   {
     Model::unguard();
     $imagy = app(Imagy::class);
-    $imageExtensions = json_decode(setting('media::allowedImageTypes', null, config("asgard.media.config.allowedImageTypes")));
+    $imageExtensions = (array)json_decode(setting('media::allowedImageTypes', null, config("asgard.media.config.allowedImageTypes")));
     $files = File::where('has_thumbnails', false)->whereIn('extension', $imageExtensions)->get();
     //Validate if has thumbnails
     foreach ($files as $file) {
