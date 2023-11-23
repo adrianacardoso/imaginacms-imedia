@@ -8,10 +8,10 @@ if (!function_exists('mediaMimesAvailableRule')) {
 
   function mediaMimesAvailableRule()
   {
-    return 'mimes:' . join(',', json_decode(setting('media::allowedImageTypes', null, config("asgard.media.config.allowedImageTypes"))))
-      . "," . join(',', json_decode(setting('media::allowedFileTypes', null, config("asgard.media.config.allowedFileTypes"))))
-      . "," . join(',', json_decode(setting('media::allowedVideoTypes', null, config("asgard.media.config.allowedVideoTypes"))))
-      . "," . join(',', json_decode(setting('media::allowedAudioTypes', null, config("asgard.media.config.allowedAudioTypes"))));
+    return 'mimes:' . join(',', (array)json_decode(setting('media::allowedImageTypes', null, config("asgard.media.config.allowedImageTypes"))))
+      . "," . join(',', (array)json_decode(setting('media::allowedFileTypes', null, config("asgard.media.config.allowedFileTypes"))))
+      . "," . join(',', (array)json_decode(setting('media::allowedVideoTypes', null, config("asgard.media.config.allowedVideoTypes"))))
+      . "," . join(',', (array)json_decode(setting('media::allowedAudioTypes', null, config("asgard.media.config.allowedAudioTypes"))));
 
   }
 }
