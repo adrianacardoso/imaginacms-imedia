@@ -80,7 +80,7 @@ trait MediaRelation
     //Create a mokup of a file if not exist
     if (!$file){
       if(!$defaultPath) {
-        $defaultPath = strtolower(url("modules/{$classInfo["moduleName"]}/img/{$classInfo["entityName"]}/default.jpg"));
+        $defaultPath = strtolower("/modules/{$classInfo["moduleName"]}/img/{$classInfo["entityName"]}/default.jpg");
       }
       $file = new File(['path' => $defaultPath, 'is_folder' => 0]);
     }
