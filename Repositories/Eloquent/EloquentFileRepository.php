@@ -234,7 +234,7 @@ class EloquentFileRepository extends EloquentBaseRepository implements FileRepos
 
     /*== RELATIONSHIPS ==*/
     if (in_array('*', $params->include ?? [])) {//If Request all relationships
-      $query->with(["createdBy"]);
+      $query->with([]);
     } else {//Especific relationships
       $includeDefault = [];//Default relationships
       if (isset($params->include))//merge relations with default relationships

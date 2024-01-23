@@ -60,7 +60,7 @@ class MediaTransformer extends JsonResource
       'extension' => $this->extension,
       'zone' => $this->when(isset($this->pivot->zone) && !empty($this->pivot->zone), $this->pivot->zone ?? null),
       'url' => $this->url ?? '#',
-      'createdByUser' => isset($this->params["ignoreUser"]) ? null : new UserTransformer($this->createdBy),
+      'createdByUser' => isset($this->params["ignoreUser"]) ? null : new UserTransformer($this->whenLoaded('createdBy')),
       'tags' => $this->tags->pluck('name')->toArray(),
     ];
 
