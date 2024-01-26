@@ -35,7 +35,7 @@ if (!function_exists('mediaOrganizationPrefix')) {
 
     if ((isset($file->id) && !empty($file->organization_id)) && (isset(tenant()->id) || !empty($organizationId)) || $tenancyMode == "singleDatabase") {
       $organizationId = tenant()->id ?? $file->organization_id ?? $organizationId ?? "";
-      if(isset($file->id) && empty($file->organization_id)) return "";
+      if (isset($file->id) && empty($file->organization_id)) return "";
       if ((!($tenancyMode == "multiDatabase") || $forced) && !empty($organizationId)) {
         return $prefix . config("tenancy.filesystem.suffix_base") . $organizationId . $suffix;
       }
@@ -104,7 +104,7 @@ if (!function_exists('getUploadedFileFromUrl')) {
       mkdir($tmpRootPath, 0777, true);
     }
     //Instance the tmp location
-    $tmpLocation = $tmpRootPath . "/" .$basename;
+    $tmpLocation = $tmpRootPath . "/" . $basename;
     //Instance request context
     $requestContext = ["http" => array_merge_recursive(['method' => 'GET'], $context)];
     //Get File and save as tmp
@@ -118,5 +118,14 @@ if (!function_exists('getUploadedFileFromUrl')) {
       0,
       true // Mark it as test, since the file isn't from real HTTP POST.
     );
+  }
+}
+if (!function_exists('validateMediaDefaultUrl')) {
+  function validateMediaDefaultPath($path)
+  {
+    //If path include word ad replace by media default path to prevent issues with ad blockers
+    if (str_contains(strtolower($path), 'ad')) $path = "modules/media/img/file/default.jpg";
+    //Response
+    return $path;
   }
 }

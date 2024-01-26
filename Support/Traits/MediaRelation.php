@@ -81,6 +81,7 @@ trait MediaRelation
     if (!$file){
       if(!$defaultPath) {
         $defaultPath = strtolower("/modules/{$classInfo["moduleName"]}/img/{$classInfo["entityName"]}/default.jpg");
+        $defaultPath = validateMediaDefaultPath($defaultPath);
       }
       $file = new File(['path' => $defaultPath, 'is_folder' => 0]);
     }

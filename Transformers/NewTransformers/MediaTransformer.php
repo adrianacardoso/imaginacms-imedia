@@ -102,7 +102,8 @@ class MediaTransformer extends JsonResource
     $moduleName = $entityNamespaceExploded[1];//Get module name
     $entityName = $entityNamespaceExploded[3];//Get entity name
     //Define default image
-    $this->defaultUrl = strtolower(url("modules/{$moduleName}/img/{$entityName}/default.jpg"));
+    $path = validateMediaDefaultPath("modules/{$moduleName}/img/{$entityName}/default.jpg");
+    $this->defaultUrl = strtolower(url($path));
   }
 
   private function getPath()
