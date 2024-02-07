@@ -51,7 +51,7 @@ class MediaApiController extends BaseApiController
     try {
       //Get Parameters from URL.
       $params = $this->getParamsRequest($request);
-      
+    
       //Request to Repository
       $dataEntity = $this->file->getItemsBy($params);
       
