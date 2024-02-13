@@ -78,8 +78,8 @@ trait MediaRelation
   {
     $classInfo = $this->getClassInfo();
     //Create a mokup of a file if not exist
-    if (!$file){
-      if(!$defaultPath) {
+    if (!$file) {
+      if (!$defaultPath) {
         $defaultPath = strtolower("/modules/{$classInfo["moduleName"]}/img/{$classInfo["entityName"]}/default.jpg");
         $defaultPath = validateMediaDefaultPath($defaultPath);
       }
@@ -97,11 +97,26 @@ trait MediaRelation
     $entityNamespaceExploded = explode('\\', strtolower($entityNamespace));
 
     //Custom Rvalidation to user ent¡ty
-    if($entityNamespaceExploded[3] == 'sentinel') $entityNamespaceExploded[3] = 'user';
+    if ($entityNamespaceExploded[3] == 'sentinel') $entityNamespaceExploded[3] = 'user';
 
     return [
       "moduleName" => $entityNamespaceExploded[1],
       "entityName" => $entityNamespaceExploded[3],
     ];
+  }
+
+  /**
+   * Return the media fields with files IDs
+   * @return void
+   */
+  public function getMediaFields()
+  {
+    $response = ['mediasSingle' => [], 'mediasMulti' => []];
+    foreach ($this->mediaFiles() as $zone => $files) {
+      if (is_array($files)) {
+        $response['mediasMulti'][$zone] = ['files' => collect($files)->pluck('id')->toArray()];
+      } else if ($files->id) $response['mediasSingle'][$zone] = $files->id;
+    }
+    return $response;
   }
 }
