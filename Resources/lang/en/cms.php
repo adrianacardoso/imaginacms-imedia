@@ -41,6 +41,7 @@ return [
     'medias' => "All the files that are loaded in your application are stored here, and they are sorted by folders",
     'zones' => "The application identifies files related to other modules by zones, these zones define
      how many files and how to select it in relation",
-  ]
+  ],
+  "thumbnailsConfig" => "Thumbnails config"
 ];
 

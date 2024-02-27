@@ -41,6 +41,7 @@ return [
     'medias' => "Aquí se almacenan todos los archivos que se cargan en tu aplicación, y se ordenan por carpetas",
     'zones' => "La aplicación identifica los archivos relacionados con otros módulos por zonas, estas zonas definen
     cuantos archivos y de que manera seleccionarlo en relación",
-  ]
+  ],
+  "thumbnailsConfig" => "Configuración de Miniaturas"
 ];
 
