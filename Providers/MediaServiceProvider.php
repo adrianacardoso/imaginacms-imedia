@@ -36,6 +36,8 @@ use Modules\Media\Repositories\FolderRepository;
 use Modules\Media\Repositories\ZoneRepository;
 use Modules\Tag\Repositories\TagManager;
 use Illuminate\Support\Facades\Blade;
+use Modules\Media\Events\FileWasCreated;
+use Modules\Media\Events\Handlers\GenerateTokenFilePrivate;
 
 class MediaServiceProvider extends ServiceProvider
 {
@@ -101,6 +103,7 @@ class MediaServiceProvider extends ServiceProvider
     $events->listen(FolderWasUpdated::class, RenameFolderOnDisk::class);
     $events->listen(FolderIsDeleting::class, DeleteFolderOnDisk::class);
     $events->listen(FolderIsDeleting::class, DeleteAllChildrenOfFolder::class);
+    $events->listen(FileWasCreated::class, GenerateTokenFilePrivate::class);
 
     $this->app[TagManager::class]->registerNamespace(new File());
     $this->registerThumbnails();
@@ -124,15 +127,37 @@ class MediaServiceProvider extends ServiceProvider
 
   private function registerBindings()
   {
-    $this->app->bind(FileRepository::class, function () {
-      return new EloquentFileRepository(new File());
-    });
+    $this->app->bind(
+      'Modules\Media\Repositories\FileRepository',
+      function () {
+        $repository = new \Modules\Media\Repositories\Eloquent\EloquentFileRepository(new \Modules\Media\Entities\File());
+      
+        if (! config('app.cache')) {
+          return $repository;
+        }
+      
+        return new \Modules\Media\Repositories\Cache\CacheFileDecorator($repository);
+      }
+    );
+    
+ 
     $this->app->bind(FolderRepository::class, function () {
       return new EloquentFolderRepository(new File());
     });
-    $this->app->bind(ZoneRepository::class, function () {
-      return new EloquentZoneRepository(new Zone());
-    });
+  
+    $this->app->bind(
+      'Modules\Media\Repositories\ZoneRepository',
+      function () {
+        $repository = new \Modules\Media\Repositories\Eloquent\EloquentZoneRepository(new \Modules\Media\Entities\Zone());
+      
+        if (! config('app.cache')) {
+          return $repository;
+        }
+      
+        return new \Modules\Media\Repositories\Cache\CacheZoneDecorator($repository);
+      }
+    );
+  
   }
 
   /**
