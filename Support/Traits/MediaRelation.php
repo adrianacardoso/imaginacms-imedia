@@ -5,6 +5,7 @@ namespace Modules\Media\Support\Traits;
 use Modules\Media\Entities\File;
 use Modules\Media\Image\Imagy;
 use Modules\Media\Image\ThumbnailManager;
+use Modules\Media\Transformers\NewTransformers\MediaTransformer;
 
 trait MediaRelation
 {
@@ -44,16 +45,9 @@ trait MediaRelation
   public function mediaFiles()
   {
     $files = $this->files;//Get files
-
-    //Get entity attributes
-    $entityNamespace = get_class($this);
-    $entityNamespaceExploded = explode('\\', strtolower($entityNamespace));
-    $moduleName = $entityNamespaceExploded[1];//Get module name
-    $entityName = $entityNamespaceExploded[3];//Get entity name
+    $classInfo = $this->getClassInfo();
     //Get media fillable
-    $mediaFillable = config("asgard.{$moduleName}.config.mediaFillable.{$entityName}") ?? [];
-    //Define default image
-    $defaultPath = strtolower(url("modules/{$moduleName}/img/{$entityName}/default.jpg"));
+    $mediaFillable = config("asgard.{$classInfo["moduleName"]}.config.mediaFillable.{$classInfo["entityName"]}") ?? [];
     $response = [];//Default response
 
     //Transform Files
@@ -69,48 +63,60 @@ trait MediaRelation
 
       //Transform files
       foreach ($filesByZone as $file) {
-        $transformedFile = $this->transformFile($file, $defaultPath);
+        $transformedFile = $this->transformFile($file);
         //Add to response
         if ($fileType == 'multiple') {
           if ($file) array_push($response[$zone], $transformedFile);
         } else $response[$zone] = $transformedFile;
       }
     }
-
     //Response
     return (object)$response;
   }
 
   public function transformFile($file, $defaultPath = null)
   {
-    $imagy = app(Imagy::class);
-    //Instance the transformed file
-    $transformedFile = (object)[
-      'id' => $file->id ?? null,
-      'filename' => $file->filename ?? null,
-      'mimeType' => $file->mimetype ?? null,
-      'fileSize' => $file->filesize ?? null,
-      'path' => ($file ? ($file->is_folder ? $file->path->getRelativeUrl() : (string)$file->path) . "?u=" . ($file->updated_at->timestamp ?? "") : $defaultPath),
-      'relativePath' => $file ? $file->path->getRelativeUrl() : '',
-      'isImage' => $file ? $file->isImage() : false,
-      'isVideo' => $file ? $file->isVideo() : false,
-      'isFolder' => $file ? $file->isFolder() : false,
-      'mediaType' => $file->media_type ?? null,
-      'createdAt' => $file->created_at ?? null,
-      'folderId' => $file->folder_id ?? null,
-      'description' => $file->description ?? null,
-      'alt' => $file->alt_attribute ?? null,
-      'updatedAt' => $file->updated_at ?? null,
-      'createdBy' => $file->created_by ?? null
-    ];
-    //Add imagy
-    $thumbnails = app(ThumbnailManager::class)->all();
-    foreach ($thumbnails as $thumbnail) {
-      $name = $thumbnail->name();
-      $transformedFile->{$name} = $file && $file->isImage() ? $imagy->getThumbnail($file, $name) : $defaultPath;
-      $transformedFile->{'relative' . ucfirst($name)} = $file && $file->isImage() ? str_replace(url("/"), "", $imagy->getThumbnail($file, $name)) : $defaultPath;
+    $classInfo = $this->getClassInfo();
+    //Create a mokup of a file if not exist
+    if (!$file) {
+      if (!$defaultPath) {
+        $defaultPath = strtolower("/modules/{$classInfo["moduleName"]}/img/{$classInfo["entityName"]}/default.jpg");
+        $defaultPath = validateMediaDefaultPath($defaultPath);
+      }
+      $file = new File(['path' => $defaultPath, 'is_folder' => 0]);
     }
-    //Response
-    return $transformedFile;
+
+    //Transform the file
+    $transformerParams = $classInfo['entityName'] == 'user' ? ['ignoreUser' => true] : [];
+    return json_decode(json_encode(new MediaTransformer($file, $transformerParams)));
+  }
+
+  private function getClassInfo()
+  {
+    $entityNamespace = get_class($this);
+    $entityNamespaceExploded = explode('\\', strtolower($entityNamespace));
+
+    //Custom Rvalidation to user ent¡ty
+    if ($entityNamespaceExploded[3] == 'sentinel') $entityNamespaceExploded[3] = 'user';
+
+    return [
+      "moduleName" => $entityNamespaceExploded[1],
+      "entityName" => $entityNamespaceExploded[3],
+    ];
+  }
+
+  /**
+   * Return the media fields with files IDs
+   * @return void
+   */
+  public function getMediaFields()
+  {
+    $response = ['mediasSingle' => [], 'mediasMulti' => []];
+    foreach ($this->mediaFiles() as $zone => $files) {
+      if (is_array($files)) {
+        $response['mediasMulti'][$zone] = ['files' => collect($files)->pluck('id')->toArray()];
+      } else if ($files->id) $response['mediasSingle'][$zone] = $files->id;
+    }
+    return $response;
   }
 }

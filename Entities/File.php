@@ -46,10 +46,12 @@ class File extends CrudModel implements TaggableInterface, Responsable
     'folder_id',
     'created_by',
     'has_watermark',
+    'has_thumbnails',
     'disk'
   ];
   protected $appends = ['path_string', 'media_type'];
   protected $casts = ['is_folder' => 'boolean'];
+  protected $with = ["tags"];
   protected static $entityNamespace = 'asgardcms/media';
 
   public function parent_folder()
@@ -61,8 +63,7 @@ class File extends CrudModel implements TaggableInterface, Responsable
   {
     $disk = is_null($this->disk) ? setting('media::filesystem', null, config("asgard.media.config.filesystem")) : $this->disk;
 
-
-    return new MediaPath($value, $disk, $this->organization_id);
+    return new MediaPath($value, $disk, $this->organization_id, $this);
   }
 
   public function getPathStringAttribute()
@@ -78,7 +79,8 @@ class File extends CrudModel implements TaggableInterface, Responsable
   public function getUrlAttribute()
   {
     if ($this->disk == 'privatemedia') {
-      return \URL::route('public.media.media.show', [ 'criteria' => $this->id]);
+      $itemToken = \DB::table('isite__tokenables')->where('entity_id', '=', $this->id)->first();
+      return \URL::route('public.media.media.show', ['criteria' => $this->id, 'token' => $itemToken->token ?? null]);
     } else {
       return (string)$this->path;
     }
@@ -91,8 +93,19 @@ class File extends CrudModel implements TaggableInterface, Responsable
 
   public function isImage()
   {
-    $imageExtensions = json_decode(setting('media::allowedImageTypes', null, config("asgard.media.config.allowedImageTypes")));
-    return in_array(pathinfo($this->path, PATHINFO_EXTENSION), $imageExtensions);
+
+    $imageExtensions = (array)json_decode(setting('media::allowedImageTypes', null, config("asgard.media.config.allowedImageTypes")));
+
+    // Case external disk
+    if (isset($this->disk) && !in_array($this->disk, array_keys(config("filesystems.disks")))){
+
+      $dataExternalImg = app("Modules\Media\Services\\" . ucfirst($this->disk) . "Service")->getDataFromUrl($this->path);
+      return in_array($dataExternalImg['extension'], $imageExtensions);
+
+    }else{
+      return in_array(pathinfo($this->path, PATHINFO_EXTENSION), $imageExtensions);
+    }
+
   }
 
 

@@ -8,10 +8,10 @@ if (!function_exists('mediaMimesAvailableRule')) {
 
   function mediaMimesAvailableRule()
   {
-    return 'mimes:' . join(',', json_decode(setting('media::allowedImageTypes', null, config("asgard.media.config.allowedImageTypes"))))
-      . "," . join(',', json_decode(setting('media::allowedFileTypes', null, config("asgard.media.config.allowedFileTypes"))))
-      . "," . join(',', json_decode(setting('media::allowedVideoTypes', null, config("asgard.media.config.allowedVideoTypes"))))
-      . "," . join(',', json_decode(setting('media::allowedAudioTypes', null, config("asgard.media.config.allowedAudioTypes"))));
+    return 'mimes:' . join(',', (array)json_decode(setting('media::allowedImageTypes', null, config("asgard.media.config.allowedImageTypes"))))
+      . "," . join(',', (array)json_decode(setting('media::allowedFileTypes', null, config("asgard.media.config.allowedFileTypes"))))
+      . "," . join(',', (array)json_decode(setting('media::allowedVideoTypes', null, config("asgard.media.config.allowedVideoTypes"))))
+      . "," . join(',', (array)json_decode(setting('media::allowedAudioTypes', null, config("asgard.media.config.allowedAudioTypes"))));
 
   }
 }
@@ -33,8 +33,9 @@ if (!function_exists('mediaOrganizationPrefix')) {
   {
     $tenancyMode = config("tenancy.mode", null);
 
-    if ((isset($file->id) && !empty($file->organization_id)) && (isset(tenant()->id) || !empty($organizationId)) || $tenancyMode == "multiDatabase") {
+    if ((isset($file->id) && !empty($file->organization_id)) && (isset(tenant()->id) || !empty($organizationId)) || $tenancyMode == "singleDatabase") {
       $organizationId = tenant()->id ?? $file->organization_id ?? $organizationId ?? "";
+      if (isset($file->id) && empty($file->organization_id)) return "";
       if ((!($tenancyMode == "multiDatabase") || $forced) && !empty($organizationId)) {
         return $prefix . config("tenancy.filesystem.suffix_base") . $organizationId . $suffix;
       }
@@ -93,15 +94,17 @@ if (!function_exists('getUploadedFileFromBase64')) {
 }
 
 if (!function_exists('getUploadedFileFromUrl')) {
-  function getUploadedFileFromUrl(string $url, array $context = []): UploadedFile
+  function getUploadedFileFromUrl(string $url, array $context = [], array $params = []): UploadedFile
   {
+    $path = parse_url($url, PHP_URL_PATH);
+    $basename = $params["file_name"] ?? basename($path);
     $tmpRootPath = "/tmp/" . config("app.name");
     //Validate app folder
     if (!file_exists($tmpRootPath)) {
       mkdir($tmpRootPath, 0777, true);
     }
     //Instance the tmp location
-    $tmpLocation = $tmpRootPath . "/" . basename($url);
+    $tmpLocation = $tmpRootPath . "/" . $basename;
     //Instance request context
     $requestContext = ["http" => array_merge_recursive(['method' => 'GET'], $context)];
     //Get File and save as tmp
@@ -115,5 +118,14 @@ if (!function_exists('getUploadedFileFromUrl')) {
       0,
       true // Mark it as test, since the file isn't from real HTTP POST.
     );
+  }
+}
+if (!function_exists('validateMediaDefaultUrl')) {
+  function validateMediaDefaultPath($path)
+  {
+    //If path include word ad replace by media default path to prevent issues with ad blockers
+    if (str_contains(strtolower($path), 'ad')) $path = "modules/media/img/file/default.jpg";
+    //Response
+    return $path;
   }
 }
