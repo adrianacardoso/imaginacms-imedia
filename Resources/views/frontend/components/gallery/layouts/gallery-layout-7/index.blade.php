@@ -78,12 +78,12 @@
   </style>
   <script>
     $(document).ready(function(){
-      $(".arrow-up").click(function(){
+      $("#{{$id}}WithVerticalThumbs .arrow-up").click(function(){
         $("#{{$id}}vertical").animate({
           scrollTop: "-=50"
         }, "slow");
       });
-      $(".arrow-down").click(function(){
+      $("#{{$id}}WithVerticalThumbs .arrow-down").click(function(){
         $("#{{$id}}vertical").animate({
           scrollTop: "+=50"
         }, "slow");
