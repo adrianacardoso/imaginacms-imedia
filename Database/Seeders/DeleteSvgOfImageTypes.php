@@ -12,8 +12,8 @@ class DeleteSvgOfImageTypes extends Seeder
     public function run()
     {
         $settingRepository = app('Modules\Setting\Repositories\SettingRepository');
-        $allowedImageTypes = json_decode(setting('media::allowedImageTypes'));
-        $allowedFileTypes = json_decode(setting('media::allowedFileTypes'));
+        $allowedImageTypes = json_decode(setting('media::allowedImageTypes', null, []));
+        $allowedFileTypes = json_decode(setting('media::allowedFileTypes', null, []));
         if (in_array('svg', $allowedImageTypes)) {
             $allowedImageTypesWithoutSvg = json_encode(array_diff($allowedImageTypes, ['svg']));
             $settingUpdate = [
