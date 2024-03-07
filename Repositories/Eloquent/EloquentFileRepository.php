@@ -211,8 +211,6 @@ class EloquentFileRepository extends EloquentCrudRepository implements FileRepos
     event($event = new FileIsUpdating($file, $data));
     $file->update($event->getAttributes());
 
-    $file->setTags(Arr::get($data, 'tags', []));
-
     event(new FileWasUpdated($file));
 
     return $file;
@@ -513,8 +511,6 @@ class EloquentFileRepository extends EloquentCrudRepository implements FileRepos
 
       event($event = new FileIsUpdating($model, $data));
       $model->update($event->getAttributes());
-
-      $model->setTags(Arr::get($data, 'tags', []));
 
       event(new FileWasUpdated($model));
 
