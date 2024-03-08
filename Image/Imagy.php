@@ -8,6 +8,7 @@ use Illuminate\Support\Arr;
 use Intervention\Image\ImageManager;
 use Modules\Media\Entities\File;
 use Modules\Media\ValueObjects\MediaPath;
+use GuzzleHttp\Psr7\MimeType;
 
 class Imagy
 {
@@ -164,7 +165,7 @@ class Imagy
         $resource = $image->detach();
         $config = [
             'visibility' => 'public',
-            'mimetype' => \GuzzleHttp\Psr7\mimetype_from_filename($filename),
+            'mimetype' => MimeType::fromFilename($filename),
         ];
 
         if ($this->fileExists($filename, $disk)) {
