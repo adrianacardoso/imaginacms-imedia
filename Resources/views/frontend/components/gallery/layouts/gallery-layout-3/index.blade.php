@@ -4,7 +4,9 @@
       @foreach($gallery as $item)
         <div class="item">
           <x-media::single-image :isMedia="true" :mediaFiles="$item" :dataFancybox="$dataFancybox"
-                                 :autoplayVideo="$autoplayVideo" :loopVideo="$loopVideo" :mutedVideo="$mutedVideo"/>
+                                 :autoplayVideo="$autoplayVideo" :loopVideo="$loopVideo" :mutedVideo="$mutedVideo"
+																 :showDescription="$showDescription"
+					/>
         </div>
       @endforeach
     </main>

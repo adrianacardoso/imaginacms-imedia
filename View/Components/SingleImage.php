@@ -18,6 +18,7 @@ class SingleImage extends Component
   public $zone;
   public $alt;
   public $title;
+  public $showDescription;
   public $fallbackExtension;
   public $url;
   public $extraLargeSrc;
@@ -47,7 +48,7 @@ class SingleImage extends Component
   public $isSVG;
 
 
-  public function __construct($src = '', $alt = '', $title = null, $url = null, $isMedia = false, $mediaFiles = null,
+  public function __construct($src = '', $alt = '', $title = null, $showDescription = false, $url = null, $isMedia = false, $mediaFiles = null,
                               $zone = 'mainimage', $extraLargeSrc = null, $largeSrc = null, $mediumSrc = null,
                               $smallSrc = null, $fallback = null, $imgClasses = '', $linkClasses = '', $linkRel = '',
                               $defaultLinkClasses = 'image-link w-100', $imgStyles = '', $width = "300px",
@@ -58,6 +59,7 @@ class SingleImage extends Component
     $this->src = $src;
     $this->alt = !empty($alt) ? $alt : $mediaFiles->{$zone}->alt ?? $mediaFiles->alt ?? "";
     $this->title = $title;
+    $this->showDescription = $showDescription;
     $this->url = $url;
     $this->imgClasses = $imgClasses;
     $this->linkClasses = $linkClasses;
@@ -82,10 +84,10 @@ class SingleImage extends Component
     }
     $this->fetchPriority = $fetchPriority;
     if (!empty($setting)) {
-      
+
       $settingRepository = app("Modules\Setting\Repositories\SettingRepository");
       $setting = $settingRepository->findByName($setting, $central);
-      
+
       if (isset($setting->id)) {
         $isMedia = true;
         $zone = "setting::mainimage";
