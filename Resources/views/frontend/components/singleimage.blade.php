@@ -1,3 +1,4 @@
+<div class="content-single-image">
 @if(!empty($url) || $dataFancybox || $dataTarget)
   <a href="{{ $dataFancybox ? ($isVideo ? "#mediaVideo".$uid : $src ) : $url }}"
      data-caption="{{$dataFancybox ? ($mediaFiles->{$zone}->description ?? $mediaFiles->description ?? '') : ''}}"
@@ -59,7 +60,6 @@
     @endif
     @if(!empty($url)|| $dataFancybox  || $dataTarget)
   </a>
-
   @if($isVideo && $dataFancybox)
     <video controls id="mediaVideo{{$uid}}" class="single-media-video" style="display:none;">
       <source src="{{ $mediaFiles->{$zone}->path ?? $mediaFiles->path }}" type="video/mp4">
@@ -68,6 +68,8 @@
       Your browser doesn't support HTML5 video tag.
     </video>
   @endif
+    @if($showDescription && (!empty($title) ||  !empty($mediaFiles->{$zone}->description) || !empty($mediaFiles->description)))
+      <figcaption>{{$title ?? $mediaFiles->{$zone}->description ?? $mediaFiles->description ?? ''}}</figcaption>
+    @endif
 @endif
-
-
+</div>

@@ -9,7 +9,7 @@
               <x-media::single-image :isMedia="true" :mediaFiles="$item" :dataFancybox="$dataFancybox"
                                      :data-slide-to="$key" imgClasses="gallery-image-mini"
                                      :dataTarget="'#'.$id.'PrimaryCarousel'" :autoplayVideo="$autoplayVideo"
-                                     :loopVideo="$loopVideo" :mutedVideo="$mutedVideo"/>
+                                     :loopVideo="$loopVideo" :mutedVideo="$mutedVideo"              />
             </div>
           @endforeach
 
@@ -31,7 +31,9 @@
               <div class="carousel-item @if($key == 0) active @endif">
                 <x-media::single-image :isMedia="true" :mediaFiles="$item" :dataFancybox="$dataFancybox"
                                        :autoplayVideo="$autoplayVideo" :loopVideo="$loopVideo"
-                                       :mutedVideo="$mutedVideo" imgClasses="gallery-image-large"/>
+                                       :mutedVideo="$mutedVideo" imgClasses="gallery-image-large"
+																			 :showDescription="$showDescription"
+								/>
               </div>
             @endforeach
           </div>
