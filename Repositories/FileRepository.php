@@ -4,11 +4,11 @@ namespace Modules\Media\Repositories;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
-use Modules\Core\Repositories\BaseRepository;
+use Modules\Core\Icrud\Repositories\BaseCrudRepository;
 use Modules\Media\Entities\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-interface FileRepository extends BaseRepository
+interface FileRepository extends BaseCrudRepository
 {
     /**
      * Create a file row from the given file
@@ -51,18 +51,7 @@ interface FileRepository extends BaseRepository
 
     public function allForGrid(): Collection;
 
-    public function move(File $file, File $destination): File;
+    public function move(File $file, File $destination) : File;
 
-    /**
-     * new inteface IMAGINA API
-     */
-    public function getItemsBy($params);
 
-    public function getItem($criteria, $params = false);
-
-    public function create($data);
-
-    public function updateBy($criteria, $data, $params = false);
-
-    public function deleteBy($criteria, $params = false);
 }

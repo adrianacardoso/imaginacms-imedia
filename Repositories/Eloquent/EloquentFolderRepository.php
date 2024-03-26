@@ -322,7 +322,7 @@ class EloquentFolderRepository extends EloquentBaseRepository implements FolderR
       return $query->where($field ?? 'id', $criteria)->first();
   }
 
-  public function validateIndexAllPermission(&$query, $params)
+  function validateIndexAllPermission(&$query, $params)
   {
       // filter by permission: index all leads
 

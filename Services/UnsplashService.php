@@ -6,11 +6,23 @@ class UnsplashService
 {
 
     private $log = "Media: UnsplashService|";
-   
+    private $mimetypes = array(
+        'bmp'     => 'image/bmp',
+        'ico'     => 'image/x-icon',
+        'jpe'     => 'image/jpeg',
+        'jpeg'    => 'image/jpeg',
+        'jpg'     => 'image/jpeg',
+        'png'     => 'image/png',
+        'svg'     => 'image/svg+xml',
+        'svgz'    => 'image/svg+xml',
+        'tif'     => 'image/tiff',
+        'tiff'    => 'image/tiff'
+    );
+
     /**
      * Get data from url (needed to save to the database later)
      */
-    public function getDataFromUrl(string $url,string $disk)
+    public function getDataFromUrl(string $url,string $disk = null)
     {
 
         $parts = parse_url($url);
@@ -19,8 +31,13 @@ class UnsplashService
         parse_str($parts['query'], $query);
         
         //Extension
-        if(isset($query['fm']))
+        if(isset($query['fm'])){
           $data['extension'] = $query['fm'];
+
+          if (isset($this->mimetypes[$data['extension']]))
+            $data['mimetype'] = $this->mimetypes[$data['extension']];
+
+        }
 
         //\Log::info("First Url: ".$url);
         
