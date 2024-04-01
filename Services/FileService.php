@@ -46,7 +46,9 @@ class FileService
   public function store(UploadedFile $file, $parentId = 0, $disk = null, $createThumbnails = true)
   {
     $disk = $this->getConfiguredFilesystem($disk);
-  
+
+    $typesWithoutResizeImagesAndCreateThumbnails = config("asgard.media.config.typesWithoutResizeImagesAndCreateThumbnails");
+
     //validating avaiable extensions
     $request = new UploadMediaRequest(['file' => $file]);
     $validator = Validator::make($request->all(), $request->rules(), $request->messages());
@@ -56,9 +58,11 @@ class FileService
       throw new \Exception(json_encode($errors), 400);
     }
     $savedFile = $this->file->createFromFile($file, $parentId, $disk);
-  
-    $this->resizeImages($file, $savedFile);
-  
+
+    if (!in_array($savedFile->extension, $typesWithoutResizeImagesAndCreateThumbnails)) {
+      $this->resizeImages($file, $savedFile);
+    }
+
     $path = $this->getDestinationPath($savedFile->getRawOriginal('path'));
     $stream = fopen($file->getRealPath(), 'r+');
   
@@ -71,12 +75,12 @@ class FileService
       'visibility' => 'public',
       'mimetype' => $savedFile->mimetype,
     ]);
-  
-    if ($createThumbnails) {
+
+    if (!in_array($savedFile->extension, $typesWithoutResizeImagesAndCreateThumbnails) && $createThumbnails) {
       $this->createThumbnails($savedFile);
-    
-      return $savedFile;
     }
+
+    return $savedFile;
   }
 
   /**
@@ -95,7 +99,8 @@ class FileService
       'extension' => $data['extension'] ?? null,
       'folder_id' => 0,
       'is_folder' => 0,
-      'disk' => $disk
+      'disk' => $disk,
+      'mimetype' => $data['mimetype'] ?? null
     ];
 
     $savedFile = $this->file->create($data);

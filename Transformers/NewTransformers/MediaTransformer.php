@@ -22,12 +22,15 @@ class MediaTransformer extends JsonResource
     private $thumbnailManager;
   private $defaultUrl;
 
-    public function __construct($resource)
-    {
-        parent::__construct($resource);
+  private $params;
 
-        $this->imagy = app(Imagy::class);
-        $this->thumbnailManager = app(ThumbnailManager::class);
+  public function __construct($resource, $params = [])
+  {
+    parent::__construct($resource);
+
+    $this->imagy = app(Imagy::class);
+    $this->thumbnailManager = app(ThumbnailManager::class);
+    $this->params = $params;
     $this->instancesDefaultUrl();
     }
 
@@ -54,11 +57,11 @@ class MediaTransformer extends JsonResource
       'createdAt' => $this->created_at,
       'updatedAt' => $this->updated_at,
       'faIcon' => FileHelper::getFaIcon($this->media_type),
-            'disk' => $this->disk,
-            'extension' => $this->extension,
-            'zone' => $this->when(isset($this->pivot->zone) && ! empty($this->pivot->zone), $this->pivot->zone ?? null),
-            'url' => $this->url ?? '#',
-      'createdByUser' => new UserTransformer($this->createdBy),
+      'disk' => $this->disk,
+      'extension' => $this->extension,
+      'zone' => $this->when(isset($this->pivot->zone) && !empty($this->pivot->zone), $this->pivot->zone ?? null),
+      'url' => $this->url ?? '#',
+      'createdByUser' => isset($this->params["ignoreUser"]) ? null : new UserTransformer($this->whenLoaded('createdBy')),
       'tags' => $this->tags->pluck('name')->toArray(),
         ];
 
@@ -74,22 +77,20 @@ class MediaTransformer extends JsonResource
       $data['relative' . ucfirst($thumbnailName)] = str_replace(url("/"), "", $thumbnailPath);
         }
 
-        $filter = json_decode($request->filter);
-
-        // Return data with available translations
-        if (isset($filter->allTranslations) && $filter->allTranslations) {
-            // Get langs avaliables
-            $languages = \LaravelLocalization::getSupportedLocales();
-
-            foreach ($languages as $lang => $value) {
-                $data[$lang]['description'] = $this->hasTranslation($lang) ?
-                  $this->translate("$lang")['description'] : '';
-                $data[$lang]['altAttribute'] = $this->hasTranslation($lang) ?
-                  $this->translate("$lang")['alt_attribute'] ?? '' : '';
-                $data[$lang]['keywords'] = $this->hasTranslation($lang) ?
-                  $this->translate("$lang")['keywords'] : '';
-            }
-        }
+    $filter = json_decode(json_encode($request->filter));
+    // Return data with available translations
+    if (isset($filter->allTranslations) && $filter->allTranslations) {
+      // Get langs avaliables
+      $languages = \LaravelLocalization::getSupportedLocales();
+      foreach ($languages as $lang => $value) {
+        $data[$lang]['description'] = $this->hasTranslation($lang) ?
+          $this->translate("$lang")['description'] : '';
+        $data[$lang]['altAttribute'] = $this->hasTranslation($lang) ?
+          $this->translate("$lang")['alt_attribute'] ?? '' : '';
+        $data[$lang]['keywords'] = $this->hasTranslation($lang) ?
+          $this->translate("$lang")['keywords'] : '';
+      }
+    }
 
         return $data;
     }
@@ -102,7 +103,8 @@ class MediaTransformer extends JsonResource
     $moduleName = $entityNamespaceExploded[1];//Get module name
     $entityName = $entityNamespaceExploded[3];//Get entity name
     //Define default image
-    $this->defaultUrl = strtolower(url("modules/{$moduleName}/img/{$entityName}/default.jpg"));
+    $path = validateMediaDefaultPath("modules/{$moduleName}/img/{$entityName}/default.jpg");
+    $this->defaultUrl = strtolower(url($path));
   }
 
     private function getPath()
@@ -125,11 +127,16 @@ class MediaTransformer extends JsonResource
 
   private function getValidatedThumbnail($thumbnailName)
   {
-    //Validate the attribute has_thumbnail
-    if (!$this->has_thumbnails) return $this->getPath();
+
+    //\Log::info("Media|Transformers|getValidatedThumbnail|: ".$thumbnailName);
+
     //Validate if not is in disk
     if (isset($this->disk) && !in_array($this->disk, array_keys(config("filesystems.disks"))))
-      return app("Modules\Media\Services\\" . ucfirst($this->disk) . "Service")->getThumbnail($this->resource, $name);
+      return app("Modules\Media\Services\\" . ucfirst($this->disk) . "Service")->getThumbnail($this->resource, $thumbnailName);
+
+    //Validate the attribute has_thumbnail
+    if (!$this->has_thumbnails) return $this->getPath();
+
     //Default thumbnails
     return $this->imagy->getThumbnail($this->resource, $thumbnailName);
   }

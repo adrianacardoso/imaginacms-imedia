@@ -4,7 +4,6 @@ namespace Modules\Media\Providers;
 
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Modules\Core\Events\BuildingSidebar;
 use Modules\Core\Events\LoadingBackendTranslations;
@@ -36,6 +35,9 @@ use Modules\Media\Repositories\FileRepository;
 use Modules\Media\Repositories\FolderRepository;
 use Modules\Media\Repositories\ZoneRepository;
 use Modules\Tag\Repositories\TagManager;
+use Illuminate\Support\Facades\Blade;
+use Modules\Media\Events\FileWasCreated;
+use Modules\Media\Events\Handlers\GenerateTokenFilePrivate;
 
 class MediaServiceProvider extends ServiceProvider
 {
@@ -92,12 +94,13 @@ class MediaServiceProvider extends ServiceProvider
         $this->mergeConfigFrom($this->getModuleConfigFilePath('media', 'cmsPages'), 'asgard.media.cmsPages');
         $this->mergeConfigFrom($this->getModuleConfigFilePath('media', 'cmsSidebar'), 'asgard.media.cmsSidebar');
 
-        $events->listen(StoringMedia::class, HandleMediaStorage::class);
-        $events->listen(DeletingMedia::class, RemovePolymorphicLink::class);
-        $events->listen(FolderWasCreated::class, CreateFolderOnDisk::class);
-        $events->listen(FolderWasUpdated::class, RenameFolderOnDisk::class);
-        $events->listen(FolderIsDeleting::class, DeleteFolderOnDisk::class);
-        $events->listen(FolderIsDeleting::class, DeleteAllChildrenOfFolder::class);
+    $events->listen(StoringMedia::class, HandleMediaStorage::class);
+    $events->listen(DeletingMedia::class, RemovePolymorphicLink::class);
+    $events->listen(FolderWasCreated::class, CreateFolderOnDisk::class);
+    $events->listen(FolderWasUpdated::class, RenameFolderOnDisk::class);
+    $events->listen(FolderIsDeleting::class, DeleteFolderOnDisk::class);
+    $events->listen(FolderIsDeleting::class, DeleteAllChildrenOfFolder::class);
+    $events->listen(FileWasCreated::class, GenerateTokenFilePrivate::class);
 
         $this->app[TagManager::class]->registerNamespace(new File());
         $this->registerThumbnails();
@@ -117,18 +120,40 @@ class MediaServiceProvider extends ServiceProvider
         return [];
     }
 
-    private function registerBindings()
-    {
-        $this->app->bind(FileRepository::class, function () {
-            return new EloquentFileRepository(new File());
-        });
-        $this->app->bind(FolderRepository::class, function () {
-            return new EloquentFolderRepository(new File());
-        });
-        $this->app->bind(ZoneRepository::class, function () {
-            return new EloquentZoneRepository(new Zone());
-        });
-    }
+  private function registerBindings()
+  {
+    $this->app->bind(
+      'Modules\Media\Repositories\FileRepository',
+      function () {
+        $repository = new \Modules\Media\Repositories\Eloquent\EloquentFileRepository(new \Modules\Media\Entities\File());
+
+        if (! config('app.cache')) {
+          return $repository;
+        }
+
+        return new \Modules\Media\Repositories\Cache\CacheFileDecorator($repository);
+      }
+    );
+
+
+    $this->app->bind(FolderRepository::class, function () {
+      return new EloquentFolderRepository(new File());
+    });
+
+    $this->app->bind(
+      'Modules\Media\Repositories\ZoneRepository',
+      function () {
+        $repository = new \Modules\Media\Repositories\Eloquent\EloquentZoneRepository(new \Modules\Media\Entities\Zone());
+
+        if (! config('app.cache')) {
+          return $repository;
+        }
+
+        return new \Modules\Media\Repositories\Cache\CacheZoneDecorator($repository);
+      }
+    );
+
+  }
 
     /**
      * Register all commands for this module

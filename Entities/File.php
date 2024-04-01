@@ -52,13 +52,11 @@ class File extends CrudModel implements TaggableInterface, Responsable
         'has_watermark',
     'has_thumbnails',
     'disk'
-    ];
-
-    protected $appends = ['path_string', 'media_type'];
-
-    protected $casts = ['is_folder' => 'boolean'];
-  protected $with = ["createdBy","tags"];
-    protected static $entityNamespace = 'asgardcms/media';
+  ];
+  protected $appends = ['path_string', 'media_type'];
+  protected $casts = ['is_folder' => 'boolean'];
+  protected $with = ["tags"];
+  protected static $entityNamespace = 'asgardcms/media';
 
     public function parent_folder()
     {
@@ -82,33 +80,44 @@ class File extends CrudModel implements TaggableInterface, Responsable
         return FileHelper::getTypeByMimetype($this->mimetype);
     }
 
-    public function getUrlAttribute()
-    {
-        if ($this->disk == 'privatemedia') {
-            return \URL::route('public.media.media.show', ['criteria' => $this->id]);
-        } else {
-            return (string) $this->path;
-        }
+  public function getUrlAttribute()
+  {
+    if ($this->disk == 'privatemedia') {
+      $itemToken = \DB::table('isite__tokenables')->where('entity_id', '=', $this->id)->first();
+      return \URL::route('public.media.media.show', ['criteria' => $this->id, 'token' => $itemToken->token ?? null]);
+    } else {
+      return (string)$this->path;
     }
+  }
 
     public function isFolder(): bool
     {
         return $this->is_folder;
     }
 
-    public function isImage()
-    {
-        $imageExtensions = json_decode(setting('media::allowedImageTypes', null, config('asgard.media.config.allowedImageTypes')));
+  public function isImage()
+  {
 
-        return in_array(pathinfo($this->path, PATHINFO_EXTENSION), $imageExtensions);
+    $imageExtensions = (array)json_decode(setting('media::allowedImageTypes', null, config("asgard.media.config.allowedImageTypes")));
+
+    // Case external disk
+    if (isset($this->disk) && !in_array($this->disk, array_keys(config("filesystems.disks")))){
+
+      $dataExternalImg = app("Modules\Media\Services\\" . ucfirst($this->disk) . "Service")->getDataFromUrl($this->path);
+      return in_array($dataExternalImg['extension'], $imageExtensions);
+
+    }else{
+      return in_array(pathinfo($this->path, PATHINFO_EXTENSION), $imageExtensions);
     }
 
-    public function isVideo()
-    {
-        $videoExtensions = json_decode(setting('media::allowedVideoTypes', null, config('asgard.media.config.allowedVideoTypes')));
+  }
 
-        return in_array(pathinfo($this->path, PATHINFO_EXTENSION), $videoExtensions);
-    }
+
+  public function isVideo()
+  {
+    $videoExtensions = json_decode(setting('media::allowedVideoTypes', null, config("asgard.media.config.allowedVideoTypes")));
+    return in_array(pathinfo($this->path, PATHINFO_EXTENSION), $videoExtensions);
+  }
 
     public function getThumbnail($type)
     {
