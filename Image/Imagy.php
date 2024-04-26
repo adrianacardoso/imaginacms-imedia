@@ -230,7 +230,7 @@ class Imagy
         return setting('media::filesystem', null, config('asgard.media.config.filesystem'));
     }
 
-    private function fileExists($filename, string $disk = null): bool
+    public function fileExists($filename, string $disk = null): bool
     {
         $disk = is_null($disk) ? $this->getConfiguredFilesystem() : $disk;
 
