@@ -10,7 +10,7 @@ class Quality implements ImageHandlerInterface
     /**
      * Handle the image manipulation request
      */
-    public function handle(Image $image, array $options): Image
+    public function handle(Image $image, $options): Image
     {
         return $image;
     }
