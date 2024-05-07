@@ -32,7 +32,6 @@ class HandleMediaStorage
     $entity = $event->getEntity();
     $postMedias = Arr::get($event->getSubmissionData(), 'medias_multi', []);
 
-    
     foreach ($postMedias as $zone => $attributes) {
       $syncList = [];
       $orders = $this->getOrdersFrom($attributes);
@@ -41,17 +40,22 @@ class HandleMediaStorage
       $entityZone = Zone::where("entity_type", get_class($entity))->where("name",$zone)->first();
       
       foreach (Arr::get($attributes, 'files', []) as $fileId) {
-  
+
         if(isset($entityZone->id) and $entityZone->name == $zone){
           //Add watermark from the Zone
           $this->addWatermark($fileId,$entityZone);
         }
+
+        //Check type file id
+        $fileId = $this->getFileIdByDataType($fileId);
         
         $syncList[$fileId] = [];
         $syncList[$fileId]['imageable_type'] = get_class($entity);
         $syncList[$fileId]['zone'] = $zone;
         $syncList[$fileId]['order'] = (int)array_search($fileId, $orders);
       }
+
+
       $entity->filesByZone($zone)->sync($syncList);
     }
   }
@@ -62,9 +66,12 @@ class HandleMediaStorage
    */
   private function handleSingleMedia(StoringMedia $event)
   {
+    
     $entity = $event->getEntity();
     $postMedia = Arr::get($event->getSubmissionData(), 'medias_single', []);
     
+    //dd($postMedia);
+
     foreach ($postMedia as $zone => $fileId) {
   
       //getting Zone with custom features to this file
@@ -76,6 +83,10 @@ class HandleMediaStorage
       }
       
       if (!empty($fileId)) {
+
+        //Check type file id
+        $fileId = $this->getFileIdByDataType($fileId);
+        //Sync Data
         $entity->filesByZone($zone)->sync([$fileId => ['imageable_type' => get_class($entity), 'zone' => $zone, 'order' => null]]);
       } else {
         $entity->filesByZone($zone)->sync([]);
@@ -113,4 +124,35 @@ class HandleMediaStorage
       }
     }
   }
+
+  /**
+   * Check if fileId is an url and save information
+   */
+  private function getFileIdByDataType($fileId)
+  {
+    
+    $urlparts = parse_url($fileId);
+
+    //Check is Url | Case URL
+    if(isset($urlparts['scheme'])){
+          
+      //Check path exist
+      $fileExist = File::where("path","=",$fileId)->first();
+      
+      //Validation File
+      if(is_null($fileExist)){
+        //Save File | it's a link the provider="external" (generic case)
+        $fileCreated = $this->fileService->storeHotLinked($fileId,"external");
+        //Set new file ID 
+        $fileId = $fileCreated->id;
+      }else{
+        $fileId = $fileExist->id;
+      }
+
+    }
+
+    return $fileId;
+
+  }
+
 }
