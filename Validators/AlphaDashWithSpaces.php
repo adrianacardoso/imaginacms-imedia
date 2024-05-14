@@ -11,7 +11,7 @@ class AlphaDashWithSpaces implements Rule
      *
      * @param  mixed  $value
      */
-    public function passes(string $attribute, $value)
+    public function passes($attribute, $value)
     {
         if (! is_string($value) && ! is_numeric($value)) {
             return false;
