@@ -12,7 +12,7 @@ class EloquentZoneRepository extends EloquentCrudRepository implements ZoneRepos
      *
      * @var array
      */
-    protected $replaceFilters = [];
+    protected $replaceFilters = ['search'];
 
     /**
      * Relation names to replace
@@ -34,6 +34,10 @@ class EloquentZoneRepository extends EloquentCrudRepository implements ZoneRepos
          * Example filter Query
          * if (isset($filter->status)) $query->where('status', $filter->status);
          */
+
+        if (isset($filter->search) && !empty($filter->search)) {
+          $query->where('name', 'like', "%{$filter->search}%");
+        }
 
         //Response
         return $query;
