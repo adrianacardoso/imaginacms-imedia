@@ -30,10 +30,10 @@ class Gallery extends Component
   public $stagePadding;
   public $autoplayTimeout;
   public $aspectRatio;
+  public $objectFit;
+  public $showDescription;
   public $marginItems;
   public $heightItems;
-
-
 
   /**
    * Create a new component instance.
@@ -41,13 +41,13 @@ class Gallery extends Component
    * @return void
    */
 
-  public function __construct($id = "gallery", $zones = ["gallery"], $mediaFiles, $margin = 10, $responsiveClass = true,
+  public function __construct($mediaFiles, $id = "gallery", $zones = ["gallery"], $margin = 10, $responsiveClass = true,
                               $autoplay = true, $autoplayHoverPause = true, $loopGallery = true, $dots = true, $nav = true,
-                              $responsive = null, $dataFancybox = 'gallery', $layout = 'gallery-layout-1',
-                              $columnMasonry = 3, $navText = '', $maxImages = null, $onlyVideos = false,
+                              $responsive = null, $dataFancybox = 'gallery', $layout = "gallery-layout-1",
+                              $columnMasonry = 3, $navText = "", $maxImages = null, $onlyVideos = false,
                               $onlyImages = false, $autoplayVideo = false, $mutedVideo = false, $loopVideo = false,
-                              $stagePadding = 0, $autoplayTimeout = 5000, $aspectRatio = "1-1", $marginItems = 0,
-                              $heightItems = 350
+                              $stagePadding = 0, $autoplayTimeout = 5000, $aspectRatio = "1-1", $objectFit = 'contain',
+                              $showDescription = false, $marginItems = 0, $heightItems = 350
   )
   {
     $this->id = $id;
@@ -73,32 +73,36 @@ class Gallery extends Component
     $this->stagePadding = $stagePadding;
     $this->autoplayTimeout = $autoplayTimeout;
     $this->aspectRatio = $aspectRatio;
+    $this->objectFit = $objectFit;
+    $this->showDescription = $showDescription;
     $this->marginItems = $marginItems;
     $this->heightItems = $heightItems;
 
-        if (! empty($mediaFiles)) {
-            $countImages = 0;
-            foreach ($zones as $zone) {
-                ! is_array($mediaFiles->{$zone}) ? $mediaFiles->{$zone} = [$mediaFiles->{$zone}] : false;
-                foreach ($mediaFiles->{$zone} as $itemImage) {
-                    if (empty($maxImages) || $countImages < $maxImages) {
-                        if (($onlyImages && $itemImage->isImage) || ($onlyVideos && $itemImage->isVideo) || (! $onlyVideos && ! $onlyImages)) {
-                            $countImages++;
-                            array_push($this->gallery, $itemImage);
-                        }
-                    }
-                }
+    if (!empty($mediaFiles)) {
+      $countImages = 0;
+      foreach ($zones as $zone) {
+        !is_array($mediaFiles->{$zone}) ? $mediaFiles->{$zone} = [$mediaFiles->{$zone}] : false;
+        foreach ($mediaFiles->{$zone} as $itemImage) {
+          if (empty($maxImages) || $countImages < $maxImages) {
+            if (($onlyImages && $itemImage->isImage) || ($onlyVideos && $itemImage->isVideo) || (!$onlyVideos && !$onlyImages)) {
+              $countImages++;
+              array_push($this->gallery, $itemImage);
             }
-        }
-    }
 
-    /**
-     * Get the view / contents that represent the component.
-     *
-     * @return \Illuminate\View\View|string
-     */
-    public function render()
-    {
-        return view($this->view);
+          }
+        }
+
+      }
     }
+  }
+
+  /**
+   * Get the view / contents that represent the component.
+   *
+   * @return \Illuminate\View\View|string
+   */
+  public function render()
+  {
+    return view($this->view);
+  }
 }
