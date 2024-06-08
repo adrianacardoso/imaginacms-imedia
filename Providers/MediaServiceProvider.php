@@ -3,6 +3,7 @@
 namespace Modules\Media\Providers;
 
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
+use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
 use Modules\Core\Events\BuildingSidebar;
 use Modules\Core\Events\LoadingBackendTranslations;
@@ -15,6 +16,7 @@ use Modules\Media\Console\RefreshThumbnailCommand;
 use Modules\Media\Contracts\DeletingMedia;
 use Modules\Media\Contracts\StoringMedia;
 use Modules\Media\Entities\File;
+use Modules\Media\Entities\Zone;
 use Modules\Media\Events\FolderIsDeleting;
 use Modules\Media\Events\FolderWasCreated;
 use Modules\Media\Events\FolderWasUpdated;
@@ -28,13 +30,19 @@ use Modules\Media\Events\Handlers\RenameFolderOnDisk;
 use Modules\Media\Image\ThumbnailManager;
 use Modules\Media\Repositories\Eloquent\EloquentFileRepository;
 use Modules\Media\Repositories\Eloquent\EloquentFolderRepository;
+use Modules\Media\Repositories\Eloquent\EloquentZoneRepository;
 use Modules\Media\Repositories\FileRepository;
 use Modules\Media\Repositories\FolderRepository;
+use Modules\Media\Repositories\ZoneRepository;
 use Modules\Tag\Repositories\TagManager;
+use Illuminate\Support\Facades\Blade;
+use Modules\Media\Events\FileWasCreated;
+use Modules\Media\Events\Handlers\GenerateTokenFilePrivate;
 
 class MediaServiceProvider extends ServiceProvider
 {
     use CanPublishConfiguration, CanGetSidebarClassForModule;
+
     /**
      * Indicates if loading of the provider is deferred.
      *
@@ -44,8 +52,6 @@ class MediaServiceProvider extends ServiceProvider
 
     /**
      * Register the service provider.
-     *
-     * @return void
      */
     public function register()
     {
@@ -69,8 +75,8 @@ class MediaServiceProvider extends ServiceProvider
         );
 
         $this->app['events']->listen(LoadingBackendTranslations::class, function (LoadingBackendTranslations $event) {
-            $event->load('media', array_dot(trans('media::media')));
-            $event->load('folders', array_dot(trans('media::folders')));
+            $event->load('media', Arr::dot(trans('media::media')));
+            $event->load('folders', Arr::dot(trans('media::folders')));
         });
 
         app('router')->bind('media', function ($id) {
@@ -81,42 +87,73 @@ class MediaServiceProvider extends ServiceProvider
     public function boot(DispatcherContract $events)
     {
         $this->publishConfig('media', 'config');
-        $this->publishConfig('media', 'permissions');
         $this->publishConfig('media', 'assets');
+        $this->mergeConfigFrom($this->getModuleConfigFilePath('media', 'permissions'), 'asgard.media.permissions');
+        $this->mergeConfigFrom($this->getModuleConfigFilePath('media', 'settings'), 'asgard.media.settings');
+        $this->mergeConfigFrom($this->getModuleConfigFilePath('media', 'settings-fields'), 'asgard.media.settings-fields');
+        $this->mergeConfigFrom($this->getModuleConfigFilePath('media', 'cmsPages'), 'asgard.media.cmsPages');
+        $this->mergeConfigFrom($this->getModuleConfigFilePath('media', 'cmsSidebar'), 'asgard.media.cmsSidebar');
 
-        $events->listen(StoringMedia::class, HandleMediaStorage::class);
-        $events->listen(DeletingMedia::class, RemovePolymorphicLink::class);
-        $events->listen(FolderWasCreated::class, CreateFolderOnDisk::class);
-        $events->listen(FolderWasUpdated::class, RenameFolderOnDisk::class);
-        $events->listen(FolderIsDeleting::class, DeleteFolderOnDisk::class);
-        $events->listen(FolderIsDeleting::class, DeleteAllChildrenOfFolder::class);
+    $events->listen(StoringMedia::class, HandleMediaStorage::class);
+    $events->listen(DeletingMedia::class, RemovePolymorphicLink::class);
+    $events->listen(FolderWasCreated::class, CreateFolderOnDisk::class);
+    $events->listen(FolderWasUpdated::class, RenameFolderOnDisk::class);
+    $events->listen(FolderIsDeleting::class, DeleteFolderOnDisk::class);
+    $events->listen(FolderIsDeleting::class, DeleteAllChildrenOfFolder::class);
+    $events->listen(FileWasCreated::class, GenerateTokenFilePrivate::class);
 
         $this->app[TagManager::class]->registerNamespace(new File());
         $this->registerThumbnails();
         $this->registerBladeTags();
 
-        $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
+        //$this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
+
+        $this->registerComponents();
+        $this->registerAwsCredentials();
     }
 
     /**
      * Get the services provided by the provider.
-     *
-     * @return array
      */
     public function provides()
     {
-        return array();
+        return [];
     }
 
-    private function registerBindings()
-    {
-        $this->app->bind(FileRepository::class, function () {
-            return new EloquentFileRepository(new File());
-        });
-        $this->app->bind(FolderRepository::class, function () {
-            return new EloquentFolderRepository(new File());
-        });
-    }
+  private function registerBindings()
+  {
+    $this->app->bind(
+      'Modules\Media\Repositories\FileRepository',
+      function () {
+        $repository = new \Modules\Media\Repositories\Eloquent\EloquentFileRepository(new \Modules\Media\Entities\File());
+
+        if (! config('app.cache')) {
+          return $repository;
+        }
+
+        return new \Modules\Media\Repositories\Cache\CacheFileDecorator($repository);
+      }
+    );
+
+
+    $this->app->bind(FolderRepository::class, function () {
+      return new EloquentFolderRepository(new File());
+    });
+
+    $this->app->bind(
+      'Modules\Media\Repositories\ZoneRepository',
+      function () {
+        $repository = new \Modules\Media\Repositories\Eloquent\EloquentZoneRepository(new \Modules\Media\Entities\Zone());
+
+        if (! config('app.cache')) {
+          return $repository;
+        }
+
+        return new \Modules\Media\Repositories\Cache\CacheZoneDecorator($repository);
+      }
+    );
+
+  }
 
     /**
      * Register all commands for this module
@@ -138,28 +175,55 @@ class MediaServiceProvider extends ServiceProvider
         $this->commands('command.media.refresh');
     }
 
+    /**
+     * Register registerAwsCredentials
+     */
+    private function registerAwsCredentials()
+    {
+        try {
+            config(['filesystems.disks.s3' => [
+                'driver' => 's3',
+                'key' => setting('media::awsAccessKeyId'),
+                'secret' => setting('media::awsSecretAccessKey'),
+                'region' => setting('media::awsDefaultRegion'),
+                'bucket' => setting('media::awsBucket'),
+                'url' => setting('media::awsUrl'),
+                'endpoint' => setting('media::awsEndpoint'),
+            ]]);
+        } catch(\Exception $error) {
+            \Log::info('Media:: RegisterThumbnails error: '.$error->getMessage());
+        }
+  //  dd(trans('media::media'));
+    }
+
     private function registerThumbnails()
     {
-        $this->app[ThumbnailManager::class]->registerThumbnail('smallThumb', [
-            'resize' => [
-                'width' => 50,
-                'height' => null,
-                'callback' => function ($constraint) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize();
-                },
-            ],
-        ]);
-        $this->app[ThumbnailManager::class]->registerThumbnail('mediumThumb', [
-            'resize' => [
-                'width' => 180,
-                'height' => null,
-                'callback' => function ($constraint) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize();
-                },
-            ],
-        ]);
+        try {
+            $thumbnails = json_decode(setting('media::thumbnails', null, config('asgard.media.config.defaultThumbnails')));
+
+            foreach ($thumbnails as $key => $thumbnail) {
+                $this->app[ThumbnailManager::class]->registerThumbnail($key, [
+
+                    'quality' => $thumbnail->quality ?? 80,
+                    'resize' => [
+                        'width' => $thumbnail->width ?? 300,
+                        'height' => $thumbnail->height ?? null,
+                        'callback' => function ($constraint) use ($thumbnail) {
+                            if (isset($thumbnail->aspectRatio) && $thumbnail->aspectRatio) {
+                                $constraint->aspectRatio();
+                            }
+                            if (isset($thumbnail->upsize) && $thumbnail->upsize) {
+                                $constraint->upsize();
+                            }
+                        },
+                    ],
+                ],
+                    $thumbnail->format ?? 'webp'
+                );
+            }
+        } catch(\Exception $error) {
+            \Log::info('Media:: RegisterThumbnails error: '.$error->getMessage());
+        }
     }
 
     private function registerBladeTags()
@@ -176,5 +240,13 @@ class MediaServiceProvider extends ServiceProvider
         $this->app['blade.compiler']->directive('thumbnail', function ($value) {
             return "<?php echo MediaThumbnailDirective::show([$value]); ?>";
         });
+    }
+
+    /**
+     * Register components
+     */
+    private function registerComponents()
+    {
+        Blade::componentNamespace("Modules\Media\View\Components", 'media');
     }
 }

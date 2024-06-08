@@ -13,12 +13,13 @@ final class FolderMoverTest extends MediaTestCase
      * @var FolderMover
      */
     private $mover;
+
     /**
      * @var FolderRepository
      */
     private $folder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -29,7 +30,7 @@ final class FolderMoverTest extends MediaTestCase
         $this->app['config']->set('asgard.media.config.files-path', '/assets/media/');
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         if ($this->app['files']->isDirectory(public_path('assets')) === true) {
             $this->app['files']->deleteDirectory(public_path('assets'));
@@ -146,7 +147,7 @@ final class FolderMoverTest extends MediaTestCase
         $this->assertEquals('/assets/media/child-folder', $folderTwo->path->getRelativeUrl());
     }
 
-    private function makeRootFolder() : File
+    private function makeRootFolder(): File
     {
         return new File([
             'id' => 0,

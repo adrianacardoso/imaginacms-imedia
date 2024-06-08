@@ -8,36 +8,33 @@ class Thumbnail
      * @var array
      */
     private $filters;
+
     /**
      * @var string
      */
     private $name;
 
     /**
-     * @param $name
-     * @param $filters
+     * @var string
      */
-    private function __construct($name, $filters)
+    private $format;
+
+    private function __construct($name, $filters, $format = 'jpg')
     {
         $this->filters = $filters;
         $this->name = $name;
+        $this->format = $format;
     }
 
-    /**
-     * @param $thumbnailDefinition
-     * @return static
-     */
-    public static function make($thumbnailDefinition)
+    public static function make($thumbnailDefinition, $format = 'jpg')
     {
         $name = key($thumbnailDefinition);
 
-        return new static($name, $thumbnailDefinition[$name]);
+        return new static($name, $thumbnailDefinition[$name], $format);
     }
 
     /**
      * Make multiple thumbnail classes with the given array
-     * @param array $thumbnailDefinitions
-     * @return array
      */
     public static function makeMultiple(array $thumbnailDefinitions)
     {
@@ -52,24 +49,24 @@ class Thumbnail
 
     /**
      * Return the thumbnail name
-     * @return string
      */
     public function name()
     {
         return $this->name;
     }
 
-    /**
-     * @return array
-     */
     public function filters()
     {
         return $this->filters;
     }
 
+    public function format()
+    {
+        return $this->format;
+    }
+
     /**
      * Return the first width option found in the filters
-     * @return int
      */
     public function width()
     {
@@ -78,7 +75,6 @@ class Thumbnail
 
     /**
      * Return the first height option found in the filters
-     * @return int
      */
     public function height()
     {
@@ -87,19 +83,16 @@ class Thumbnail
 
     /**
      * Get the thumbnail size in format: width x height
-     * @return string
      */
     public function size()
     {
-        return $this->width() . 'x' . $this->height();
+        return $this->width().'x'.$this->height();
     }
 
     /**
      * Get the first found key in filters
-     * @param string $key
-     * @return int
      */
-    private function getFirst($key)
+    private function getFirst(string $key)
     {
         foreach ($this->filters as $filter) {
             if (isset($filter[$key])) {

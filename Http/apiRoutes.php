@@ -3,7 +3,7 @@
 use Illuminate\Routing\Router;
 
 /** @var Router $router */
-$router->group(['middleware' => 'api.token'], function (Router $router) {
+Route::middleware('api.token')->group(function (Router $router) {
     $router->get('folder', [
         'uses' => 'AllNestableFolderController',
         'as' => 'api.media.folders.all-nestable',
@@ -97,20 +97,22 @@ $router->group(['middleware' => 'api.token'], function (Router $router) {
     ]);
 });
 
-
 /**
  * IMAGINA API V1 ROUTES
  */
-$router->group(['prefix' => '/imedia/v1'], function (Router $router) {
+Route::prefix('/imedia/v1')->group(function (Router $router) {
+    //======  FILES
+    require 'ApiRoutes/fileRoutes.php';
 
-//======  FILES
-  require('ApiRoutes/fileRoutes.php');
+    //======  FOLDERS
+    require 'ApiRoutes/folderRoutes.php';
 
-//======  FOLDERS
-  require('ApiRoutes/folderRoutes.php');
+    //======  BATCHS
+    require 'ApiRoutes/batchRoutes.php';
 
-//======  BATCHS
-  require('ApiRoutes/batchRoutes.php');
-  
-  
+    $router->apiCrud([
+        'module' => 'imedia',
+        'prefix' => 'zones',
+        'controller' => 'ZoneApiController',
+    ]);
 });
