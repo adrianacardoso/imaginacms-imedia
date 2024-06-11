@@ -19,27 +19,21 @@ class DeleteFolderOnDisk
 
     public function handle(FolderIsDeleting $event)
     {
-        $this->finder->disk($this->getConfiguredFilesystem())->deleteDirectory($this->getDestinationPath($event->folder->getOriginal('path')));
+        $disk = is_null($event->folder->disk) ? $this->getConfiguredFilesystem() : $event->folder->disk;
+        $this->finder->disk($disk)->deleteDirectory($this->getDestinationPath($event->folder->getRawOriginal('path')));
     }
 
-    /**
-     * @param string $path
-     * @return string
-     */
-    private function getDestinationPath($path)
+    private function getDestinationPath(string $path): string
     {
         if ($this->getConfiguredFilesystem() === 'local') {
-            return basename(public_path()) . $path;
+            return basename(public_path()).$path;
         }
 
         return $path;
     }
 
-    /**
-     * @return string
-     */
-    private function getConfiguredFilesystem()
+    private function getConfiguredFilesystem(): string
     {
-        return config('asgard.media.config.filesystem');
+        return setting('media::filesystem', null, config('asgard.media.config.filesystem'));
     }
 }
