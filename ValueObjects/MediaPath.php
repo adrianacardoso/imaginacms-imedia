@@ -57,7 +57,7 @@ class MediaPath
             //Case other disk (Example Unsplash)
             return $this->file->path->getRelativeUrl();
         }
-       
+
     }
 
     /**
@@ -65,7 +65,8 @@ class MediaPath
      */
     public function getRelativeUrl()
     {
-        return $this->path;
+      $organizationPrefix = mediaOrganizationPrefix($this->file,"","", $this->organizationId,true);
+      return  $organizationPrefix . $this->path;
     }
 
     public function __toString()
