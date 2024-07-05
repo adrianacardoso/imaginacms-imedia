@@ -10,7 +10,7 @@ class MediaPath
      * @var string
      */
     private $path;
-  
+
   /**
    * @var string
    */
@@ -19,7 +19,7 @@ class MediaPath
    * @var string
    */
   private $file;
-  
+
   /**
    * @var int
    */
@@ -33,9 +33,9 @@ class MediaPath
         $this->path = $path;
 
         $this->disk = $disk;
-        
+
         $this->organizationId = $organizationId;
-        
+
         $this->file = $file;
     }
 
@@ -49,7 +49,7 @@ class MediaPath
         $path = ltrim($this->path, '/');
         $disk = is_null($disk)? is_null($this->disk)? setting('media::filesystem', null, config("asgard.media.config.filesystem")) : $this->disk : $disk;
         $organizationPrefix = mediaOrganizationPrefix($this->file,"","/", $organizationId,true);
-        
+
         $config = config("filesystems.disks");
 
         if(isset($config[$disk])){
@@ -58,15 +58,16 @@ class MediaPath
             //Case other disk (Example Unsplash)
             return $this->file->path->getRelativeUrl();
         }
-       
+
     }
 
     /**
      * @return string
      */
-    public function getRelativeUrl()
+    public function getRelativeUrl($organizationPrefix = '')
     {
-        return $this->path;
+      $organizationPrefix = mediaOrganizationPrefix($this->file,"","", $this->organizationId,true);
+      return  $organizationPrefix . $this->path;
     }
 
     public function __toString()

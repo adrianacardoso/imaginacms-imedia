@@ -31,15 +31,24 @@ if (!function_exists('mediaOrganizationPrefix')) {
 
   function mediaOrganizationPrefix($file = null, $prefix = "", $suffix = "", $organizationId = null, $forced = false)
   {
-    $tenancyMode = config("tenancy.mode", null);
+    $isSingleDataBase = config("tenancy.mode", null) == "singleDatabase";
+    $fileId = $file->id ?? null;
+    $organizationId = tenant()->id ?? $file->organization_id ?? $organizationId ?? null;
 
-    if ((isset($file->id) && !empty($file->organization_id)) && (isset(tenant()->id) || !empty($organizationId)) || $tenancyMode == "singleDatabase") {
-      $organizationId = tenant()->id ?? $file->organization_id ?? $organizationId ?? "";
-      if (isset($file->id) && empty($file->organization_id)) return "";
-      if ((!($tenancyMode == "multiDatabase") || $forced) && !empty($organizationId)) {
-        return $prefix . config("tenancy.filesystem.suffix_base") . $organizationId . $suffix;
-      }
-    }
+    if(!$fileId || !$organizationId) return "";
+    if($isSingleDataBase || $forced) return $prefix . config("tenancy.filesystem.suffix_base") . $organizationId . $suffix;
+
+//    if (
+//      (isset($file->id) && !empty($file->organization_id)) &&
+//      (isset(tenant()->id) || !empty($organizationId)) ||
+//      $tenancyMode == "singleDatabase"
+//    ) {
+//      $organizationId = tenant()->id ?? $file->organization_id ?? $organizationId ?? "";
+//      if (isset($file->id) && empty($file->organization_id)) return "";
+//      if ((!($tenancyMode == "multiDatabase") || $forced) && !empty($organizationId)) {
+//        return $prefix . config("tenancy.filesystem.suffix_base") . $organizationId . $suffix;
+//      }
+//    }
 
     return "";
   }
