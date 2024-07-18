@@ -66,8 +66,9 @@ class MediaPath
      */
     public function getRelativeUrl($organizationPrefix = '')
     {
-      $organizationPrefix = mediaOrganizationPrefix($this->file,"","", $this->organizationId,true);
-      return  $organizationPrefix . $this->path;
+      return $this->path;
+//      $organizationPrefix = mediaOrganizationPrefix($this->file,"","", $this->organizationId,true);
+//      return  $organizationPrefix . $this->path;
     }
 
     public function __toString()
