@@ -24,9 +24,15 @@ class ValidateHasThumbnailsTableSeeder extends Seeder
     foreach ($files as $file) {
       $thubmbnail = $imagy->getThumbnail($file, 'smallThumb');
       $thubmbnailPath = preg_replace('/^https?:\/\/.*?\//', '', $thubmbnail);
-      if ($imagy->fileExists($thubmbnailPath, $file->disk)) {
-        File::where('id', $file->id)->update(['has_thumbnails' => true]);
+
+      //Se agrega esta validacion xq generaba un error en $imagy->fileExists: 
+      //Error era: Disk [external] does not have a configured driver
+      if($file->disk!="external"){
+        if ($imagy->fileExists($thubmbnailPath, $file->disk)) {
+          File::where('id', $file->id)->update(['has_thumbnails' => true]);
+        }
       }
+
     }
   }
 }
