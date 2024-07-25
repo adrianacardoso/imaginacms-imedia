@@ -30,6 +30,7 @@ if (! function_exists('mediaOrganizationPrefix')) {
       $validFile = !$file ? true : ($file->id ?? null);// If file not exist is valid, if exist and has Id is valid
       $organizationId = tenant()->id ?? $file->organization_id ?? $organizationId ?? null;
 
+      if($file && strpos($file->path->getRelativeUrl(),"default.jpg")) return "";
       if($validFile && !$organizationId) return "";
       if($isSingleDataBase || $forced) return $prefix . config("tenancy.filesystem.suffix_base") . $organizationId . $suffix;
 
