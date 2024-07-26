@@ -26,13 +26,13 @@ if (! function_exists('mediaExtensionsAvailable')) {
 if (! function_exists('mediaOrganizationPrefix')) {
     function mediaOrganizationPrefix($file = null, $prefix = '', $suffix = '', $organizationId = null, $forced = false)
     {
-      $isSingleDataBase = config("tenancy.mode", null) == "singleDatabase";
-      $validFile = !$file ? true : ($file->id ?? null);// If file not exist is valid, if exist and has Id is valid
       $organizationId = tenant()->id ?? $file->organization_id ?? $organizationId ?? null;
-
-      if($file && strpos($file->path->getRelativeUrl(),"default.jpg")) return "";
-      if($validFile && !$organizationId) return "";
-      if($isSingleDataBase || $forced) return $prefix . config("tenancy.filesystem.suffix_base") . $organizationId . $suffix;
+      $isSingleDataBase = config("tenancy.mode", null) == "singleDatabase";//Check the tenant mode
+      $isDefaultImage = $file && strpos($file->path->getRelativeUrl(), "default.jpg");//check if file is default image
+      $isGlobalFile = $file && !$file->organization_id;//Check if file has a organizationId
+    
+      if (!$organizationId || $isDefaultImage || $isGlobalFile) return "";
+      if ($isSingleDataBase || $forced) return $prefix . config("tenancy.filesystem.suffix_base") . $organizationId . $suffix;
 
 //    if (
 //      (isset($file->id) && !empty($file->organization_id)) &&
