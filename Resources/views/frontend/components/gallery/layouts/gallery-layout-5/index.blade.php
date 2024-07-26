@@ -30,7 +30,7 @@
               <div class="carousel-item @if($key == 0) active @endif">
                 <x-media::single-image :isMedia="true" :mediaFiles="$item" :dataFancybox="$dataFancybox"
                                        :autoplayVideo="$autoplayVideo" :loopVideo="$loopVideo"
-                                       :mutedVideo="$mutedVideo"/>
+                                       :mutedVideo="$mutedVideo" :showDescription="$showDescription"/>
               </div>
             @endforeach
           </div>
@@ -40,4 +40,4 @@
   </div>
 @endif
 
-@include('media::frontend.components.gallery.partials.style')
+@include('media::frontend.components.gallery.partials.style', [$objectFit, $aspectRatio])
