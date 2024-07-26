@@ -5,7 +5,9 @@
         <article>
           <figure>
             <x-media::single-image :isMedia="true" :mediaFiles="$item" :dataFancybox="$dataFancybox"
-                                   :autoplayVideo="$autoplayVideo" :loopVideo="$loopVideo" :mutedVideo="$mutedVideo"/>
+                                   :autoplayVideo="$autoplayVideo" :loopVideo="$loopVideo" :mutedVideo="$mutedVideo"
+                                   :showDescription="$showDescription"
+            />
           </figure>
         </article>
       @endforeach
