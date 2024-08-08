@@ -63,6 +63,7 @@ class Gallery extends Component
     $this->dots = $dots;
     $this->nav = $nav;
     $this->responsive = json_encode($responsive ?? [0 => ["items" => 1], 640 => ["items" => 2], 992 => ["items" => 4]]);
+    if (gettype($responsive) === 'string') $this->responsive = $responsive ?? json_encode($responsive);
     $this->dataFancybox = $dataFancybox ? $dataFancybox . Str::uuid() : null;
     $this->gallery = [];
     $this->columnMasonry = $columnMasonry;
