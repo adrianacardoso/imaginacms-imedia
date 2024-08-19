@@ -256,14 +256,16 @@ class Imagy
         if ($thumbnail instanceof Thumbnail) {
             $thumbnail = $thumbnail->name();
         }
+        
+        
         $filenameWithoutPrefix = $this->removeConfigPrefix($path->getRelativeUrl());
         $filename = substr(strrchr($filenameWithoutPrefix, '/'), 1);
         $folders = str_replace($filename, '', $filenameWithoutPrefix);
-
-        if ($filename === false) {
+     
+        if ($filename === false || empty($filename)) {
             return config('asgard.media.config.files-path').$this->newFilename($path, $thumbnail);
         }
-
+        
         return config('asgard.media.config.files-path').$folders.$this->newFilename($path, $thumbnail);
     }
 
