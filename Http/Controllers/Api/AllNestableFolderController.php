@@ -3,10 +3,10 @@
 namespace Modules\Media\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Routing\Controller;
+use Modules\Core\Icrud\Controllers\BaseCrudController;
 use Modules\Media\Repositories\FolderRepository;
 
-class AllNestableFolderController extends Controller
+class AllNestableFolderController extends BaseCrudController
 {
     /**
      * @var FolderRepository

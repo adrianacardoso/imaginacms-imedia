@@ -3,12 +3,12 @@
 namespace Modules\Media\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Routing\Controller;
+use Modules\Core\Icrud\Controllers\BaseCrudController;
 use Modules\Media\Entities\File;
 use Modules\Media\Http\Requests\CreateFolderRequest;
 use Modules\Media\Repositories\FolderRepository;
 
-class FolderController extends Controller
+class FolderController extends BaseCrudController
 {
     /**
      * @var FolderRepository

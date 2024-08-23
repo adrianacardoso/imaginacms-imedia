@@ -2,6 +2,8 @@
 
 namespace Modules\Media\Http\Controllers\Api;
 
+use Modules\Core\Icrud\Controllers\BaseCrudController;
+//Model
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Modules\Media\Http\Requests\MoveMediaRequest;
@@ -9,7 +11,7 @@ use Modules\Media\Repositories\FileRepository;
 use Modules\Media\Repositories\FolderRepository;
 use Modules\Media\Services\Movers\Mover;
 
-class MoveMediaController extends Controller
+class MoveMediaController extends BaseCrudController
 {
     /**
      * @var FileRepository
