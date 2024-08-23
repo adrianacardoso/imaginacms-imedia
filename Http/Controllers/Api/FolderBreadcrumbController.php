@@ -3,11 +3,11 @@
 namespace Modules\Media\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Routing\Controller;
+use Modules\Core\Icrud\Controllers\BaseCrudController;
 use Modules\Media\Entities\File;
 use Modules\Media\Repositories\FolderRepository;
 
-class FolderBreadcrumbController extends Controller
+class FolderBreadcrumbController extends BaseCrudController
 {
     /**
      * @var FolderRepository

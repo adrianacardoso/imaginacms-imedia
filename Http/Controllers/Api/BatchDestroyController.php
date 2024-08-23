@@ -4,12 +4,12 @@ namespace Modules\Media\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
+use Modules\Core\Icrud\Controllers\BaseCrudController;
 use Modules\Media\Image\Imagy;
 use Modules\Media\Repositories\FileRepository;
 use Modules\Media\Repositories\FolderRepository;
 
-class BatchDestroyController extends Controller
+class BatchDestroyController extends BaseCrudController
 {
     /**
      * @var FileRepository
