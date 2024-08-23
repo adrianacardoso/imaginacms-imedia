@@ -233,8 +233,8 @@ class Imagy
     public function fileExists($filename, string $disk = null): bool
     {
         $disk = is_null($disk) ? $this->getConfiguredFilesystem() : $disk;
-
-        return $this->filesystem->disk($disk)->exists($filename);
+  
+        return $disk == "s3" ? false : $this->filesystem->disk($disk)->exists($filename);
     }
 
     private function getDestinationPath(string $path, $disk = null): string
