@@ -114,5 +114,6 @@ Route::prefix('/imedia/v1')->group(function (Router $router) {
         'module' => 'imedia',
         'prefix' => 'zones',
         'controller' => 'ZoneApiController',
+        'permission' => 'media.zones'
     ]);
 });
