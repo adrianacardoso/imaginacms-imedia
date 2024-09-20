@@ -21,6 +21,7 @@ class CacheFileDecorator extends BaseCacheCrudDecorator implements FileRepositor
     
     public function createFromFile(UploadedFile $file, $parentId = 0, $disk = null)
     {
+      $this->cache->tags($this->getTags())->flush();
       return $this->repository->createFromFile($file, $parentId, $disk);
     }
 
