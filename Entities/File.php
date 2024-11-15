@@ -50,8 +50,8 @@ class File extends CrudModel implements TaggableInterface, Responsable
         'folder_id',
         'created_by',
         'has_watermark',
-    'has_thumbnails',
-    'disk'
+        'has_thumbnails',
+        'disk'
   ];
   protected $appends = ['path_string', 'media_type'];
   protected $casts = ['is_folder' => 'boolean'];
@@ -83,8 +83,7 @@ class File extends CrudModel implements TaggableInterface, Responsable
   public function getUrlAttribute()
   {
     if ($this->disk == 'privatemedia') {
-      $itemToken = \DB::table('isite__tokenables')->where('entity_id', '=', $this->id)->first();
-      return \URL::route('public.media.media.show', ['criteria' => $this->id, 'token' => $itemToken->token ?? null]);
+      return \URL::route('public.media.media.show', ['criteria' => $this->id]);
     } else {
       return (string)$this->path;
     }

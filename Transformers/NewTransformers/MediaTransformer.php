@@ -11,15 +11,15 @@ use Modules\Iprofile\Transformers\UserTransformer;
 
 class MediaTransformer extends JsonResource
 {
-    /**
-     * @var Imagy
-     */
-    private $imagy;
+  /**
+   * @var Imagy
+   */
+  private $imagy;
 
-    /**
-     * @var ThumbnailManager
-     */
-    private $thumbnailManager;
+  /**
+   * @var ThumbnailManager
+   */
+  private $thumbnailManager;
   private $defaultUrl;
 
   private $params;
@@ -32,24 +32,25 @@ class MediaTransformer extends JsonResource
     $this->thumbnailManager = app(ThumbnailManager::class);
     $this->params = $params;
     $this->instancesDefaultUrl();
-    }
+  }
 
-    public function toArray($request)
-    {
+  public function toArray($request)
+  {
+    $fileToken = isset($this->params['fileToken']) ? $this->params['fileToken'] : null;
     $filePath = $this->getPath();
 
-        $data = [
-            'id' => $this->id,
-            'filename' => $this->filename,
+    $data = [
+      'id' => $this->id,
+      'filename' => $this->filename,
       'mimeType' => $this->mimetype,
       'fileSize' => $this->filesize,
       'path' => $filePath,
       'relativePath' => $this->path->getRelativeUrl(),
-            'isImage' => $this->isImage(),
+      'isImage' => $this->isImage(),
       'isVideo' => $this->isVideo(),
-            'isFolder' => $this->isFolder(),
-            'mediaType' => $this->media_type,
-            'folderId' => $this->folder_id,
+      'isFolder' => $this->isFolder(),
+      'mediaType' => $this->media_type,
+      'folderId' => $this->folder_id,
       'description' => $this->description,
       'alt' => $this->alt_attribute,
       'keywords' => $this->keywords,
@@ -63,19 +64,28 @@ class MediaTransformer extends JsonResource
       'url' => $this->url ?? '#',
       'createdByUser' => isset($this->params["ignoreUser"]) ? null : new UserTransformer($this->whenLoaded('createdBy')),
       'tags' => $this->tags->pluck('name')->toArray(),
-        ];
+    ];
+
+    if ($fileToken) {
+      $data['url'] = addQueryParamToUrl($this->url, 'token', $fileToken);
+      $data['path'] = addQueryParamToUrl($this->path, 'token', $fileToken);
+    }
 
     //Thumbnails
-        foreach ($this->thumbnailManager->all() as $thumbnail) {
-            $thumbnailName = $thumbnail->name();
+    foreach ($this->thumbnailManager->all() as $thumbnail) {
+      $thumbnailName = $thumbnail->name();
       $thumbnailPath = $this->isImage() ? $this->getValidatedThumbnail($thumbnailName) : $this->defaultUrl;
+      if ($fileToken) {
+        $thumbnailPath = addQueryParamToUrl($thumbnailPath, 'token', $fileToken);
+        $thumbnailPath = addQueryParamToUrl($thumbnailPath, 'originalFileId', $this->id);
+      }
       //Include the thumbnails data as relation
       $data['thumbnails'][] = ['name' => $thumbnailName, 'path' => $thumbnailPath, 'size' => $thumbnail->size(),];
       //Include thumnail in main three
       $data[$thumbnailName] = $thumbnailPath;
       //Include the relative thumnail in main three
       $data['relative' . ucfirst($thumbnailName)] = str_replace(url("/"), "", $thumbnailPath);
-        }
+    }
 
     $filter = json_decode(json_encode($request->filter));
     // Return data with available translations
@@ -91,9 +101,8 @@ class MediaTransformer extends JsonResource
           $this->translate("$lang")['keywords'] : '';
       }
     }
-
-        return $data;
-    }
+    return $data;
+  }
 
   private function instancesDefaultUrl()
   {
@@ -107,23 +116,23 @@ class MediaTransformer extends JsonResource
     $this->defaultUrl = strtolower(url($path));
   }
 
-    private function getPath()
-    {
-        if ($this->is_folder) {
-            return (string) $this->pathString;
-        }
+  private function getPath()
+  {
+    if ($this->is_folder) {
+      return (string)$this->pathString;
+    }
 
     return (string)$this->path . "?u=" . ($this->updated_at->timestamp ?? "");
+  }
+
+  private function getDeleteUrl()
+  {
+    if ($this->isImage()) {
+      return route('api.media.media.destroy', $this->id);
     }
 
-    private function getDeleteUrl()
-    {
-        if ($this->isImage()) {
-            return route('api.media.media.destroy', $this->id);
-        }
-
-        return route('api.media.folders.destroy', $this->id);
-    }
+    return route('api.media.folders.destroy', $this->id);
+  }
 
   private function getValidatedThumbnail($thumbnailName)
   {

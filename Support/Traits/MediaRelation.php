@@ -9,31 +9,31 @@ use Modules\Media\Transformers\NewTransformers\MediaTransformer;
 
 trait MediaRelation
 {
-    /**
-     * Make the Many To Many Morph To Relation
-     */
-    public function files()
-    {
-        $tenantWithCentralData = config('asgard.media.config.tenantWithCentralData.imageable');
+  /**
+   * Make the Many To Many Morph To Relation
+   */
+  public function files()
+  {
+    $tenantWithCentralData = config('asgard.media.config.tenantWithCentralData.imageable');
 
-        if ($tenantWithCentralData) {
-            return $this->morphToMany(File::class, 'imageable', 'media__imageables')->with('translations')->withPivot('zone', 'id')->withTimestamps()->orderBy('order')->withoutTenancy();
-        } else {
-            return $this->morphToMany(File::class, 'imageable', 'media__imageables')->with('translations')->withPivot('zone', 'id')->withTimestamps()->orderBy('order');
-        }
+    if ($tenantWithCentralData) {
+      return $this->morphToMany(File::class, 'imageable', 'media__imageables')->with('translations')->withPivot('zone', 'id')->withTimestamps()->orderBy('order')->withoutTenancy();
+    } else {
+      return $this->morphToMany(File::class, 'imageable', 'media__imageables')->with('translations')->withPivot('zone', 'id')->withTimestamps()->orderBy('order');
     }
+  }
 
-    /**
-     * Make the Many to Many Morph to Relation with specific zone
-     */
-    public function filesByZone($zone)
-    {
-        return $this->morphToMany(File::class, 'imageable', 'media__imageables')
-          ->withPivot('zone', 'id')
-          ->wherePivot('zone', '=', $zone)
-          ->withTimestamps()
-          ->orderBy('order');
-    }
+  /**
+   * Make the Many to Many Morph to Relation with specific zone
+   */
+  public function filesByZone($zone)
+  {
+    return $this->morphToMany(File::class, 'imageable', 'media__imageables')
+      ->withPivot('zone', 'id')
+      ->wherePivot('zone', '=', $zone)
+      ->withTimestamps()
+      ->orderBy('order');
+  }
 
   /**
    * Order and transform all files data
@@ -86,6 +86,15 @@ trait MediaRelation
 
     //Transform the file
     $transformerParams = $classInfo['entityName'] == 'user' ? ['ignoreUser' => true] : [];
+    $privateDisk = config('filesystems.disks.privatemedia');
+    if ($file->disk == $privateDisk) {
+      $validatePrivateFiles = method_exists($this, 'allowPrivateMedia') ? $this->allowPrivateMedia() : false;
+      if ($validatePrivateFiles) {
+        $itemToken = \DB::table('isite__tokenables')->where('entity_id', '=', $file->id)->first();
+        $transformerParams['fileToken'] = $itemToken->token;
+      }
+    }
+
     return json_decode(json_encode(new MediaTransformer($file, $transformerParams)));
   }
 
