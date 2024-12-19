@@ -2,7 +2,7 @@
   <div id="{{$id}}WithVerticalThumbs">
     <div class="row">
       <div class="col-auto d-none d-sm-block">
-        <div class="arrow arrow-up" > {!! json_decode($navText)[0] ?? "<i class='fa fa-angle-up'></i>" !!} </div>
+        <div class="arrow arrow-up {{  $showNavs && count( $gallery) <= 1 ? 'd-none': ''}}" > {!! json_decode($navText)[0] ?? "<i class='fa fa-angle-up'></i>" !!} </div>
         <div id="{{$id}}vertical" class="vertical">
           @foreach($gallery as $key=>$item)
             <div class="item">
@@ -14,15 +14,15 @@
           @endforeach
 
         </div>
-        <div class="arrow arrow-down"> {!! json_decode($navText)[1] ?? "<i class='fa fa-angle-down'></i>" !!} </i></div>
+        <div class="arrow arrow-down {{  $showNavs && count( $gallery ) <= 1 ? 'd-none': ''}}"> {!! json_decode($navText)[1] ?? "<i class='fa fa-angle-down'></i>" !!} </i></div>
       </div>
       <div class="col pl-sm-0">
         <div id="{{$id}}PrimaryCarousel" class="carousel slide" data-ride="carousel">
-          <a class="carousel-control-prev" href="#{{$id}}PrimaryCarousel" role="button" data-slide="prev">
+          <a class="carousel-control-prev {{  $showNavs && count( $gallery) <= 1 ? 'd-none': ''}}" href="#{{$id}}PrimaryCarousel" role="button" data-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="sr-only">Previous</span>
           </a>
-          <a class="carousel-control-next" href="#{{$id}}PrimaryCarousel" role="button" data-slide="next">
+          <a class="carousel-control-next {{  $showNavs && count( $gallery) <= 1 ? 'd-none': ''}}" href="#{{$id}}PrimaryCarousel" role="button" data-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="sr-only">Next</span>
           </a>
