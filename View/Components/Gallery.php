@@ -23,6 +23,7 @@ class Gallery extends Component
   public $view;
   public $columnMasonry;
   public $navText;
+  public $showNavs;
   public $maxImages;
   public $autoplayVideo;
   public $mutedVideo;
@@ -43,7 +44,7 @@ class Gallery extends Component
 
   public function __construct($mediaFiles, $id = "gallery", $zones = ["gallery"], $margin = 10, $responsiveClass = true,
                               $autoplay = true, $autoplayHoverPause = true, $loopGallery = true, $dots = true, $nav = true,
-                              $responsive = null, $dataFancybox = 'gallery', $layout = "gallery-layout-1",
+                              $showNavs = true, $responsive = null, $dataFancybox = 'gallery', $layout = "gallery-layout-1",
                               $columnMasonry = 3, $navText = "", $maxImages = null, $onlyVideos = false,
                               $onlyImages = false, $autoplayVideo = false, $mutedVideo = false, $loopVideo = false,
                               $stagePadding = 0, $autoplayTimeout = 5000, $aspectRatio = "1-1", $objectFit = 'contain',
@@ -61,6 +62,7 @@ class Gallery extends Component
     $this->loopGallery = $loopGallery;
     $this->dots = $dots;
     $this->nav = $nav;
+    $this->showNavs = $showNavs;
     $this->responsive = json_encode($responsive ?? [0 => ["items" => 1], 640 => ["items" => 2], 992 => ["items" => 4]]);
     if (gettype($responsive) === 'string') $this->responsive = $responsive;
     $this->dataFancybox = $dataFancybox ? $dataFancybox . Str::uuid() : null;
