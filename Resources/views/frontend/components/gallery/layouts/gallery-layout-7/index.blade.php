@@ -1,7 +1,7 @@
 @if(count($gallery) > 0)
   <div id="{{$id}}WithVerticalThumbs">
     <div class="row">
-      @if(count($gallery) == 1)
+      @if(count($gallery) > 1)
       <div class="col-auto d-none d-sm-block">
         <div class="arrow arrow-up {{  $showNavs && count( $gallery) <= 1 ? 'd-none': ''}}" > {!! json_decode($navText)[0] ?? "<i class='fa fa-angle-up'></i>" !!} </div>
         <div id="{{$id}}vertical" class="vertical">
