@@ -14,12 +14,12 @@ class MediaTransformer extends CrudResource
      */
     public function modelAttributes($request)
     {
-        foreach (ThumbnailManager::class->all() as $thumbnail) {
+        foreach (app(ThumbnailManager::class)->all() as $thumbnail) {
             $thumbnailName = $thumbnail->name();
 
             $data['thumbnails'][] = [
                 'name' => $thumbnailName,
-                'path' => Imagy::class->getThumbnail($this->resource->path, $thumbnailName, $this->resource->disk),
+                'path' => app(Imagy::class)->getThumbnail($this->resource->path, $thumbnailName, $this->resource->disk),
                 'size' => $thumbnail->size(),
             ];
         }
@@ -30,8 +30,8 @@ class MediaTransformer extends CrudResource
             'fa_icon' => FileHelper::getFaIcon($this->resource->media_type),
             'created_at' => $this->resource->created_at,
             'folder_id' => $this->resource->folder_id,
-            'small_thumb' => Imagy::class->getThumbnail($this->resource->path, 'smallThumb', $this->resource->disk),
-            'medium_thumb' => Imagy::class->getThumbnail($this->resource->path, 'mediumThumb', $this->resource->disk),
+            'small_thumb' => app(Imagy::class)->getThumbnail($this->resource->path, 'smallThumb', $this->resource->disk),
+            'medium_thumb' => app(Imagy::class)->getThumbnail($this->resource->path, 'mediumThumb', $this->resource->disk),
             'urls' => [
                 'delete_url' => $this->getDeleteUrl(),
             ],
