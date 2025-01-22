@@ -86,7 +86,7 @@ class DynamicGallery extends Component
   public function updateGallery($productOptionValueSelected)
   {
     $this->mediaFiles = json_decode(json_encode($productOptionValueSelected));
-    $this->emit('refreshOwlCarousel');
+    $this->emit('refreshOwlCarousel'.$this->componentId);
   }
 
   public function render()

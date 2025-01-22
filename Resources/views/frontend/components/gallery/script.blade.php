@@ -18,7 +18,7 @@
     });
 
     document.addEventListener('livewire:load', function () {
-        Livewire.on('refreshOwlCarousel', () => {
+        Livewire.on('refreshOwlCarousel'.{{$componentId}}, () => {
             var owl = $('#{{$id}}Carousel');
             owl.owlCarousel('destroy');
             owl.owlCarousel({
