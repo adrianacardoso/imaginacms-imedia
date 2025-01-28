@@ -102,16 +102,16 @@ class SingleImage extends Component
     if ($isMedia && !empty($mediaFiles)) {
       $this->mediaFiles = $mediaFiles;
       $this->zone = $zone ?? 'mainimage';
-      $this->src = $mediaFiles->{$zone}->extraLargeThumb ?? $mediaFiles->extraLargeThumb;
+      $this->src = $mediaFiles->{$this->zone}->extraLargeThumb ?? $mediaFiles->extraLargeThumb;
       if ($this->isSVG) {
-        $this->src = $mediaFiles->{$zone}->path ?? $mediaFiles->path;
+        $this->src = $mediaFiles->{$this->zone}->path ?? $mediaFiles->path;
       }
-      $this->fallback = $mediaFiles->{$zone}->path ?? $mediaFiles->path;
-      $this->extraLargeSrc = $mediaFiles->{$zone}->extraLargeThumb ?? $mediaFiles->extraLargeThumb;
-      $this->largeSrc = $mediaFiles->{$zone}->largeThumb ?? $mediaFiles->largeThumb;
-      $this->mediumSrc = $mediaFiles->{$zone}->mediumThumb ?? $mediaFiles->mediumThumb;
-      $this->smallSrc = $mediaFiles->{$zone}->smallThumb ?? $mediaFiles->smallThumb;
-      $this->isVideo = $mediaFiles->{$zone}->isVideo ?? $mediaFiles->isVideo ?? false;
+      $this->fallback = $mediaFiles->{$this->zone}->path ?? $mediaFiles->path;
+      $this->extraLargeSrc = $mediaFiles->{$this->zone}->extraLargeThumb ?? $mediaFiles->extraLargeThumb;
+      $this->largeSrc = $mediaFiles->{$this->zone}->largeThumb ?? $mediaFiles->largeThumb;
+      $this->mediumSrc = $mediaFiles->{$this->zone}->mediumThumb ?? $mediaFiles->mediumThumb;
+      $this->smallSrc = $mediaFiles->{$this->zone}->smallThumb ?? $mediaFiles->smallThumb;
+      $this->isVideo = $mediaFiles->{$this->zone}->isVideo ?? $mediaFiles->isVideo ?? false;
     } else {
       $this->extraLargeSrc = $extraLargeSrc;
       $this->largeSrc = $largeSrc;
