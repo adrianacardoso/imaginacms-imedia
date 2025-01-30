@@ -1,6 +1,6 @@
 <div id="{{$componentId}}">
     <x-media::gallery
-            :mediaFiles="$mediaFiles"
+            :mediaFiles="$images"
             :id="$idGallery" :zones="$zones"
             :margin="$margin"
             :responsiveClass="$responsiveClass"

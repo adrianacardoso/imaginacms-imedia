@@ -7,11 +7,9 @@ use Illuminate\Support\Str;
 
 class DynamicGallery extends Component
 {
-  protected $listeners = ['updateGallery'];
-
   public $idGallery;
   public $zones;
-  protected $mediaFiles;
+  public $mediaFiles;
   public $margin;
   public $responsiveClass;
   public $autoplay;
@@ -38,7 +36,8 @@ class DynamicGallery extends Component
   public $marginItems;
   public $heightItems;
   public $componentId;
-
+  protected $images;
+  public $productId;
 
   public function mount($mediaFiles, $idGallery = "gallery", $zones = ["gallery"], $margin = 10, $responsiveClass = true,
                         $autoplay = true, $autoplayHoverPause = true, $loopGallery = true, $dots = true, $nav = true,
@@ -46,14 +45,13 @@ class DynamicGallery extends Component
                         $columnMasonry = 3, $navText = "", $maxImages = null, $onlyVideos = false,
                         $onlyImages = false, $autoplayVideo = false, $mutedVideo = false, $loopVideo = false,
                         $stagePadding = 0, $autoplayTimeout = 5000, $aspectRatio = "1-1", $objectFit = 'contain',
-                        $showDescription = false, $marginItems = 0, $heightItems = 350)
+                        $showDescription = false, $marginItems = 0, $heightItems = 350, $productId = null)
   {
     $this->componentId = 'livewireGallery' . rand(0, 99);
     $this->idGallery = $idGallery;
     $this->layout = $layout;
     $this->view = "media::frontend.components.gallery.layouts.$layout.index";
     $this->zones = $zones;
-    $this->mediaFiles = $mediaFiles;
     $this->margin = $margin;
     $this->responsiveClass = $responsiveClass;
     $this->autoplay = $autoplay;
@@ -81,16 +79,24 @@ class DynamicGallery extends Component
     $this->heightItems = $heightItems;
     $this->onlyVideos = $onlyVideos;
     $this->onlyImages = $onlyImages;
+    $this->images = $mediaFiles;
+    $this->mediaFiles = json_encode($mediaFiles); // save like this because is needed as primitive
+    $this->productId = $productId;
   }
 
-  public function updateGallery($productOptionValueSelected)
+  protected function getListeners()
   {
-    $this->mediaFiles = json_decode(json_encode($productOptionValueSelected));
-    $this->emit('refreshOwlCarousel'.$this->componentId);
+    return ["updateMediaFilesItem-$this->productId" => "updateGallery"];
+  }
+
+  public function updateGallery($mediaFiles = null)
+  {
+    $this->images = $mediaFiles ? json_decode(json_encode($mediaFiles)) : json_decode($this->mediaFiles);
+    $this->emit('refreshOwlCarousel' . $this->componentId);
   }
 
   public function render()
   {
-    return view("media::frontend.livewire.dynamic-gallery.index", ['mediaFiles' => $this->mediaFiles]);
+    return view("media::frontend.livewire.dynamic-gallery.index", ['images' => $this->images]);
   }
 }

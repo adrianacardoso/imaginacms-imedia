@@ -7,9 +7,6 @@ use Illuminate\Support\Str;
 
 class DynamicImage extends Component
 {
-
-  protected $listeners = ['updateSingleImage'];
-
   public $src;
   public $zone;
   public $alt;
@@ -32,7 +29,7 @@ class DynamicImage extends Component
   public $dataCaption;
   public $target;
   public $isVideo;
-  protected $mediaFiles;
+  public $mediaFiles;
   public $uid;
   public $dataTarget;
   public $dataSlideTo;
@@ -45,7 +42,6 @@ class DynamicImage extends Component
   public $productId;
   protected $images;
   public $updateOnlyThisComponent;
-  protected $newMediaFiles;
   public $componentId;
 
 
@@ -88,23 +84,18 @@ class DynamicImage extends Component
     $this->central = $central;
     $this->fetchPriority = $fetchPriority;
     $this->images = $mediaFiles;
-    $this->newMediaFiles = null;
-    $this->updateOnlyThisComponent = null;
-    cache()->put($this->componentId, $mediaFiles);
-
+    $this->mediaFiles = json_encode($mediaFiles); // save like this because is needed as primitive
   }
 
-  public function updateSingleImage($productOptionValueSelected, $productId)
+  //register dynamic listeners
+  protected function getListeners()
   {
-    $this->newMediaFiles = json_decode(json_encode($productOptionValueSelected));
-    $this->updateOnlyThisComponent = 'livewireImage-' . $productId;
+    return ["updateMediaFilesItem-$this->productId" => "updateSingleImage"];
+  }
 
-    if ($this->componentId == $this->updateOnlyThisComponent) {
-      $this->images = $this->newMediaFiles;
-    } else {
-      $cachedMediaFiles = cache()->get($this->componentId);
-      $this->images = $cachedMediaFiles;
-    }
+  public function updateSingleImage($mediaFiles = null)
+  {
+    $this->images = $mediaFiles ? json_decode(json_encode($mediaFiles)) : json_decode($this->mediaFiles);
   }
 
   /**
