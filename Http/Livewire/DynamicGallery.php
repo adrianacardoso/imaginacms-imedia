@@ -37,7 +37,7 @@ class DynamicGallery extends Component
   public $heightItems;
   public $componentId;
   protected $images;
-  public $productId;
+  public $itemId;
 
   public function mount($mediaFiles, $idGallery = "gallery", $zones = ["gallery"], $margin = 10, $responsiveClass = true,
                         $autoplay = true, $autoplayHoverPause = true, $loopGallery = true, $dots = true, $nav = true,
@@ -45,7 +45,7 @@ class DynamicGallery extends Component
                         $columnMasonry = 3, $navText = "", $maxImages = null, $onlyVideos = false,
                         $onlyImages = false, $autoplayVideo = false, $mutedVideo = false, $loopVideo = false,
                         $stagePadding = 0, $autoplayTimeout = 5000, $aspectRatio = "1-1", $objectFit = 'contain',
-                        $showDescription = false, $marginItems = 0, $heightItems = 350, $productId = null)
+                        $showDescription = false, $marginItems = 0, $heightItems = 350, $itemId = null)
   {
     $this->componentId = 'livewireGallery' . rand(0, 99);
     $this->idGallery = $idGallery;
@@ -81,12 +81,12 @@ class DynamicGallery extends Component
     $this->onlyImages = $onlyImages;
     $this->images = $mediaFiles;
     $this->mediaFiles = json_encode($mediaFiles); // save like this because is needed as primitive
-    $this->productId = $productId;
+    $this->itemId = $itemId;
   }
 
   protected function getListeners()
   {
-    return ["updateMediaFilesItem-$this->productId" => "updateGallery"];
+    return ["updateMediaFilesItem-$this->itemId" => "updateGallery"];
   }
 
   public function updateGallery($mediaFiles = null)

@@ -39,7 +39,7 @@ class DynamicImage extends Component
   public $withVideoControls;
   public $fetchPriority;
   public $isSVG;
-  public $productId;
+  public $itemId;
   protected $images;
   public $updateOnlyThisComponent;
   public $componentId;
@@ -51,9 +51,9 @@ class DynamicImage extends Component
                         $defaultLinkClasses = 'image-link w-100', $imgStyles = '', $width = '300px',
                         $dataFancybox = null, $dataTarget = null, $dataSlideTo = null, $dataCaption = null,
                         $target = '_self', $setting = '', $autoplayVideo = false, $loopVideo = true,
-                        $mutedVideo = true, $central = false, $withVideoControls = false, $fetchPriority = 'low', $productId = null)
+                        $mutedVideo = true, $central = false, $withVideoControls = false, $fetchPriority = 'low', $itemId = null)
   {
-    $this->componentId = 'livewireImage-' . $productId;
+    $this->componentId = 'livewireImage-' . $itemId;
     $this->src = $src;
     $this->alt = !empty($alt) ? $alt : $mediaFiles->{$zone}->alt ?? $mediaFiles->alt ?? '';
     $this->title = $title;
@@ -85,12 +85,13 @@ class DynamicImage extends Component
     $this->fetchPriority = $fetchPriority;
     $this->images = $mediaFiles;
     $this->mediaFiles = json_encode($mediaFiles); // save like this because is needed as primitive
+    $this->itemId = $itemId;
   }
 
   //register dynamic listeners
   protected function getListeners()
   {
-    return ["updateMediaFilesItem-$this->productId" => "updateSingleImage"];
+    return ["updateMediaFilesItem-$this->itemId" => "updateSingleImage"];
   }
 
   public function updateSingleImage($mediaFiles = null)
