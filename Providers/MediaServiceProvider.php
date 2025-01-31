@@ -258,6 +258,7 @@ class MediaServiceProvider extends ServiceProvider
   private function registerComponentsLivewire()
   {
     Livewire::component('media::dynamic-gallery', \Modules\Media\Http\Livewire\DynamicGallery::class);
+    Livewire::component('media::dynamic-image', \Modules\Media\Http\Livewire\DynamicImage::class);
   }
 
 }
