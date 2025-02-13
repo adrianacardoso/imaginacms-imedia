@@ -25,7 +25,7 @@ class EloquentFileRepository extends EloquentCrudRepository implements FileRepos
    * Filter names to replace
    * @var array
    */
-  protected $replaceFilters = ["folderId","extension"];
+  protected $replaceFilters = ["folderId", "extension", "disk"];
 
   /**
    * Relation names to replace
@@ -38,8 +38,8 @@ class EloquentFileRepository extends EloquentCrudRepository implements FileRepos
    * @var array
    */
   protected $with = [
-    'index' => [ 'tags'],
-    'show' => [ 'tags'],
+    'index' => ['tags'],
+    'show' => ['tags'],
   ];
 
 
@@ -237,164 +237,164 @@ class EloquentFileRepository extends EloquentCrudRepository implements FileRepos
 
     $exists = $this->model->where('filename', $fileName)->where('folder_id', $parentId)->where('disk', $disk)->first();
 
-        if ($exists) {
-            $fileName = $this->getNewUniqueFilename($fileName);
-        }
+    if ($exists) {
+      $fileName = $this->getNewUniqueFilename($fileName);
+    }
 
-        $data = [
-            'filename' => $fileName,
-            'path' => $this->getPathFor($fileName, $parentId),
-            'extension' => substr(strrchr($fileName, '.'), 1),
-            'mimetype' => $file->getClientMimeType(),
-            'filesize' => $file->getFileInfo()->getSize(),
-            'folder_id' => $parentId ?? 0,
-            'is_folder' => 0,
-            'disk' => $disk,
-        ];
+    $data = [
+      'filename' => $fileName,
+      'path' => $this->getPathFor($fileName, $parentId),
+      'extension' => substr(strrchr($fileName, '.'), 1),
+      'mimetype' => $file->getClientMimeType(),
+      'filesize' => $file->getFileInfo()->getSize(),
+      'folder_id' => $parentId ?? 0,
+      'is_folder' => 0,
+      'disk' => $disk,
+    ];
 
-        event($event = new FileIsCreating($data));
+    event($event = new FileIsCreating($data));
 
-        $file = $this->model->create($event->getAttributes());
-        event(new FileWasCreated($file));
+    $file = $this->model->create($event->getAttributes());
+    event(new FileWasCreated($file));
 
+    return $file;
+  }
+
+  private function getPathFor(string $filename, $folderId)
+  {
+    if ($folderId !== 0) {
+      $parent = app(FolderRepository::class)->findFolder($folderId);
+      if ($parent !== null) {
+        return $parent->path->getRelativeUrl() . '/' . $filename;
+      }
+    }
+
+    return config('asgard.media.config.files-path') . $filename;
+  }
+
+  public function destroy($file)
+  {
+    $file->delete();
+  }
+
+  /**
+   * Find a file for the entity by zone
+   */
+  public function findFileByZoneForEntity($zone, $entity)
+  {
+    foreach ($entity->files as $file) {
+      if ($file->pivot->zone == $zone) {
         return $file;
+      }
     }
 
-    private function getPathFor(string $filename, $folderId)
-    {
-        if ($folderId !== 0) {
-            $parent = app(FolderRepository::class)->findFolder($folderId);
-            if ($parent !== null) {
-                return $parent->path->getRelativeUrl().'/'.$filename;
-            }
-        }
+    return '';
+  }
 
-        return config('asgard.media.config.files-path').$filename;
+  /**
+   * Find multiple files for the given zone and entity
+   */
+  public function findMultipleFilesByZoneForEntity($zone, $entity)
+  {
+    $files = [];
+    foreach ($entity->files as $file) {
+      if ($file->pivot->zone == $zone) {
+        $files[] = $file;
+      }
     }
 
-    public function destroy($file)
-    {
-        $file->delete();
+    return new Collection($files);
+  }
+
+  /**
+   * @return string
+   */
+  private function getNewUniqueFilename($fileName)
+  {
+    $fileNameOnly = pathinfo($fileName, PATHINFO_FILENAME);
+    $extension = pathinfo($fileName, PATHINFO_EXTENSION);
+
+    $models = $this->model->where('filename', 'LIKE', "$fileNameOnly%")->get();
+
+    $versionCurrent = $models->reduce(function ($carry, $model) {
+      $latestFilename = pathinfo($model->filename, PATHINFO_FILENAME);
+
+      if (preg_match('/_([0-9]+)$/', $latestFilename, $matches) !== 1) {
+        return $carry;
+      }
+
+      $version = (int)$matches[1];
+
+      return ($version > $carry) ? $version : $carry;
+    }, 0);
+
+    return $fileNameOnly . '_' . ($versionCurrent + 1) . '.' . $extension;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function serverPaginationFilteringFor(Request $request)
+  {
+    $media = $this->allWithBuilder();
+
+    $media->orderBy('is_folder', 'desc');
+    $media->where('folder_id', $request->get('folder_id', 0));
+
+    if ($request->get('search') !== null) {
+      $term = $request->get('search');
+      $media->where('filename', 'LIKE', "%{$term}%");
     }
 
-    /**
-     * Find a file for the entity by zone
-     */
-    public function findFileByZoneForEntity($zone, $entity)
-    {
-        foreach ($entity->files as $file) {
-            if ($file->pivot->zone == $zone) {
-                return $file;
-            }
-        }
+    if ($request->get('order_by') !== null && $request->get('order') !== 'null') {
+      $order = $request->get('order') === 'ascending' ? 'asc' : 'desc';
 
-        return '';
+      $media->orderBy($request->get('order_by'), $order);
+    } else {
+      $media->orderBy('created_at', 'desc');
     }
 
-    /**
-     * Find multiple files for the given zone and entity
-     */
-    public function findMultipleFilesByZoneForEntity($zone, $entity)
-    {
-        $files = [];
-        foreach ($entity->files as $file) {
-            if ($file->pivot->zone == $zone) {
-                $files[] = $file;
-            }
-        }
+    return $media->paginate($request->get('per_page', 10));
+  }
 
-        return new Collection($files);
-    }
+  /**
+   * @param int $folderId
+   */
+  public function allChildrenOf($folderId): Collection
+  {
+    return $this->model->where('folder_id', $folderId)->get();
+  }
 
-    /**
-     * @return string
-     */
-    private function getNewUniqueFilename($fileName)
-    {
-        $fileNameOnly = pathinfo($fileName, PATHINFO_FILENAME);
-        $extension = pathinfo($fileName, PATHINFO_EXTENSION);
+  public function findForVirtualPath($criteria, $params = [])
+  {
+    $query = $this->model->where('id', $criteria);
 
-        $models = $this->model->where('filename', 'LIKE', "$fileNameOnly%")->get();
+    $this->validateIndexAllPermission($query, $params);
 
-        $versionCurrent = $models->reduce(function ($carry, $model) {
-            $latestFilename = pathinfo($model->filename, PATHINFO_FILENAME);
+    return $query->first();
+  }
 
-            if (preg_match('/_([0-9]+)$/', $latestFilename, $matches) !== 1) {
-                return $carry;
-            }
+  public function allForGrid(): Collection
+  {
+    return $this->model->where('is_folder', 0)->get();
+  }
 
-            $version = (int) $matches[1];
+  public function move(File $file, File $destination): File
+  {
+    $previousData = [
+      'filename' => $file->filename,
+      'path' => $file->path,
+    ];
 
-            return ($version > $carry) ? $version : $carry;
-        }, 0);
+    $this->update($file, [
+      'path' => $this->getPathFor($file->filename, $destination->id),
+      'folder_id' => $destination->id,
+    ]);
 
-        return $fileNameOnly.'_'.($versionCurrent + 1).'.'.$extension;
-    }
+    event(new FileStartedMoving($file, $previousData));
 
-    /**
-     * @return mixed
-     */
-    public function serverPaginationFilteringFor(Request $request)
-    {
-        $media = $this->allWithBuilder();
-
-        $media->orderBy('is_folder', 'desc');
-        $media->where('folder_id', $request->get('folder_id', 0));
-
-        if ($request->get('search') !== null) {
-            $term = $request->get('search');
-            $media->where('filename', 'LIKE', "%{$term}%");
-        }
-
-        if ($request->get('order_by') !== null && $request->get('order') !== 'null') {
-            $order = $request->get('order') === 'ascending' ? 'asc' : 'desc';
-
-            $media->orderBy($request->get('order_by'), $order);
-        } else {
-            $media->orderBy('created_at', 'desc');
-        }
-
-        return $media->paginate($request->get('per_page', 10));
-    }
-
-    /**
-     * @param  int  $folderId
-     */
-    public function allChildrenOf($folderId): Collection
-    {
-        return $this->model->where('folder_id', $folderId)->get();
-    }
-
-    public function findForVirtualPath($criteria, $params = [])
-    {
-        $query = $this->model->where('id', $criteria);
-
-        $this->validateIndexAllPermission($query, $params);
-
-        return $query->first();
-    }
-
-    public function allForGrid(): Collection
-    {
-        return $this->model->where('is_folder', 0)->get();
-    }
-
-    public function move(File $file, File $destination): File
-    {
-        $previousData = [
-            'filename' => $file->filename,
-            'path' => $file->path,
-        ];
-
-        $this->update($file, [
-            'path' => $this->getPathFor($file->filename, $destination->id),
-            'folder_id' => $destination->id,
-        ]);
-
-        event(new FileStartedMoving($file, $previousData));
-
-        return $file;
-    }
+    return $file;
+  }
 
 
   public function getItemsBy($params = false)
@@ -402,8 +402,9 @@ class EloquentFileRepository extends EloquentCrudRepository implements FileRepos
 
     $response = parent::getItemsBy($params);
 
-    if(isset($params->returnAsQuery) && $params->returnAsQuery) {
-      return $response;}
+    if (isset($params->returnAsQuery) && $params->returnAsQuery) {
+      return $response;
+    }
 
     $filter = $params->filter;
 
@@ -436,72 +437,72 @@ class EloquentFileRepository extends EloquentCrudRepository implements FileRepos
     //Initialize query
     $query = $this->model->query();
 
-        /*== RELATIONSHIPS ==*/
-        if (in_array('*', $params->include ?? [])) {//If Request all relationships
-            $query->with([]);
-        } else {//Especific relationships
-            $includeDefault = []; //Default relationships
-            if (isset($params->include)) {//merge relations with default relationships
-                $includeDefault = array_merge($includeDefault, $params->include);
-            }
-            $query->with($includeDefault); //Add Relationships to query
-        }
-
-        /*== FILTER ==*/
-        if (isset($params->filter)) {
-            $filter = $params->filter;
-
-            if (isset($filter->field)) {//Filter by specific field
-                $field = $filter->field;
-            }
-
-            //is Folder
-            if (isset($filter->zone)) {
-                $filesIds = \DB::table('media__imageables as imageable')
-                  ->where('imageable.zone', $filter->zone)
-                  ->where('imageable.imageable_id', $filter->entityId)
-                  ->where('imageable.imageable_type', $filter->entity)
-                  ->get()->pluck('file_id')->toArray();
-                $query->whereIn('id', $filesIds);
-            }
-        }
-
-        /*== FIELDS ==*/
-        if (isset($params->fields) && count($params->fields)) {
-            $query->select($params->fields);
-        }
-
-        /*== REQUEST ==*/
-        return $query->where($field ?? 'id', $criteria)->first();
+    /*== RELATIONSHIPS ==*/
+    if (in_array('*', $params->include ?? [])) {//If Request all relationships
+      $query->with([]);
+    } else {//Especific relationships
+      $includeDefault = []; //Default relationships
+      if (isset($params->include)) {//merge relations with default relationships
+        $includeDefault = array_merge($includeDefault, $params->include);
+      }
+      $query->with($includeDefault); //Add Relationships to query
     }
 
-    public function create($data)
-    {
-        return $this->model->create($data);
+    /*== FILTER ==*/
+    if (isset($params->filter)) {
+      $filter = $params->filter;
+
+      if (isset($filter->field)) {//Filter by specific field
+        $field = $filter->field;
+      }
+
+      //is Folder
+      if (isset($filter->zone)) {
+        $filesIds = \DB::table('media__imageables as imageable')
+          ->where('imageable.zone', $filter->zone)
+          ->where('imageable.imageable_id', $filter->entityId)
+          ->where('imageable.imageable_type', $filter->entity)
+          ->get()->pluck('file_id')->toArray();
+        $query->whereIn('id', $filesIds);
+      }
     }
 
-    public function updateBy($criteria, $data, $params = false)
-    {
-        /*== initialize query ==*/
-        $query = $this->model->query();
+    /*== FIELDS ==*/
+    if (isset($params->fields) && count($params->fields)) {
+      $query->select($params->fields);
+    }
 
-        /*== FILTER ==*/
-        if (isset($params->filter)) {
-            $filter = $params->filter;
+    /*== REQUEST ==*/
+    return $query->where($field ?? 'id', $criteria)->first();
+  }
 
-            //Update by field
-            if (isset($filter->field)) {
-                $field = $filter->field;
-            }
-        }
-        /*== REQUEST ==*/
-        $model = $query->where($field ?? 'id', $criteria)->first();
+  public function create($data)
+  {
+    return $this->model->create($data);
+  }
 
-        if ($model) {
-            //$model->update((array)$data);
+  public function updateBy($criteria, $data, $params = false)
+  {
+    /*== initialize query ==*/
+    $query = $this->model->query();
 
-            event($event = new FileIsUpdating($model, $data));
-            $model->update($event->getAttributes());
+    /*== FILTER ==*/
+    if (isset($params->filter)) {
+      $filter = $params->filter;
+
+      //Update by field
+      if (isset($filter->field)) {
+        $field = $filter->field;
+      }
+    }
+    /*== REQUEST ==*/
+    $model = $query->where($field ?? 'id', $criteria)->first();
+
+    if ($model) {
+      //$model->update((array)$data);
+
+      event($event = new FileIsUpdating($model, $data));
+      $model->update($event->getAttributes());
 
       event(new FileWasUpdated($model));
 
@@ -509,28 +510,28 @@ class EloquentFileRepository extends EloquentCrudRepository implements FileRepos
   }
 
 
-    public function deleteBy($criteria, $params = false)
-    {
-        /*== initialize query ==*/
-        $query = $this->model->query();
+  public function deleteBy($criteria, $params = false)
+  {
+    /*== initialize query ==*/
+    $query = $this->model->query();
 
-        /*== FILTER ==*/
-        if (isset($params->filter)) {
-            $filter = $params->filter;
+    /*== FILTER ==*/
+    if (isset($params->filter)) {
+      $filter = $params->filter;
 
-            if (isset($filter->field)) {//Where field
-                $field = $filter->field;
-            }
-        }
-
-        /*== REQUEST ==*/
-        $model = $query->where($field ?? 'id', $criteria)->first();
-
-        if (isset($model->id)) {
-            $model->delete();
-            $model->forceDelete();
-        }
+      if (isset($filter->field)) {//Where field
+        $field = $filter->field;
+      }
     }
+
+    /*== REQUEST ==*/
+    $model = $query->where($field ?? 'id', $criteria)->first();
+
+    if (isset($model->id)) {
+      $model->delete();
+      $model->forceDelete();
+    }
+  }
 
   function validateIndexAllPermission(&$query, $params)
   {
