@@ -124,33 +124,35 @@ class MediaServiceProvider extends ServiceProvider
 
   private function registerBindings()
   {
+
     $this->app->bind(
       'Modules\Media\Repositories\FileRepository',
       function () {
         $repository = new \Modules\Media\Repositories\Eloquent\EloquentFileRepository(new \Modules\Media\Entities\File());
-
         if (!config('app.cache')) {
           return $repository;
         }
-
         return new \Modules\Media\Repositories\Cache\CacheFileDecorator($repository);
       }
     );
 
-
-    $this->app->bind(FolderRepository::class, function () {
-      return new EloquentFolderRepository(new File());
-    });
+    $this->app->bind(
+      'Modules\Media\Repositories\FolderRepository',
+      function () {
+        $repository = new \Modules\Media\Repositories\Eloquent\EloquentFolderRepository(new \Modules\Media\Entities\File());
+        if (!config('app.cache')) {
+          return $repository;
+        }
+        return new \Modules\Media\Repositories\Cache\CacheFolderDecorator($repository);
+      });
 
     $this->app->bind(
       'Modules\Media\Repositories\ZoneRepository',
       function () {
         $repository = new \Modules\Media\Repositories\Eloquent\EloquentZoneRepository(new \Modules\Media\Entities\Zone());
-
         if (!config('app.cache')) {
           return $repository;
         }
-
         return new \Modules\Media\Repositories\Cache\CacheZoneDecorator($repository);
       }
     );
@@ -173,7 +175,6 @@ class MediaServiceProvider extends ServiceProvider
     $this->app->singleton('command.media.refresh', function ($app) {
       return new RefreshThumbnailCommand($app['Modules\Media\Repositories\FileRepository']);
     });
-
     $this->commands('command.media.refresh');
   }
 
@@ -202,10 +203,8 @@ class MediaServiceProvider extends ServiceProvider
   {
     try {
       $thumbnails = json_decode(setting('media::thumbnails', null, config('asgard.media.config.defaultThumbnails')));
-
       foreach ($thumbnails as $key => $thumbnail) {
         $this->app[ThumbnailManager::class]->registerThumbnail($key, [
-
           'quality' => $thumbnail->quality ?? 80,
           'resize' => [
             'width' => $thumbnail->width ?? 300,
@@ -260,5 +259,4 @@ class MediaServiceProvider extends ServiceProvider
     Livewire::component('media::dynamic-gallery', \Modules\Media\Http\Livewire\DynamicGallery::class);
     Livewire::component('media::dynamic-image', \Modules\Media\Http\Livewire\DynamicImage::class);
   }
-
 }

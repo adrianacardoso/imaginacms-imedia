@@ -9,11 +9,12 @@ use Modules\Media\Support\Collection\NestedFoldersCollection;
 
 class CacheFolderDecorator extends BaseCacheCrudDecorator implements FolderRepository
 {
-  public function __construct(ZoneRepository $zone)
+  public function __construct(FolderRepository $folder)
   {
     parent::__construct();
-    $this->entityName = 'media.zones';
-    $this->repository = $zone;
+    $this->entityName = 'media.folder';
+    $this->repository = $folder;
+    $this->tags = ['media.files'];
   }
 
   public function findFolder($folderId)
@@ -33,11 +34,11 @@ class CacheFolderDecorator extends BaseCacheCrudDecorator implements FolderRepos
 
   public function move(File $folder, File $destination): File
   {
-    return $this->repository->allChildrenOf($folder, $destination);
+    return $this->repository->move($folder, $destination);
   }
 
   public function findFolderOrRoot($folderId): File
   {
-    return $this->repository->allChildrenOf($folderId);
+    return $this->repository->findFolderOrRoot($folderId);
   }
 }
