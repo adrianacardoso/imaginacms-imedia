@@ -14,7 +14,7 @@
           <div class="carousel-item @if($key == 0) active @endif aspect-ratio-{{$aspectRatio}}">
             <x-media::single-image :isMedia="true" :mediaFiles="$item" :dataFancybox="$dataFancybox"
                                    :autoplayVideo="$autoplayVideo" :loopVideo="$loopVideo" :mutedVideo="$mutedVideo"
-                                   :showDescription="$showDescription"
+                                   :showDescription="$showDescription" :withVideoControls="$controlsVideo"
             />
           </div>
         @endforeach
@@ -27,7 +27,7 @@
             <x-media::single-image :isMedia="true" :mediaFiles="$item" :dataFancybox="$dataFancybox" :data-slide-to="$key"
                                    :dataTarget="'#'.$id.'PrimaryCarousel'" :autoplayVideo="$autoplayVideo"
                                    :loopVideo="$loopVideo" :mutedVideo="$mutedVideo"
-                                   :showDescription="$showDescription"
+                                   :showDescription="$showDescription" :withVideoControls="$controlsVideo"
             />
           </div>
         @endforeach
