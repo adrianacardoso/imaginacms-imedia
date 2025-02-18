@@ -171,7 +171,7 @@ class FileService
   private function getConfiguredFilesystem($disk = "publicmedia")
   {
     $settingDisk = setting('media::filesystem', null, config("asgard.media.config.filesystem"));
-    if ($disk == "publicmedia" && $settingDisk == "s3") return $settingDisk;
+    if ($settingDisk == "s3") return $settingDisk;
     return $disk ?? "publicmedia";
   }
 
