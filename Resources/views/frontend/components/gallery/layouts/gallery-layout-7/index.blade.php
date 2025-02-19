@@ -10,7 +10,8 @@
               <x-media::single-image :isMedia="true" :mediaFiles="$item" :dataFancybox="$dataFancybox"
                                      :data-slide-to="$key" imgClasses="gallery-image-mini"
                                      :dataTarget="'#'.$id.'PrimaryCarousel'" :autoplayVideo="$autoplayVideo"
-                                     :loopVideo="$loopVideo" :mutedVideo="$mutedVideo"              />
+                                     :loopVideo="$loopVideo" :mutedVideo="$mutedVideo"
+                                     :withVideoControls="$controlsVideo"/>
             </div>
           @endforeach
 
@@ -37,6 +38,7 @@
                                        :autoplayVideo="$autoplayVideo" :loopVideo="$loopVideo"
                                        :mutedVideo="$mutedVideo" imgClasses="gallery-image-large"
                                        :showDescription="$showDescription"
+                                       :withVideoControls="$controlsVideo"
                 />
               </div>
             @endforeach
