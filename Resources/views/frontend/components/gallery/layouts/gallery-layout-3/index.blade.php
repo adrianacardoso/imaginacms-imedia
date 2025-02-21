@@ -6,6 +6,7 @@
           <x-media::single-image :isMedia="true" :mediaFiles="$item" :dataFancybox="$dataFancybox"
                                  :autoplayVideo="$autoplayVideo" :loopVideo="$loopVideo" :mutedVideo="$mutedVideo"
                                  :showDescription="$showDescription"
+                                 :withVideoControls="$controlsVideo"
           />
         </div>
       @endforeach

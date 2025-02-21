@@ -36,6 +36,7 @@ class Gallery extends Component
   public $marginItems;
   public $heightItems;
   public $componentId;
+  public $controlsVideo;
 
   /**
    * Create a new component instance.
@@ -49,7 +50,7 @@ class Gallery extends Component
                               $columnMasonry = 3, $navText = "", $maxImages = null, $onlyVideos = false,
                               $onlyImages = false, $autoplayVideo = false, $mutedVideo = false, $loopVideo = false,
                               $stagePadding = 0, $autoplayTimeout = 5000, $aspectRatio = "1-1", $objectFit = 'contain',
-                              $showDescription = false, $marginItems = 0, $heightItems = 350, $componentId = null
+                              $showDescription = false, $marginItems = 0, $heightItems = 350, $componentId = null, $controlsVideo = false
   )
   {
     $this->componentId = $componentId ?? "";
@@ -82,6 +83,7 @@ class Gallery extends Component
     $this->showDescription = $showDescription;
     $this->marginItems = $marginItems;
     $this->heightItems = $heightItems;
+    $this->controlsVideo = $controlsVideo;
 
     if (!empty($mediaFiles)) {
       $countImages = 0;
