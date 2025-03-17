@@ -53,7 +53,7 @@ class Gallery extends Component
                               $showDescription = false, $marginItems = 0, $heightItems = 350, $componentId = null, $controlsVideo = false
   )
   {
-    $this->componentId = $componentId ?? "";
+    $this->componentId = $componentId ?? "gallery". rand(1, 1000);
     $this->id = $id;
     $this->view = "media::frontend.components.gallery.layouts.$layout.index";
     $this->zones = $zones;
