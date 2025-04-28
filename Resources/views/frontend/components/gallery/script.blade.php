@@ -20,9 +20,8 @@
     $(document).ready(function () {
         initializeOwlCarousel();
     });
-
     document.addEventListener('livewire:load', function () {
-        Livewire.on('refreshOwlCarousel'.{{$componentId ?? ""}}, () => {
+        Livewire.on('refreshOwlCarousel'.{{!empty($componentId) ? $componentId : "gallery". rand(1, 1000)}}, () => {
             var owl = $('#{{$id}}Carousel');
             owl.owlCarousel('destroy');
             initializeOwlCarousel();
