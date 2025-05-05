@@ -17,7 +17,8 @@ class AvailableExtensionsRule implements Rule
      */
     public function __construct($extensionsAvailable = null, $message = null)
     {
-        $this->extensionsAvailable = $extensionsAvailable ?? mediaExtensionsAvailable();
+        $this->extensionsAvailable = is_array($extensionsAvailable) && count($extensionsAvailable) ?
+          $extensionsAvailable : mediaExtensionsAvailable();
         $this->message = $message ?? trans('media::messages.invalidExtensions');
     }
 
