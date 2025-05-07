@@ -16,9 +16,10 @@ class ExternalService
         'ico'     => 'image/x-icon',
         'svgz'    => 'image/svg+xml',
         'tif'     => 'image/tiff',
-        'tiff'    => 'image/tiff'
+        'tiff'    => 'image/tiff',
+        'jfif'    => 'image/jpeg'
     );
-   
+
     /**
      * Get data from url (needed to save to the database later)
      * It's a generic method
@@ -28,7 +29,7 @@ class ExternalService
 
         //Get Parts
         $parts = parse_url($url);
-        
+
         //Get Extension and Mimetype in path from Url
         foreach ($this->mimetypes as $key => $value) {
             if(strpos($parts['path'], $key) !== false){
@@ -47,22 +48,22 @@ class ExternalService
         return $data;
 
     }
-    
+
     /**
      * @param $name (Thumbnail Name)
      */
     public function getThumbnail($file,string $name)
     {
-        
+
         //\Log::info($this->log."getThumbnail|".$name);
-        
+
         $url = $file->path->getRelativeUrl();
-        
+
         //Set params in final url
         $thumbnail = $url;
 
         return $thumbnail;
-      
+
 
     }
 
