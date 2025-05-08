@@ -43,6 +43,7 @@ class DynamicImage extends Component
   protected $images;
   public $updateOnlyThisComponent;
   public $componentId;
+  public $listenerId;
 
 
   public function mount($src = '', $alt = '', $title = null, $showDescription = false, $url = null, $isMedia = false, $mediaFiles = null,
@@ -86,12 +87,13 @@ class DynamicImage extends Component
     $this->images = $mediaFiles;
     $this->mediaFiles = json_encode($mediaFiles); // save like this because is needed as primitive
     $this->itemId = $itemId;
+    $this->listenerId = strstr($itemId, '-', true);
   }
 
   //register dynamic listeners
   protected function getListeners()
   {
-    return ["updateMediaFilesItem-$this->itemId" => "updateSingleImage"];
+    return ["updateMediaFilesItem-$this->listenerId" => "updateSingleImage"];
   }
 
   public function updateSingleImage($mediaFiles = null)
