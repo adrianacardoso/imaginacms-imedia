@@ -17,7 +17,8 @@ class ExternalService
         'svgz'    => 'image/svg+xml',
         'tif'     => 'image/tiff',
         'tiff'    => 'image/tiff',
-        'jfif'    => 'image/jpeg'
+        'jfif'    => 'image/jpeg',
+        'webp'    => 'image/webp',
     );
 
     /**
