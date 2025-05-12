@@ -1,5 +1,5 @@
 @if(count($gallery) > 0)
-  <div id="galleryWithHorizontalThumbs">
+  <div id="galleryWithHorizontalThumbs" class="gallery-layout-5">
     <div class="row">
       <div class="col-4">
         <div id="{{$id}}Carousel" class="owl-carousel owl-image-mini owl-image-mini{{$id}} owl-theme">
