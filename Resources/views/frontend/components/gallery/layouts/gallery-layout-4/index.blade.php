@@ -1,5 +1,5 @@
 @if(count($gallery) > 0)
-  <div id="galleryWithHorizontalThumbs">
+  <div id="galleryWithHorizontalThumbs" class="gallery-layout-4">
     <div id="{{$id}}PrimaryCarousel" class="primary-gallery carousel slide" data-ride="carousel">
       <a class="carousel-control-prev" href="#{{$id}}PrimaryCarousel" role="button" data-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
