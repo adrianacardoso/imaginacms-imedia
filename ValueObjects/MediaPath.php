@@ -9,7 +9,7 @@ class MediaPath
     /**
      * @var string
      */
-    private $path;
+    public $path;
 
     /**
      * @var string
