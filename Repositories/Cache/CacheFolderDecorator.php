@@ -41,4 +41,10 @@ class CacheFolderDecorator extends BaseCacheCrudDecorator implements FolderRepos
   {
     return $this->repository->findFolderOrRoot($folderId);
   }
+
+  public function destroy($folder)
+  {
+    $this->cache->tags($this->getTags())->flush();
+    return $this->repository->destroy($folder);
+  }
 }

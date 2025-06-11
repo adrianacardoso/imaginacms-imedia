@@ -5,7 +5,7 @@ namespace Modules\Media\Repositories\Eloquent;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Modules\Core\Repositories\Eloquent\EloquentBaseRepository;
+use Modules\Core\Icrud\Repositories\Eloquent\EloquentCrudRepository;
 use Modules\Media\Entities\File;
 use Modules\Media\Events\FolderIsCreating;
 use Modules\Media\Events\FolderIsDeleting;
@@ -16,8 +16,77 @@ use Modules\Media\Events\FolderWasUpdated;
 use Modules\Media\Repositories\FolderRepository;
 use Modules\Media\Support\Collection\NestedFoldersCollection;
 
-class EloquentFolderRepository extends EloquentBaseRepository implements FolderRepository
+class EloquentFolderRepository extends EloquentCrudRepository implements FolderRepository
 {
+
+  /**
+   * Filter names to replace
+   * @var array
+   */
+  protected $replaceFilters = [];
+
+  /**
+   * Relation names to replace
+   * @var array
+   */
+  protected $replaceSyncModelRelations = [];
+
+  /**
+   * Attribute to customize relations by default
+   * @var array
+   */
+  protected $with = [];
+
+  /**
+   * Filter query
+   *
+   * @param $query
+   * @param $filter
+   * @param $params
+   * @return mixed
+   */
+  public function filterQuery($query, $filter, $params)
+  {
+
+    /**
+     * Note: Add filter name to replaceFilters attribute before replace it
+     *
+     * Example filter Query
+     * if (isset($filter->status)) $query->where('status', $filter->status);
+     *
+     */
+
+    $this->validateIndexAllPermission($query, $params);
+
+    //Response
+    return $query;
+  }
+
+  /**
+   * Method to sync Model Relations
+   *
+   * @param $model ,$data
+   * @return $model
+   */
+  public function syncModelRelations($model, $data)
+  {
+    //Get model relations data from attribute of model
+    $modelRelationsData = ($model->modelRelations ?? []);
+
+    /**
+     * Note: Add relation name to replaceSyncModelRelations attribute before replace it
+     *
+     * Example to sync relations
+     * if (array_key_exists(<relationName>, $data)){
+     *    $model->setRelation(<relationName>, $model-><relationName>()->sync($data[<relationName>]));
+     * }
+     *
+     */
+
+    //Response
+    return $model;
+  }
+
   public function all()
   {
     return $this->model->with('translations')->where('is_folder', 1)->orderBy('created_at', 'DESC')->get();
@@ -165,161 +234,6 @@ class EloquentFolderRepository extends EloquentBaseRepository implements FolderR
       'folder_id' => 0,
       'path' => config('asgard.media.config.files-path'),
     ]);
-  }
-
-  /**
-   * @return mixed
-   */
-  public function getItemsBy($params = false)
-  {
-    /*== initialize query ==*/
-    $query = $this->model->query();
-
-    /*== RELATIONSHIPS ==*/
-    if (in_array('*', $params->include ?? [])) {//If Request all relationships
-      $query->with(['createdBy']);
-    } else {//Especific relationships
-      $includeDefault = []; //Default relationships
-      if (isset($params->include)) {//merge relations with default relationships
-        $includeDefault = array_merge($includeDefault, $params->include);
-      }
-      $query->with($includeDefault); //Add Relationships to query
-    }
-
-    /*== FILTERS ==*/
-    if (isset($params->filter)) {
-      $filter = $params->filter; //Short filter
-
-      //Filter by date
-      if (isset($filter->date)) {
-        $date = $filter->date; //Short filter date
-        $date->field = $date->field ?? 'created_at';
-        if (isset($date->from)) {//From a date
-          $query->whereDate($date->field, '>=', $date->from);
-        }
-        if (isset($date->to)) {//to a date
-          $query->whereDate($date->field, '<=', $date->to);
-        }
-      }
-
-      //Order by
-      if (isset($filter->order)) {
-        $orderByField = $filter->order->field ?? 'is_Folder'; //Default field
-        $orderWay = $filter->order->way ?? 'desc'; //Default way
-        $query->orderBy($orderByField, $orderWay); //Add order to query
-      } else {
-        $query->orderBy('is_Folder', 'desc'); //Add order to query
-        $query->orderBy('media__files.created_at', 'desc'); //Add order to query
-      }
-
-      //folder id
-      if (isset($filter->folderId) && (string)$filter->folderId != '') {
-        $query->where('folder_id', $filter->folderId);
-      }
-
-      if (!isset($params->permissions['media.medias.index']) ||
-        (isset($params->permissions['media.medias.index']) &&
-          !$params->permissions['media.medias.index'])) {
-        $query->where('is_folder', '!=', 0);
-      }
-
-      if (!isset($params->permissions['media.folders.index']) ||
-        (isset($params->permissions['media.folders.index']) &&
-          !$params->permissions['media.folders.index'])) {
-        $query->where('is_folder', '!=', 1);
-      }
-
-      //folder name
-      if (isset($filter->folderName) && $filter->folderName != 'Home') {
-        $folder = \DB::table('media__files as files')
-          ->where('is_folder', true)
-          ->where('filename', $filter->folderName)
-          ->first();
-
-        if (isset($folder->id)) {
-          $query->where('folder_id', $filter->folderId ?? $folder->id);
-        }
-      }
-
-      //is Folder
-      $query->where('is_folder', true);
-
-      //is Folder
-      if (isset($filter->zone)) {
-        $filesIds = \DB::table('media__imageables as imageable')
-          ->where('imageable.zone', $filter->zone)
-          ->where('imageable.imageable_id', $filter->entityId)
-          ->where('imageable.imageable_type', $filter->entity)
-          ->get()->pluck('file_id')->toArray();
-        $query->whereIn('id', $filesIds);
-      }
-
-      //disk
-      if (isset($filter->disk) && !empty($filter->disk)) {
-        $query->whereIn('disk', $filter->disk);
-      }
-
-      //add filter by search
-      if (isset($filter->search) && $filter->search) {
-        //find search in columns
-        $query->where(function ($query) use ($filter) {
-          $query->where('id', 'like', '%' . $filter->search . '%')
-            ->orWhere('filename', 'like', '%' . $filter->search . '%')
-            ->orWhere('updated_at', 'like', '%' . $filter->search . '%')
-            ->orWhere('created_at', 'like', '%' . $filter->search . '%');
-        });
-      }
-    }
-
-    $this->validateIndexAllPermission($query, $params);
-    /*== FIELDS ==*/
-    if (isset($params->fields) && count($params->fields)) {
-      $query->select($params->fields);
-    }
-
-    //dd($query->toSql(), $query->getBindings());
-    /*== REQUEST ==*/
-    if (isset($params->page) && $params->page) {
-      return $query->paginate($params->take);
-    } else {
-      $params->take ? $query->take($params->take) : false; //Take
-
-      return $query->get();
-    }
-  }
-
-  public function getItem($criteria, $params = false)
-  {
-    //Initialize query
-    $query = $this->model->query();
-
-    /*== RELATIONSHIPS ==*/
-    if (in_array('*', $params->include ?? [])) {//If Request all relationships
-      $query->with([]);
-    } else {//Especific relationships
-      $includeDefault = []; //Default relationships
-      if (isset($params->include)) {//merge relations with default relationships
-        $includeDefault = array_merge($includeDefault, $params->include);
-      }
-      $query->with($includeDefault); //Add Relationships to query
-    }
-
-    /*== FILTER ==*/
-    if (isset($params->filter)) {
-      $filter = $params->filter;
-
-      if (isset($filter->field)) {//Filter by specific field
-        $field = $filter->field;
-      }
-    }
-
-    /*== FIELDS ==*/
-    if (isset($params->fields) && count($params->fields)) {
-      $query->select($params->fields);
-    }
-
-    /*== REQUEST ==*/
-    return $query->where($field ?? 'id', $criteria)->first();
   }
 
   function validateIndexAllPermission(&$query, $params)
