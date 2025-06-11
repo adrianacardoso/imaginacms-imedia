@@ -3,11 +3,11 @@
 namespace Modules\Media\Repositories;
 
 use Illuminate\Database\Eloquent\Collection;
-use Modules\Core\Repositories\BaseRepository;
+use Modules\Core\Icrud\Repositories\BaseCrudRepository;
 use Modules\Media\Entities\File;
 use Modules\Media\Support\Collection\NestedFoldersCollection;
 
-interface FolderRepository extends BaseRepository
+interface FolderRepository extends BaseCrudRepository
 {
     /**
      * Find a folder by its ID
